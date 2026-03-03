@@ -4,9 +4,23 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="reservation">
+	<!-- 예약 페이지 내 객실 기본 정보 조회 -->
+	<select id="getRoomInfo" parameterType="int" resultType="map">
+	
+	    SELECT
+	        h.HOTEL_NAME,
+	        r.ROOM_NAME,
+	        r.BASE_PRICE,
+	        r.MAX_CAPACITY
+	    FROM ROOM_TYPE r
+	    JOIN TBL_HOTEL h
+	      ON r.FK_HOTEL_ID = h.HOTEL_ID
+	    WHERE r.ROOM_TYPE_ID = #{value}
+	
+	</select>
 
-   <!-- 예약하기 성공시 payment 테이블에 insert (imp_uid) -->
-  <insert id="insertPayment" parameterType="map" useGeneratedKeys="false">
+    <!-- 예약하기 성공시 payment 테이블에 insert (imp_uid) -->
+    <insert id="insertPayment" parameterType="map" useGeneratedKeys="false">
 	    <selectKey keyProperty="payment_id" resultType="long" order="BEFORE">
 	        SELECT SEQ_PAYMENT.NEXTVAL FROM DUAL
 	    </selectKey>
@@ -31,11 +45,11 @@
 	        SYSDATE,
 	        SYSDATE
 	    )
-	</insert>
+	  </insert>
 	
 	
-	<!-- reservation 테이블에 insert -->
-	<insert id="insertReservation" parameterType="map">
+	  <!-- reservation 테이블에 insert -->
+	  <insert id="insertReservation" parameterType="map">
 
 	    <!-- reservation_id만 생성 -->
 	    <selectKey keyProperty="reservation_id"
@@ -75,12 +89,10 @@
 	        #{cancel_deadline},
 	        #{refund_amount}
 	    )
-	</insert>
+	  </insert>
 	
-	<!-- 예약 완료 페이지 -->
-	<select id="findByReservationCode"
-        parameterType="string"
-        resultType="map">
+	  <!-- 예약 완료 페이지 -->
+	  <select id="findByReservationCode" parameterType="string" resultType="map">
 
 	    SELECT
 	        reservation_code,
@@ -93,6 +105,6 @@
 	    FROM RESERVATION
 	    WHERE reservation_code = #{value}
 	
-	</select>
+	  </select>
 
 </mapper>

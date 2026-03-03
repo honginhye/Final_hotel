@@ -29,4 +29,10 @@ public class ReservationDAO_imple implements ReservationDAO {
     public Map<String, Object> findByReservationCode(String reservationCode) {
         return sqlsession.selectOne("reservation.findByReservationCode", reservationCode);
     }
+
+    // 예약 페이지 내 객실 기본 정보 조회
+	@Override
+	public Map<String, Object> getRoomInfo(int room_type_id) {
+		return sqlsession.selectOne("reservation.getRoomInfo", room_type_id);
+	}
 }

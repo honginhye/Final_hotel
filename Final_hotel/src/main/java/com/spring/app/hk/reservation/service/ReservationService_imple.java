@@ -84,4 +84,18 @@ public class ReservationService_imple implements ReservationService {
 	public Map<String, Object> getReservationByCode(String code) {
 		return reservationDAO.findByReservationCode(code);
 	}
+
+
+	// 예약 페이지 내 객실 기본 정보 조회
+	@Override
+	public Map<String, Object> getRoomInfo(int room_type_id) {
+
+	    Map<String, Object> roomInfo = reservationDAO.getRoomInfo(room_type_id);
+
+	    if (roomInfo == null) {
+	        throw new IllegalArgumentException("해당 객실이 존재하지 않습니다.");
+	    }
+
+	    return roomInfo;
+	}
 }

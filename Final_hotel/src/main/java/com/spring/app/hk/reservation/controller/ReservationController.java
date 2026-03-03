@@ -1,5 +1,7 @@
 package com.spring.app.hk.reservation.controller;
 
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.Map;
 
 import org.springframework.stereotype.Controller;
@@ -20,7 +22,7 @@ public class ReservationController {
 
     private final ReservationService reservationService;
     
-    // 
+    // 예약 정보 입력 페이지 (객실 정보 조회, 숙박일 계산, 총 객실 기본요금 계산)
     @GetMapping("/form")
     public String reservationForm(
             @RequestParam("room_type_id") int room_type_id,
@@ -28,10 +30,30 @@ public class ReservationController {
             @RequestParam("check_out") String check_out,
             Model model) {
 
+    	// 객실 기본 정보 조회 (DAO → ROOM + HOTEL JOIN)
+        Map<String, Object> roomInfo = reservationService.getRoomInfo(room_type_id);
+    	
+        // 숙박일 계산
+        LocalDate inDate = LocalDate.parse(check_in);
+        LocalDate outDate = LocalDate.parse(check_out);
+        long nights = ChronoUnit.DAYS.between(inDate, outDate);
+        
+        // 기본 객실 요금 계산 (1박 요금 * 숙박일)
+        int basePrice = ((Number) roomInfo.get("BASE_PRICE")).intValue();
+        int maxCapacity = ((Number) roomInfo.get("MAX_CAPACITY")).intValue();
+        int totalRoomPrice = basePrice * (int)nights;
+               
         model.addAttribute("room_type_id", room_type_id);
         model.addAttribute("check_in", check_in);
         model.addAttribute("check_out", check_out);
+        model.addAttribute("nights", nights);
+        
+        model.addAttribute("hotel_name", roomInfo.get("HOTEL_NAME"));
+        model.addAttribute("room_name", roomInfo.get("ROOM_NAME"));
+        model.addAttribute("max_capacity", maxCapacity);
+        model.addAttribute("base_price", totalRoomPrice);
 
+        	
         return "hk/reservation/form";
     }
     

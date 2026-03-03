@@ -13,6 +13,9 @@ public interface ReservationDAO {
     // 예약 완료 페이지
     Map<String, Object> findByReservationCode(String reservationCode);
 
+    // 예약 페이지 내 객실 기본 정보 조회
+	Map<String, Object> getRoomInfo(int room_type_id);
+
 	
 
 }
