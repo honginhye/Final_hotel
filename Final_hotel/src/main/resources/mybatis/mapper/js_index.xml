@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.spring.app.js.index.model.IndexDAO">
+
+    <select id="getBannerList" resultType="BannerDTO">
+        SELECT 
+            banner_id, 
+            title, 
+            image_url, 
+            promo_type AS subtitle, 
+            '#' AS link_url,         
+            banner_id AS priority    
+        FROM PROMOTION_BANNER
+        WHERE active_yn = 'Y'
+        ORDER BY banner_id ASC
+    </select>
+
+    <select id="getMainRoomList" resultType="RoomTypeDTO">
+	    <![CDATA[
+	    SELECT * FROM (
+	        SELECT 
+	            RT.room_type_id, 
+	            RT.fk_hotel_id AS brand_id, 
+	            RT.room_grade, 
+	            RT.room_name, 
+	            RT.view_type,
+	            RI.image_url -- room_image 테이블에서 가져온 이미지 경로
+	        FROM ROOM_TYPE RT
+	        JOIN room_image RI ON RT.room_type_id = RI.room_type_id
+	        WHERE RT.is_active = 'Y' 
+	          AND RI.is_main = 'Y'
+	        ORDER BY DBMS_RANDOM.VALUE
+	    ) WHERE ROWNUM <= 2
+	    ]]>
+	</select>
+
+    <select id="getMainDiningList" resultType="DiningDTO">
+	    <![CDATA[
+	    SELECT * FROM (
+	        SELECT 
+	            DINING_ID,        
+	            FK_HOTEL_ID, 
+	            NAME,             
+	            MAIN_IMG          
+	        FROM tbl_dining       
+	        -- 만약 활성화 여부 컬럼이 없다면 이 WHERE절은 삭제하거나 컬럼명에 맞게 수정하세요.
+	        -- WHERE ACTIVE_YN = 'Y' 
+	        ORDER BY DBMS_RANDOM.VALUE -- 랜덤으로 3개 추출
+	    ) WHERE ROWNUM <= 3
+	    ]]>
+	</select>
+
+    <select id="getPromoList" resultType="PromotionDTO">
+        SELECT 
+            promotion_id, 
+            title, 
+            promotion_type AS subtitle, 
+            'default_poster.jpg' AS poster_img, 
+            promotion_type AS tags
+        FROM PROMOTION_MASTER
+        WHERE is_active = 1
+        ORDER BY promotion_id DESC
+    </select>
+
+</mapper>
