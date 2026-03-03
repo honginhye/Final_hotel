@@ -1,16 +1,211 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" 
+      xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{js/layout/layout_main :: layout(~{::title}, ~{::link}, ~{::style}, ~{::script}, ~{::content})}">
 <head>
 <meta charset="UTF-8">
 <title>객실 목록</title>
 
+
 <style>
-body {font-family: Arial;}
-.room-card {border-bottom: 1px solid #ddd; padding: 30px 0; display: flex; gap: 30px;}
-.room-image {width: 300px; height: 200px; background-color: #eee;}
-.room-info {flex: 1;}
-.room-name {font-size: 22px; font-weight: bold;}
-.price {font-size: 20px; font-weight: bold; margin-top: 15px;}
+body {
+    font-family: 'Pretendard', sans-serif;
+    background: #fff;
+    color: #111;
+}
+
+#roomListArea {
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+h1 {
+    text-align: center;
+    font-size: 36px;
+    font-weight: 600;
+    margin-bottom: 50px;
+}
+
+/* 카드 크기 줄임 */
+.room-card {
+    display: flex;
+    gap: 40px;
+    padding: 50px 0;
+    border-bottom: 1px solid #eee;
+    align-items: center;
+}
+
+/* 이미지 줄임 */
+.room-image {
+    width: 420px;
+    height: 260px;
+    overflow: hidden;
+    border-radius: 4px;
+}
+
+.room-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* 정보 */
+.room-info {
+    flex: 1;
+}
+
+.room-name a {
+    font-size: 24px;
+    font-weight: 600;
+    color: #111;
+    text-decoration: none;
+}
+
+.room-name a:hover {
+    text-decoration: underline;
+}
+
+.room-meta {
+    margin-top: 18px;
+    font-size: 14px;
+    color: #666;
+    line-height: 1.9;
+}
+
+.price {
+    font-size: 20px;
+    font-weight: 600;
+    margin-top: 22px;
+}
+
+/* 버튼 */
+.button-group {
+    margin-top: 25px;
+    display: flex;
+    gap: 12px;
+}
+
+.btn-reserve {
+    background: #111;
+    color: white;
+    border: none;
+    padding: 10px 30px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.btn-reserve:hover {
+    background: #c9a76b;
+    color: #111;
+}
+
+.btn-compare {
+    background: transparent;
+    border: 1px solid #ccc;
+    padding: 10px 20px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.btn-compare:hover {
+    border-color: #111;
+}
+
+.filter-wrapper {
+    max-width: 1100px;
+    width: 100%;      /* 추가 */
+    margin: 0 auto 40px auto;
+    padding: 25px 30px;
+    background: #fafafa;
+    border: 1px solid #eee;
+    border-radius: 6px;
+}
+
+.filter-row {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.sort-group {
+    margin-left: auto;
+}
+
+.filter-group {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.filter-group select {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    font-size: 14px;
+    min-width: 130px;
+    background: white;
+}
+
+.filter-group select:focus {
+    outline: none;
+    border-color: #111;
+}
+
+.filter-search-btn {
+    background: #111;
+    color: white;
+    border: none;
+    padding: 8px 20px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.filter-search-btn:hover {
+    background: #c9a76b;
+    color: #111;
+}
+
+.sort-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.sort-group select {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+}
+
+.title-row {
+    max-width: 1100px;
+    margin: 0 auto 40px auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.title-row h1 {
+    margin: 0;
+}
+
+#currencySelect {
+    padding: 6px 10px;
+}
+
+.filter-date {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    background: #fff;
+    border-radius: 4px;
+}
+
+.filter-date input {
+    border: none;
+    outline: none;
+}
 </style>
 
 <!-- FullCalendar CSS -->
@@ -18,12 +213,29 @@ body {font-family: Arial;}
 
 </head>
 <body>
+<div th:fragment="content" style="margin-top:140px;">
 
-<h1>객실</h1>
+<div class="title-row">
+	<h1>객실</h1>
+	<select id="currencySelect" style="margin-bottom:20px;">
+	    <option value="KRW">KRW</option>
+	    <option value="USD">USD</option>
+	    <option value="JPY">JPY</option>
+	    <option value="EUR">EUR</option>
+	</select>
+</div>
+
+<!-- 체크박스 -->
+<div style="max-width:1100px; margin:0 auto 20px auto; text-align:right;">
+    <label>
+        <input type="checkbox" id="extraFeeCheck">
+        세금 · 봉사료 포함 (10%)
+    </label>
+</div>
 
 <!-- 사용자가 선택한 체크인/체크아웃 날짜 표시 영역 -->
 <div id="selectedDateBox" style="margin:20px 0; font-weight:bold;">
-    체크인/체크아웃 선택 안됨
+   
 </div>
 
 <!-- 예약 페이지로 넘길 값 저장용 hidden input -->
@@ -33,53 +245,69 @@ body {font-family: Arial;}
 <!-- ===============================
       필터 (AJAX)
      =============================== -->
-<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+<div style="display:flex; justify-content:center; margin-bottom:20px;">
 
 	<!-- 좌측 필터 -->
-	<form id="filterForm">
-		호텔:
-		<select name="hotel">
-		   <option value="">전체</option>
-		   <option value="1">호텔 시엘</option>
-		   <option value="2">르시엘</option>
-		</select>
-		
-	    객실등급:
-	    <select name="room_grade">
-	        <option value="">전체</option>
-	        <option value="DELUXE">DELUXE</option>
-	        <option value="PREMIER">PREMIER</option>
-	        <option value="SUITE">SUITE</option>
-	        <option value="STANDARD">STANDARD</option>
-	    </select>
-	
-	    침대타입:
-	    <select name="bed_type">
-	        <option value="">전체</option>
-	        <option value="DOUBLE">DOUBLE</option>
-	        <option value="TWIN">TWIN</option>
-	        <option value="KING">KING</option>
-	    </select>
-	
-	    전망:
-	    <select name="view_type">
-	        <option value="">전체</option>
-	        <option value="CITY">CITY</option>
-	        <option value="RIVER">RIVER</option>
-	    </select>
-	
-	    <button type="submit">검색</button>
-	</form>
-	
-	<!-- 우측 정렬 -->
-    <div>
-        정렬:
-        <select id="sortSelect">
-            <option value="">기본순</option>
-            <option value="priceAsc">가격 낮은순</option>
-            <option value="priceDesc">가격 높은순</option>
-        </select>
+	<div class="filter-wrapper">
+    
+    <!-- 1줄 -->
+    <div class="filter-row">
+        <form id="filterForm" class="filter-group">
+
+            <select name="hotel">
+                <option value="">호텔 전체</option>
+                <option value="1">호텔 시엘</option>
+                <option value="2">르시엘</option>
+            </select>
+
+            <select name="room_grade">
+                <option value="">객실등급 전체</option>
+                <option value="DELUXE">DELUXE</option>
+                <option value="PREMIER">PREMIER</option>
+                <option value="SUITE">SUITE</option>
+                <option value="STANDARD">STANDARD</option>
+            </select>
+
+            <select name="bed_type">
+                <option value="">침대타입 전체</option>
+                <option value="DOUBLE">DOUBLE</option>
+                <option value="TWIN">TWIN</option>
+                <option value="KING">KING</option>
+            </select>
+
+            <select name="view_type">
+                <option value="">전망 전체</option>
+                <option value="CITY">CITY</option>
+                <option value="RIVER">RIVER</option>
+            </select>           
+
+        </form>
+
+        <div class="sort-group">
+            <span>정렬</span>
+            <select id="sortSelect">
+                <option value="">기본순</option>
+                <option value="priceAsc">가격 낮은순</option>
+                <option value="priceDesc">가격 높은순</option>
+            </select>
+        </div>
+
     </div>
+    
+ 		<!-- 2줄 (날짜 + 검색) -->
+		<div class="filter-row" style="margin-top:15px;">
+            <div class="filter-date">
+	           	<input type="date" id="filterCheckIn" name="filter_check_in">
+				<span>~</span>
+				<input type="date" id="filterCheckOut" name="filter_check_out">
+			</div>
+			
+			<button type="submit" form="filterForm" class="filter-search-btn">
+                검색
+            </button>
+
+		</div>
+	</div>
 </div>
 
 <hr>
@@ -108,8 +336,11 @@ body {font-family: Arial;}
             <div>전망: <span th:text="${room.view_type}"></span></div>
 
             <div class="price">
-                ₩ <span th:text="${room.base_price}"></span>
-            </div>
+			    <span class="price-value"
+			          data-base-price="${room.base_price}">
+			        ₩ ${room.base_price}
+			    </span>
+			</div>
             
             <div style="margin-top:20px;">
 			    <button id="reserveBtn" th:onclick="'handleReserveClick(' + ${room.room_type_id} + ')'">
@@ -198,64 +429,12 @@ body {font-family: Arial;}
 
 <script>
 
-// ===============================
-// 필터 AJAX : 필터 폼 제출 시 페이지 이동 막고 AJAX로 객실 목록 재조회
-// ===============================
-document.getElementById("filterForm").addEventListener("submit", function(e){
-    e.preventDefault(); // 기본 form 제출 막기
+// 환율
+let exchangeRates = { KRW: 1 };
+let currentCurrency = "KRW";
 
-    // 선택한 필터 값 가져오기
-    const roomGrade = document.querySelector("[name='room_grade']").value;
-    const bedType = document.querySelector("[name='bed_type']").value;
-    const viewType = document.querySelector("[name='view_type']").value;
-    const hotel = document.querySelector("[name='hotel']").value;
-
-    // 서버에 조건 전달
-    fetch(`/final_hotel/room/filter?hotel=${hotel}&room_grade=${roomGrade}&bed_type=${bedType}&view_type=${viewType}`)
-        .then(response => response.json())
-        .then(data => {
-
-            const area = document.getElementById("roomListArea");
-            area.innerHTML = ""; // 기존 목록 초기화
-
-            if(data.length === 0){
-                area.innerHTML = "<p>검색 결과가 없습니다.</p>";
-                return;
-            }
-			
-            // 객실 카드 다시 그리기
-            data.forEach(room => {
-                area.innerHTML += `
-                    <div class="room-card">
-                        <div class="room-image">
-                            <img src="/final_hotel${room.image_url}" 
-                                 style="width:100%; height:100%; object-fit:cover;">
-                        </div>
-                        <div class="room-info">
-                            <div class="room-name">
-                                <a href="/final_hotel/room/detail?room_id=${room.room_type_id}">
-                                    ${room.room_name}
-                                </a>
-                            </div>
-                            <div>등급: ${room.room_grade}</div>
-                            <div>침대: ${room.bed_type}</div>
-                            <div>전망: ${room.view_type}</div>
-                            <div class="price">₩ ${room.base_price}</div>
-
-                            <div style="margin-top:20px;">
-                                <button onclick="openCalendar(${room.room_type_id})">
-                                    예약하기
-                                </button>
-                            </div>
-
-                        </div>
-                    </div>
-                `;
-            });
-
-        });
-});
-
+// 체크박스 (세금봉사료)
+let includeExtraFee = false;
 
 // ===============================
 // 달력 모달
@@ -278,7 +457,7 @@ function openCalendar(roomId) {
             const events = data.map(day => ({
 			    title: day.AVAILABLE_COUNT === 0 
 			           ? "예약마감" 
-			           : "₩ " + day.FINAL_PRICE,
+			           : calculateFinalPrice(day.FINAL_PRICE),
 			    start: day.STAY_DATE,
 			    allDay: true,
 			    color: day.AVAILABLE_COUNT === 0 ? "#999999" : ""  // 재고 0 이면 회색처리
@@ -303,32 +482,39 @@ function openCalendar(roomId) {
                 // 드래그
                 select: function(info){
 
-                	const checkIn = info.startStr;  // 체크인
-                    const checkOut = info.endStr;   // 체크아웃 (자동 +1일)
+                	 const nights = calculateNights(info.startStr, info.endStr);
 
-                    applyDateToPage(checkIn, checkOut); // 화면 반영
-                    closeModal();
+                	    // 하루짜리 선택(클릭으로 인식된 select) 무시
+                	    if(nights === 1){
+                	        return;
+                	    }
+
+                	    // 드래그로 2박 이상 선택한 경우만 처리
+                	    applyDateToPage(info.startStr, info.endStr);
+
+                	    selectedCheckIn = null;
+                	    selectedCheckOut = null;
+
+                	    closeModal();
                 },
                 
                 // 클릭 → 클릭 방식
-                dateClick: function(info){             	
-                	
-                	// 추가 : 클릭한 날짜 재고 확인 (예약 막기)
-                	const clickedDay = data.find(d => d.STAY_DATE === info.dateStr);
+                dateClick: function(info){
 
-                	console.log(clickedDay);
-                
-                	if(clickedDay && clickedDay.AVAILABLE_COUNT === 0){
-                	    alert("해당 날짜는 예약 마감입니다.");
-                	    return;
-                	}
-                	
-                	// 시작
+                    const clickedDay = data.find(d => d.STAY_DATE === info.dateStr);
+
+                    if(clickedDay && clickedDay.AVAILABLE_COUNT === 0){
+                        alert("해당 날짜는 예약 마감입니다.");
+                        return;
+                    }
+
+                    // 체크인
                     if(!selectedCheckIn){
                         selectedCheckIn = info.dateStr;
                         return;
                     }
 
+                    // 체크아웃
                     selectedCheckOut = info.dateStr;
 
                     if(new Date(selectedCheckOut) <= new Date(selectedCheckIn)){
@@ -387,18 +573,10 @@ function closeModal(){
 // 선택된 날짜 페이지 반영
 function applyDateToPage(checkIn, checkOut){
 
-    const box = document.getElementById("selectedDateBox");
+    const roomId = currentRoomId;  // 선택한 객실
 
-    const nights = calculateNights(checkIn, checkOut);  // 박수 계산
-
-    // 상단 표시 영역 업데이트
-    box.innerHTML = `
-        체크인 ${checkIn} ~ 체크아웃 ${checkOut} / ${nights}박
-    `;
-
-    // hidden input에 값 저장 (예약 페이지 전송용)
-    document.getElementById("checkInInput").value = checkIn;
-    document.getElementById("checkOutInput").value = checkOut;
+    // 바로 예약 페이지로 이동
+    location.href = `/final_hotel/reservation/form?room_type_id=${roomId}&check_in=${checkIn}&check_out=${checkOut}`;
 }
 
 
@@ -414,26 +592,19 @@ function calculateNights(start, end){
 
 
 //예약 버튼 클릭 처리 함수
-//1) 날짜가 선택되지 않은 경우 → 달력 모달 열기
-//2) 날짜가 이미 선택된 경우 → 예약 정보 입력 페이지로 이동
 function handleReserveClick(roomId) {
 
-    const checkIn = document.getElementById("checkInInput").value;
-    const checkOut = document.getElementById("checkOutInput").value;
+    currentRoomId = roomId;
 
-    // 날짜 선택 안 된 상태 → 달력 열기
-    if(!checkIn || !checkOut) {
-        openCalendar(roomId);
-        return;
-    }
-
-    // 날짜 이미 선택됨 → 예약 페이지로 이동
-    location.href = `/final_hotel/reservation/form?room_type_id=${roomId}&check_in=${checkIn}&check_out=${checkOut}`;
+    // 무조건 달력 열기
+    openCalendar(roomId);
 }
 
 
 //======================================
-// 우측 정렬 필터 (js공통함수)
+// 필터 AJAX : 필터 폼 제출 시 페이지 이동 막고 AJAX로 객실 목록 재조회
+// + 날짜 선택 시 재고 판단
+// + 우측 정렬 필터 (js공통함수)
 //======================================
 function loadRooms() {
 
@@ -442,8 +613,21 @@ function loadRooms() {
     const bedType = document.querySelector("[name='bed_type']").value;
     const viewType = document.querySelector("[name='view_type']").value;
     const sort = document.getElementById("sortSelect").value;
+    
+    // 날짜 값
+    const checkIn = document.getElementById("filterCheckIn").value;
+    const checkOut = document.getElementById("filterCheckOut").value;
 
-    fetch(`/final_hotel/room/filter?hotel=${hotel}&room_grade=${roomGrade}&bed_type=${bedType}&view_type=${viewType}&sort=${sort}`)
+    // 날짜 없으면 재고 조건 없이 조회
+    let url = `/final_hotel/room/filter?hotel=${hotel}&room_grade=${roomGrade}&bed_type=${bedType}&view_type=${viewType}&sort=${sort}`;
+
+    // 체크인 체크아웃 선택 하면 재고 조건 포함하여 조회 (예약 마감)
+    if(checkIn && checkOut){
+        url += `&check_in=${checkIn}&check_out=${checkOut}`;
+    }
+    
+    // ajax 요청
+    fetch(url)
         .then(res => res.json())
         .then(data => {
 
@@ -456,6 +640,54 @@ function loadRooms() {
             }
 
             data.forEach(room => {
+            	
+            	let stockHtml = "";
+            	let reserveBtn;
+            	let priceHtml = "";
+            	
+            	// 날짜 선택 전
+            	if(!checkIn || !checkOut){
+
+            	    reserveBtn = `
+            	        <button onclick="handleReserveClick(${room.room_type_id})">
+            	            예약하기
+            	        </button>
+            	    `;
+            	    // 가격 표시 안함
+            	}
+
+            	// 날짜 선택 후
+            	else {
+            		if(room.availableCount === 0){
+                	    stockHtml = `<div style="color:gray; font-weight:bold;">
+                	                    예약마감
+                	                 </div>`;
+                	    reserveBtn = `
+                            <button disabled style="background:#ccc;">
+                                예약불가
+                            </button>
+                        `;
+            		}
+            		else if(room.availableCount < 3){
+                	    stockHtml = `<div style="color:red; font-weight:bold;">
+                	                    ⚠ 잔여 ${room.availableCount}개
+                	                 </div>`;
+                	    reserveBtn = `
+	              	          <button onclick="handleReserveClick(${room.room_type_id})">
+	              	              예약하기
+	              	          </button>
+              	        `;
+                	}
+            		else {
+            		        reserveBtn = `
+            		            <button onclick="handleReserveClick(${room.room_type_id})">
+            		                예약하기
+            		            </button>
+            		        `;
+            		}
+            		
+            	}
+            	
                 area.innerHTML += `
                     <div class="room-card">
                         <div class="room-image">
@@ -471,13 +703,30 @@ function loadRooms() {
                             <div>등급: ${room.room_grade}</div>
                             <div>침대: ${room.bed_type}</div>
                             <div>전망: ${room.view_type}</div>
-                            <div class="price">₩ ${room.base_price}</div>
+                            <div class="price">
+	                            <span class="price-value"
+	                                  data-base-price="${room.base_price}">
+	                                ₩ ${room.base_price}
+	                            </span>
+	                        </div>
+                            ${stockHtml}
+                            
+                            <div style="margin-top:20px;">
+	                            ${reserveBtn}
+	                            <button onclick="addToCompare(${room.room_type_id})">
+		                            비교하기
+		                        </button>
+	                        </div>
                         </div>
                     </div>
                 `;
+                
             });
 
+            updatePricesByCurrency(currentCurrency);
+            
         });
+    
 }
 
 
@@ -552,7 +801,17 @@ function updateCompareFooter(){
 
 // 페이지 로드시도 실행
 document.addEventListener("DOMContentLoaded", function(){
+	
+   const savedCurrency = localStorage.getItem("currency");
+
+    if(savedCurrency){
+        currentCurrency = savedCurrency;
+        document.getElementById("currencySelect").value = savedCurrency;
+    }
+	    
     updateCompareFooter();
+    loadRooms();
+    loadExchangeRates();
 });
 
 
@@ -612,7 +871,12 @@ function renderCompareModal(data){
 
             <tr>
                 <td>가격</td>
-                ${data.map(r => `<td>₩ ${r.base_price}</td>`).join("")}
+                ${data.map(r => `
+	                <td class="compare-price"
+	                    data-base-price="${r.base_price}">
+	                    ${calculateFinalPrice(r.base_price)}
+	                </td>
+	            `).join("")}
             </tr>
 
             <tr>
@@ -644,8 +908,123 @@ function closeCompareModal(){
 }
 
 
+// 환율 api 호출
+function loadExchangeRates() {
+    fetch("https://open.er-api.com/v6/latest/KRW")
+        .then(response => response.json())
+        .then(data => {
+            exchangeRates = data.rates;
+            exchangeRates["KRW"] = 1; // 기준통화
+
+            console.log("환율 저장 완료");
+        })
+        .catch(error => {
+            console.error("환율 API 오류:", error);
+        });
+}
+
+
+// 통화 변경시 가격 재계산 함수
+function updatePricesByCurrency(currency){
+
+    currentCurrency = currency;
+
+    const rate = exchangeRates[currency];
+
+    document.querySelectorAll(".price-value")
+        .forEach(el => {
+
+            const basePrice = Number(el.dataset.basePrice);
+
+            el.innerText = calculateFinalPrice(basePrice);
+        });
+}
+
+function formatCurrency(amount, currency){
+    return new Intl.NumberFormat('ko-KR', {
+        style: 'currency',
+        currency: currency
+    }).format(amount);
+}
+
+// 셀렉트 이벤트 연결
+document.getElementById("currencySelect")
+    .addEventListener("change", function(){
+    	
+    	currentCurrency = this.value;
+
+        localStorage.setItem("currency", currentCurrency); // 통화 선택시 저장
+    	
+        updatePricesByCurrency(this.value);
+        
+        // 비교 모달 가격 갱신
+        document.querySelectorAll(".compare-price")
+            .forEach(el => {
+                const base = Number(el.dataset.basePrice);
+                el.innerText = calculateFinalPrice(base);
+            });
+        
+        // 달력이 열려있으면 다시 열어서 갱신
+        if(calendarInstance !== null){
+            const currentRoomId = window.currentRoomId;
+            if(currentRoomId){
+                openCalendar(currentRoomId);
+            }
+        }
+        
+    });
+    
+    
+// 달력 모달에 통화 변환시 적용 위해 함수 추가 + 세금. 봉사료 체크박스 반영 추가
+function calculateFinalPrice(basePrice){
+
+    let price = basePrice;
+
+    // 세금·봉사료 10%
+    if(includeExtraFee){
+        price *= 1.1;
+    }
+
+    // 환율 적용
+    const rate = exchangeRates[currentCurrency] || 1;
+
+    if(currentCurrency !== "KRW"){
+        price *= rate;
+    }
+
+    return new Intl.NumberFormat('ko-KR', {
+        style: 'currency',
+        currency: currentCurrency
+    }).format(price);
+}
+
+
+// 체크박스 이벤트 연결
+document.getElementById("extraFeeCheck")
+.addEventListener("change", function(){
+
+    includeExtraFee = this.checked;
+
+    updatePricesByCurrency(currentCurrency);
+
+    // 비교 모달 갱신
+    document.querySelectorAll(".compare-price")
+        .forEach(el => {
+            const base = Number(el.dataset.basePrice);
+            el.innerText = calculateFinalPrice(base);
+        });
+
+    // 달력 열려있으면 다시 렌더
+    if(calendarInstance !== null){
+        if(window.currentRoomId){
+            openCalendar(window.currentRoomId);
+        }
+    }
+});
+
 
 </script>
 
+</div>
 </body>
 </html>
