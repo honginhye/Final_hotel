@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 import com.spring.app.js.cs.service.CsService;
 
 @Controller
@@ -126,14 +128,44 @@ public class CsController {
      * [사용자] 1:1 문의 상세 보기
      */
     @GetMapping("/qnaDetail")
-    public ModelAndView qnaDetail(ModelAndView mav, 
-                                  // 수정: value 속성 추가
-                                  @RequestParam(value = "qnaId") String qnaId) {
-        
+    public ModelAndView qnaDetail(ModelAndView mav, @RequestParam(value = "qnaId") String qnaId) {
         Map<String, String> qnaDetail = service.getQnaDetail(qnaId);
         
         mav.addObject("qna", qnaDetail);
-        mav.setViewName("js/cs/qnaDetail.tiles1");
+        mav.setViewName("js/cs/qnaDetail"); 
         return mav;
     }
+    
+    // 삭제하기
+    @GetMapping("/qnaDelete")
+    public String qnaDelete(@RequestParam("qna_id") String qnaId, 
+                            @RequestParam("hotelId") String hotelId,
+                            java.security.Principal principal, // Principal 주입
+                            RedirectAttributes rttr) {
+
+        // 로그인이 안 된 경우
+        if (principal == null) {
+            rttr.addFlashAttribute("message", "로그인이 필요합니다.");
+            return "redirect:/login";
+        }
+
+        // 시큐리티에 등록된 사용자 아이디(username) 가져오기
+        String loginId = principal.getName(); 
+
+        // 2. 게시글 상세 정보 조회
+        Map<String, String> qna = service.getQnaDetail(qnaId);
+        
+        // 3. 본인 확인 (기존 로그 확인 결과 WRITER_NAME에 아이디가 들어있으므로)
+        String writerId = String.valueOf(qna.get("WRITER_NAME"));
+
+        if (loginId.equals(writerId)) {
+            service.deleteQna(qnaId);
+            rttr.addFlashAttribute("message", "삭제되었습니다.");
+        } else {
+            rttr.addFlashAttribute("message", "본인만 삭제 가능합니다.");
+        }
+
+        return "redirect:/cs/list?hotelId=" + hotelId;
+    }
+    
 }

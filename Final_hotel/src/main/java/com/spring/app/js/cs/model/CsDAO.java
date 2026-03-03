@@ -21,4 +21,7 @@ public interface CsDAO {
 
     // QnA 작성
 	int insertQna(Map<String, String> paraMap);
+
+	// QnA 삭제
+	int deleteQna(String qnaId);
 }

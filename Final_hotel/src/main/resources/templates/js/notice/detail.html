@@ -79,21 +79,20 @@
         </div>
 
         <div class="footer-group">
-            <a th:href="@{/notice/list(hotelId=${notice.fkHotelId})}" class="btn-list">목록</a>
-            
-            <div class="admin-btns">
-                <button type="button" class="btn btn-light border" 
-                        th:onclick="|location.href='@{/notice/edit/{id}(id=${notice.noticeId}, hotelId=${notice.fkHotelId})}'|">수정</button>
-                
-                <button type="button" class="btn btn-light border text-danger" 
-                        onclick="deleteNotice()">삭제</button>
-            </div>
-            
-            <form id="deleteFrm" th:action="@{/notice/delete}" method="post" style="display:none;">
-                <input type="hidden" name="noticeId" th:value="${notice.noticeId}">
-            </form>
-            
-        </div>
+		    <a th:href="@{/notice/list(hotelId=${notice.fkHotelId})}" class="btn-list">목록</a>
+		    
+		    <div class="admin-btns" sec:authorize="hasRole('ADMIN')">
+		        <button type="button" class="btn btn-light border" 
+		                th:onclick="|location.href='@{/notice/edit/{id}(id=${notice.noticeId}, hotelId=${notice.fkHotelId})}'|">수정</button>
+		        
+		        <button type="button" class="btn btn-light border text-danger" 
+		                onclick="deleteNotice()">삭제</button>
+		    </div>
+		    
+		    <form id="deleteFrm" th:action="@{/notice/delete}" method="post" style="display:none;" sec:authorize="hasRole('ADMIN')">
+		        <input type="hidden" name="noticeId" th:value="${notice.noticeId}">
+		    </form>
+	    </div>
         
     </div>
 </th:block>

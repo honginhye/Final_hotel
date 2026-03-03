@@ -18,4 +18,7 @@ public interface CsService {
 
     // Qna 작성
 	int insertQna(Map<String, String> paraMap);
+
+	// Qna 삭제
+	int deleteQna(String qnaId);
 }

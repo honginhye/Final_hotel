@@ -47,15 +47,20 @@
     </select>
 
     <select id="getQnaDetail" parameterType="String" resultType="HashMap">
-        SELECT 
-            Q.qna_id, Q.title, Q.content, Q.writer_name, Q.status, Q.is_secret,
-            TO_CHAR(Q.created_at, 'yyyy-mm-dd HH24:mi') AS q_date,
-            A.content AS ans_content,
-            TO_CHAR(A.created_at, 'yyyy-mm-dd HH24:mi') AS a_date
-        FROM QUESTIONS Q
-        LEFT JOIN ANSWERS A ON Q.qna_id = A.fk_qna_id
-        WHERE Q.qna_id = #{qnaId}
-    </select>
+	    SELECT 
+	        Q.qna_id, 
+	        Q.title, 
+	        Q.content, 
+	        Q.writer_name, 
+	        Q.status, 
+	        Q.is_secret,
+	        Q.fk_hotel_id,
+	        TO_CHAR(Q.created_at, 'yyyy-mm-dd HH24:mi') AS q_date,
+	        A.content AS ans_content,
+	        TO_CHAR(A.created_at, 'yyyy-mm-dd HH24:mi') AS a_date
+	    FROM QUESTIONS Q
+	    LEFT JOIN ANSWERS A ON Q.qna_id = A.qna_id  WHERE Q.qna_id = #{qnaId}
+	</select>
 
 	<insert id="insertQna" parameterType="HashMap">
 	    INSERT INTO QUESTIONS (
@@ -74,8 +79,14 @@
 		    #{content}, 
 		    #{writer_name}, 
 		    #{is_secret}, 
-		    'WAITING',    
+		    'WAITING',
 		    SYSDATE
 		)
 	</insert>
+	
+	<delete id="deleteQna" parameterType="String">
+        DELETE FROM QUESTIONS
+        WHERE qna_id = #{qnaId}
+    </delete>
+	
 </mapper>

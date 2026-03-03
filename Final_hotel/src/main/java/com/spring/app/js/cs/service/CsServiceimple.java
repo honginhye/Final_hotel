@@ -51,4 +51,9 @@ public class CsServiceimple implements CsService {
 	public int insertQna(Map<String, String> paraMap) {
 		return dao.insertQna(paraMap);
 	}
+
+	@Override
+	public int deleteQna(String qnaId) {
+		return dao.deleteQna(qnaId);
+	}
 }
