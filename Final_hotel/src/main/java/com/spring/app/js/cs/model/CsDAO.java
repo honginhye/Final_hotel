@@ -18,4 +18,7 @@ public interface CsDAO {
 
     // QnA 상세 조회 (XML의 id="getQnaDetail"와 매칭)
     Map<String, String> getQnaDetail(String qnaId);
+
+    // QnA 작성
+	int insertQna(Map<String, String> paraMap);
 }

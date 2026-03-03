@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko" 
       xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       th:fragment="layout(title, link, style, script, content)">
 <head>
    <meta charset="UTF-8">
@@ -38,6 +39,7 @@
        }
        
        .top-util a { color: #eee; margin-left: 20px; text-decoration: none; }
+       .user-welcome { color: #d4af37; font-weight: 500; margin-left: 20px; }
 
        /* --- 드롭다운 배경 꽉 채우기 스타일 --- */
        .custom-dropdown {
@@ -65,24 +67,22 @@
            background-color: #1a1a1a !important;
            border: 1px solid rgba(212, 175, 55, 0.5) !important;
            min-width: 160px;
-           padding: 0 !important; /* 메뉴 박스 내부 여백 제거 */
+           padding: 0 !important;
            margin-top: 10px !important;
            overflow: hidden; 
            display: none;
        }
 
-       .custom-dropdown.show .dropdown-menu {
-           display: block;
-       }
+       .custom-dropdown.show .dropdown-menu { display: block; }
        
        .custom-dropdown .dropdown-item {
            color: #fff !important;
            font-size: 0.75rem;
-           padding: 12px 20px !important; /* 내부 여백으로 영역 확보 */
-           display: flex !important;      /* 중요: block 대신 flex */
+           padding: 12px 20px !important;
+           display: flex !important;
            align-items: center;
-           width: 100% !important;        /* 가로 꽉 채우기 */
-           margin: 0 !important;          /* 외부 여백 제거 */
+           width: 100% !important;
+           margin: 0 !important;
            background-color: transparent;
            border: none !important;
            transition: all 0.2s ease;
@@ -96,14 +96,12 @@
        }
        
        .custom-dropdown .dropdown-item:hover {
-           background-color: #d4af37 !important; /* 전체 노란 배경 */
+           background-color: #d4af37 !important;
            color: #000 !important;
            text-decoration: none;
        }
        
-       .custom-dropdown .dropdown-item:hover i { 
-           color: #000 !important; 
-       }
+       .custom-dropdown .dropdown-item:hover i { color: #000 !important; }
 
        /* --- 기존 네비게이션 스타일 --- */
        .nav-section { width: 100%; transition: all 0.4s ease; padding: 15px 0; }
@@ -140,7 +138,7 @@
        .reserve-field { width: 100%; padding: 15px; margin-bottom: 15px; background: #f8f9fa; border: 1px solid #eee; border-radius: 5px; text-align: left; font-size: 0.95rem; }
        .search-submit-btn { width: 100%; padding: 15px; background: #1a1a1a; color: #fff; border: none; border-radius: 5px; font-weight: 700; margin-top: 10px; }
 
-       /* --- [유지] 푸터 스타일 --- */
+       /* --- 푸터 스타일 --- */
        .footer { background-color: #000; color: #fff; padding: 60px 0; }
        .footer-logo { font-size: 1.5rem; letter-spacing: 5px; margin-bottom: 20px; color: #d4af37; }
        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
@@ -158,12 +156,25 @@
 		            </a>
 		            <div class="dropdown-menu shadow-lg" aria-labelledby="supportDropdown">
 		                <a class="dropdown-item" th:href="@{/notice/list}"><i class="fas fa-bullhorn"></i>공지사항</a>
-		                <a class="dropdown-item" th:href="@{/}"><i class="fas fa-question-circle"></i>Q&A</a>
+		                <a class="dropdown-item" th:href="@{/cs/list}"><i class="fas fa-question-circle"></i>Q&A</a>
 		            </div>
 		        </div>
                 
-                <a th:href="@{/security/login}">로그인</a>
-                <a th:href="@{/security/login}">회원가입</a>
+                <th:block sec:authorize="isAnonymous()">
+                    <a th:href="@{/security/login}">로그인</a>
+                    <a th:href="@{/member/register}">회원가입</a>
+                </th:block>
+
+                <th:block sec:authorize="isAuthenticated()">
+                    <span class="user-welcome">
+                        <i class="fas fa-user-circle mr-1"></i>
+                        <span sec:authentication="name">사용자</span>님 환영합니다
+                    </span>
+                    <a th:href="@{/member/mypage}">마이페이지</a>
+                    <a href="#" onclick="document.getElementById('logout-form').submit();">로그아웃</a>
+                    <form id="logout-form" th:action="@{/security/logout}" method="post" style="display: none;"></form>
+                </th:block>
+                
                 <a href="#">예약조회</a>
             </div>
         </div>

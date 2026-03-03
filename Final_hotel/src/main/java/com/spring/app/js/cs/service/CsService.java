@@ -15,4 +15,7 @@ public interface CsService {
 
     // QnA 상세 조회
     Map<String, String> getQnaDetail(String qnaId);
+
+    // Qna 작성
+	int insertQna(Map<String, String> paraMap);
 }

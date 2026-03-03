@@ -46,4 +46,9 @@ public class CsServiceimple implements CsService {
         // 상세 조회 시 조회수 증가 로직이 필요하다면 여기에 추가할 수 있습니다.
         return dao.getQnaDetail(qnaId);
     }
+
+	@Override
+	public int insertQna(Map<String, String> paraMap) {
+		return dao.insertQna(paraMap);
+	}
 }

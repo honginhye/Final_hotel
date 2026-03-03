@@ -3,6 +3,13 @@
 
 <mapper namespace="com.spring.app.js.cs.model.CsDAO">
 
+	<resultMap id="faqResultMap" type="HashMap">
+	    <result property="FAQ_ID" column="faq_id" />
+	    <result property="TITLE" column="title" />
+	    <result property="CONTENT" column="content" jdbcType="CLOB" javaType="java.lang.String" />
+	    <result property="CATEGORY" column="category" />
+	    <result property="VIEW_COUNT" column="view_count" />
+	</resultMap>
     <select id="getFaqListByHotel" parameterType="String" resultType="HashMap">
         SELECT *
         FROM (
@@ -50,4 +57,25 @@
         WHERE Q.qna_id = #{qnaId}
     </select>
 
+	<insert id="insertQna" parameterType="HashMap">
+	    INSERT INTO QUESTIONS (
+		    QNA_ID, 
+		    FK_HOTEL_ID, 
+		    TITLE, 
+		    CONTENT, 
+		    WRITER_NAME, 
+		    IS_SECRET, 
+		    STATUS, 
+		    CREATED_AT
+		) VALUES (
+		    SEQ_QNA_ID.nextval,  
+		    #{fk_hotel_id}, 
+		    #{title}, 
+		    #{content}, 
+		    #{writer_name}, 
+		    #{is_secret}, 
+		    'WAITING',    
+		    SYSDATE
+		)
+	</insert>
 </mapper>
