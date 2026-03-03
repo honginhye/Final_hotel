@@ -482,20 +482,29 @@ function openCalendar(roomId) {
                 // 드래그
                 select: function(info){
 
-                	 const nights = calculateNights(info.startStr, info.endStr);
+                    let start = info.startStr;
+                    let end = new Date(info.endStr);
 
-                	    // 하루짜리 선택(클릭으로 인식된 select) 무시
-                	    if(nights === 1){
-                	        return;
-                	    }
+                    // FullCalendar는 end가 하루 더해져서 오므로 -1일 해준다
+                    end.setDate(end.getDate() - 1);
 
-                	    // 드래그로 2박 이상 선택한 경우만 처리
-                	    applyDateToPage(info.startStr, info.endStr);
+                    let adjustedEnd =
+                        end.getFullYear() + "-"
+                        + String(end.getMonth()+1).padStart(2,'0') + "-"
+                        + String(end.getDate()).padStart(2,'0');
 
-                	    selectedCheckIn = null;
-                	    selectedCheckOut = null;
+                    const nights = calculateNights(start, adjustedEnd);
 
-                	    closeModal();
+                    if(nights <= 0){
+                        return;
+                    }
+
+                    applyDateToPage(start, adjustedEnd);
+
+                    selectedCheckIn = null;
+                    selectedCheckOut = null;
+
+                    closeModal();
                 },
                 
                 // 클릭 → 클릭 방식
