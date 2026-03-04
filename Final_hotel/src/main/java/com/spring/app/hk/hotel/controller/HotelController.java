@@ -71,14 +71,14 @@ public class HotelController {
     
 
     // 등록 페이지 이동
-	@PreAuthorize("hasRole('ROLE_HQ')")
+	//@PreAuthorize("hasRole('ROLE_HQ')")
     @GetMapping("register")
     public String registerPage() {
         return "hk/admin/hotel/register";
     }
 
     // 호텔 등록
-	@PreAuthorize("hasRole('ROLE_HQ')")
+	//@PreAuthorize("hasRole('ROLE_HQ')")
     @PostMapping("register")
     @ResponseBody
     public Map<String, Object> register(
