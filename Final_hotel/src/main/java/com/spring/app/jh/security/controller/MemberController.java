@@ -1,14 +1,10 @@
 package com.spring.app.jh.security.controller;
 
-import java.io.UnsupportedEncodingException;
-import java.security.GeneralSecurityException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.crypto.password.PasswordEncoder;
-// import org.springframework.security.crypto.password.PasswordEncoder;  // ★ 제거
+import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.spring.app.common.AES256;
 import com.spring.app.jh.security.domain.MemberDTO;
 import com.spring.app.jh.security.domain.Session_MemberDTO;
 import com.spring.app.jh.security.service.MemberService;
@@ -38,6 +33,8 @@ public class MemberController {
 	// 회원가입 form 페이지
 	@GetMapping("memberRegister")
 	public String memberRegister(HttpServletRequest request) {
+		
+		
 		
 		// 이미 로그인 했다면 인덱스로
        HttpSession session = request.getSession(false);
@@ -137,6 +134,13 @@ public class MemberController {
             SavedRequest 를 읽어 원래 가려던 페이지로 자동 redirect 한다.
           - 따라서 여기서 referer 를 세션에 prevURLPage 로 저장하는 방식은 제거한다.
        */
+    	
+        // ✅ 응답이 커밋되기 전에 세션을 먼저 만들어서 JSESSIONID 쿠키를 헤더에 박아둔다
+        request.getSession(true);
+
+        // ✅ CSRF도 "지금" 꺼내서(지연 로딩 해제) 세션에 저장까지 끝내버린다
+        CsrfToken token = (CsrfToken) request.getAttribute(CsrfToken.class.getName());
+        if (token != null) token.getToken();
     	
        
        // 이미 로그인 했다면 인덱스로
@@ -372,21 +376,21 @@ public class MemberController {
     
     
     
-    
-    
-    // 관리자 권한을 가진 사용자만 접근 가능한 URL
-    @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping(value="admin/adminOnly")
-    public String adminOnly(Model model){
-       
-       List<MemberDTO> memberDtoList = memberService.getAllMember();
-       
-       model.addAttribute("memberDtoList", memberDtoList);
-       
-       return "security/admin/memberAllInfo";
-    // src/main/resources/templates/security/admin/memberAllInfo.html 파일 생성해줘야 함
-    }
-    
+//    
+//    
+//    // 관리자 권한을 가진 사용자만 접근 가능한 URL
+//    @PreAuthorize("hasRole('ADMIN')")
+//    @GetMapping(value="admin/adminOnly")
+//    public String adminOnly(Model model){
+//       
+//       List<MemberDTO> memberDtoList = memberService.getAllMember();
+//       
+//       model.addAttribute("memberDtoList", memberDtoList);
+//       
+//       return "security/admin/memberAllInfo";
+//    // src/main/resources/templates/security/admin/memberAllInfo.html 파일 생성해줘야 함
+//    }
+//    
     
     
     

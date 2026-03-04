@@ -84,6 +84,8 @@ public class MemberAuthenticationSuccessHandler extends SavedRequestAwareAuthent
 			                          , HttpServletResponse response
 			                          , Authentication authentication) throws IOException, ServletException {
 
+		
+		
 		// Authentication authentication 은 서버 세션(SecurityContext) 에 저장된 "출입증카드" 이다.
 		// 출입증카드에서 아이디를 알아오는 단축경로
 		String memberid = authentication.getName();
@@ -119,6 +121,8 @@ public class MemberAuthenticationSuccessHandler extends SavedRequestAwareAuthent
 		sessionMemberDTO.setMemberNo(memberDto.getMemberNo());  // ★ member_no 저장
 
 		HttpSession session = request.getSession();
+		// 회원 로그인 성공 시 비회원 세션 제거
+		session.removeAttribute("Session_GuestDTO");
 		session.setAttribute("sessionMemberDTO", sessionMemberDTO); // 키값이 sessionMemberDTO 임.
 
 		// >>> 로그인한 사용자 정보를 tbl_loginhistory 테이블에 입력 하도록 함.

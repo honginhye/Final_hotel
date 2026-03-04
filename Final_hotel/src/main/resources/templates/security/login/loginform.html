@@ -1,15 +1,17 @@
 <!DOCTYPE html>
-<html th:replace="~{layout/layout_main :: layout(~{::title}, ~{::link}, ~{::style}, ~{::script}, ~{::div.container})}" 
-      lang="ko" 
-      xmlns:th="http://www.thymeleaf.org"> 
+<html th:replace="~{layout/layout_main :: layout(~{::title}, ~{::link}, ~{::style}, ~{::script}, ~{::div.container})}"
+      lang="ko"
+      xmlns:th="http://www.thymeleaf.org">
 <!-- ::title 은   현재 페이지의 title   태그를 읽어다가 templates/layout/layout_main.html 파일의 th:fragment="layout(title, link, css, script, content)" 에 있는 첫번째 파라미터로 전달한다. -->
 <!-- ::link  는   현재 페이지의 link    태그를 읽어다가 templates/layout/layout_main.html 파일의 th:fragment="layout(title, link, css, script, content)" 에 있는 두번째 파라미터로 전달한다. -->
 <!-- ::style 은   현재 페이지의 style   태그를 읽어다가 templates/layout/layout_main.html 파일의 th:fragment="layout(title, link, css, script, content)" 에 있는 세번째 파라미터로 전달한다. -->
 <!-- ::script 는  현재 페이지의 script  태그를 읽어다가 templates/layout/layout_main.html 파일의 th:fragment="layout(title, link, css, script, content)" 에 있는 네번째 파라미터로 전달한다. -->
-<!-- ::div.container 은 현재 페이지의 div.container 태그를 읽어다가 templates/layout/layout_main.html 파일의 th:fragment="layout(title, link, css, script, content)" 에 있는 다섯번째 파라미터로 전달한다. --> 
+<!-- ::div.container 은 현재 페이지의 div.container 태그를 읽어다가 templates/layout/layout_main.html 파일의 th:fragment="layout(title, link, css, script, content)" 에 있는 다섯번째 파라미터로 전달한다. -->
 <!-- 타임리프는 백엔드 서버에서 HTML을 동적으로 렌더링하는 용도로 사용된다. -->
 
 <head>
+<meta name="_csrf" th:if="${_csrf != null}" th:content="${_csrf.token}"/>
+<meta name="_csrf_header" th:if="${_csrf != null}" th:content="${_csrf.headerName}"/>
 <meta charset="UTF-8">
 <title>로그인</title>
 
@@ -203,7 +205,7 @@
     border-bottom-color: rgba(139,106,82,.5);
   }
 
-  /* 서버 msg(로그인Fail) */
+  /* 서버 msg(로그인Fail 등) */
   .server-msg{
     margin-bottom: 12px;
     font-size: 12.5px;
@@ -242,10 +244,10 @@
   }
 </style>
 
-<!--/* 
-      자바스크립트 인라인 
-      th:inline="javascript" 은 스크립트 태그 내에서 Thymeleaf 문법([[...]])을 해석할 수 있게 해주는 설정이다.
-      JavaScript 안에서 Thymeleaf 값을 넣을 때는 th:inline="javascript" 와 /*[[뭐뭐뭐]]*/ 구문을 사용해야 한다. 
+<!--/*
+  자바스크립트 인라인
+  th:inline="javascript" 은 스크립트 태그 내에서 Thymeleaf 문법([[...]])을 해석할 수 있게 해주는 설정이다.
+  JavaScript 안에서 Thymeleaf 값을 넣을 때는 th:inline="javascript" 와 /*[[뭐뭐뭐]]*/ 구문을 사용해야 한다.
 */-->
 <script th:inline="javascript">
 /*<![CDATA[*/
@@ -308,11 +310,51 @@ $(document).ready(function(){
     }
   });
 
+  // ===== 비회원 로그인 유효성 + submit =====
+  $("#panel-guest").submit(function(e){
+    const $err = $("#err-guest");
+    $err.removeClass("show").text("");
+
+    const phone = $.trim($("#guestPhone").val());
+    const name  = $.trim($("#guestName").val());
+
+    if(phone === ""){
+      e.preventDefault();
+      showError($err, "휴대폰번호를 입력하세요.");
+      $("#guestPhone").focus();
+      return false;
+    }
+
+    const phoneNorm = phone.replace(/[^0-9]/g, "");
+    if(phoneNorm.length < 10){
+      e.preventDefault();
+      showError($err, "휴대폰번호를 정확히 입력하세요. (숫자만)");
+      $("#guestPhone").focus();
+      return false;
+    }
+
+    if(name === ""){
+      e.preventDefault();
+      showError($err, "고객명을 입력하세요.");
+      $("#guestName").focus();
+      return false;
+    }
+
+    // /guest/loginEnd 로 전송(옵션2: 로그인 성공 시 즉시 guest 계정 생성)
+    return true;
+  });
+
   // ===== 관리자 로그인 이동 =====
   $("#goAdminLogin").click(function(){
     const ctxPath = /*[[@{/}]]*/ "";
     location.href = `${ctxPath}admin/login`;
   });
+  
+  //페이지 로드 시 tab 파라미터로 초기 탭 설정
+  const params = new URLSearchParams(window.location.search);
+  const tab = params.get("tab");
+  if(tab === "guest") setTab("guest");
+  else setTab("member"); // 기본 member
 
 }); // end of ready
 
@@ -357,6 +399,12 @@ $(document).ready(function(){
                 method="post"
                 th:action="@{/security/loginEnd}">
 
+            <!-- CSRF (Spring Security 사용시 403 방지) -->
+            <input type="hidden"
+		       th:if="${_csrf != null}"
+		       th:name="${_csrf.parameterName}"
+		       th:value="${_csrf.token}" />
+
             <div class="field">
               <div class="label"><span>아이디 또는 이메일</span></div>
               <input class="input" id="memberid" name="memberid" autocomplete="username" placeholder="아이디 또는 이메일" />
@@ -388,7 +436,6 @@ $(document).ready(function(){
             <button class="btnx" type="submit">로그인</button>
 
             <div class="links">
-              <!-- 아래 링크들은 네 프로젝트 URL에 맞게 필요하면 교체 -->
               <a th:href="@{/security/member_id_find}">아이디 찾기</a>
               <span>|</span>
               <a th:href="@{/security/member_pw_find}">비밀번호 찾기</a>
@@ -400,27 +447,44 @@ $(document).ready(function(){
           </form>
 
           <!-- =======================
-               비회원 로그인(현재 컨트롤러/URL이 없다면 임시)
-               - 아직 미구현이면 submit 막고 안내만 띄워도 됨
+               비회원 로그인 (옵션2: 로그인 성공 시 즉시 guest 계정 생성)
+               - POST /guest/loginEnd
+               - param: name, phone
                ======================= -->
           <form class="form"
                 id="panel-guest"
                 role="tabpanel"
                 aria-labelledby="tab-guest"
                 method="post"
-                action="#">
+                th:action="@{/guest/loginEnd}">
+
+            <!-- CSRF (Spring Security 사용시 403 방지) -->
+            <input type="hidden"
+		       th:if="${_csrf != null}"
+		       th:name="${_csrf.parameterName}"
+		       th:value="${_csrf.token}" />
 
             <div class="field">
               <div class="label"><span>휴대폰번호</span></div>
-              <input class="input" name="phone" inputmode="tel" autocomplete="tel" placeholder="휴대폰번호 (숫자만)" />
+              <input class="input"
+                     id="guestPhone"
+                     name="phone"
+                     inputmode="tel"
+                     autocomplete="tel"
+                     placeholder="휴대폰번호 (숫자만)" />
             </div>
 
             <div class="field">
               <div class="label"><span>고객명</span></div>
-              <input class="input" name="guestName" type="text" autocomplete="name" placeholder="비회원 고객명" />
+              <input class="input"
+                     id="guestName"
+                     name="name"
+                     type="text"
+                     autocomplete="name"
+                     placeholder="비회원 고객명" />
             </div>
 
-            <button class="btnx" type="button" onclick="alert('비회원 로그인은 아직 미구현입니다.');">비회원으로 계속</button>
+            <button class="btnx" type="submit">비회원으로 계속</button>
 
             <div class="error" id="err-guest"></div>
           </form>
