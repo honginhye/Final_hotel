@@ -78,6 +78,13 @@ public class HotelService_imple implements HotelService {
 	}
 
 
+	// 호텔 상세페이지 내 비활성화하기
+	@Override
+	public int deleteHotel(int hotel_id) {
+		  return hotelDAO.deleteHotel(hotel_id);
+	}
+
+
    
 	
 }

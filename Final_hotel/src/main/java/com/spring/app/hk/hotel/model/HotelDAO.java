@@ -20,5 +20,8 @@ public interface HotelDAO {
     // 호텔 상세페이지 내 수정하기
 	int updateHotel(Map<String, Object> param);
 
+	// 호텔 상세페이지 내 비활성화하기
+	int deleteHotel(int hotel_id);
+
 
 }

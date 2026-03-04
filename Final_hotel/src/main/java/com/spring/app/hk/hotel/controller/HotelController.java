@@ -70,6 +70,23 @@ public class HotelController {
     }
     
 
+    // 호텔 상세페이지 내 비활성화하기
+    @PostMapping("delete")
+    @ResponseBody
+    public Map<String,Object> deleteHotel(@RequestBody Map<String,Object> param){
+
+        int hotel_id = Integer.parseInt(param.get("hotel_id").toString());
+
+        int result = hotelService.deleteHotel(hotel_id);
+
+        Map<String,Object> map = new HashMap<>();
+        map.put("result", result);
+
+        return map;
+    }
+    
+    
+    
     // 등록 페이지 이동
 	//@PreAuthorize("hasRole('ROLE_HQ')")
     @GetMapping("register")

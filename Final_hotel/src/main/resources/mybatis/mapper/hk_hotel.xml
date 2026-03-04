@@ -16,9 +16,9 @@
 		FROM tbl_hotel h
 		LEFT JOIN hotel_image i
 		ON h.hotel_id = i.fk_hotel_id
-		AND i.is_main = 'Y'
+		AND i.is_main = 'Y'	
+		WHERE h.active_yn = 'Y'
 		ORDER BY h.hotel_id
-		
 		</select>
 	
 	
@@ -41,7 +41,7 @@
 		AND I.IS_MAIN = 'Y'
 		
 		WHERE H.HOTEL_ID = #{hotelId}
-		
+		AND H.ACTIVE_YN = 'Y'
 	</select>
 		
 		
@@ -59,11 +59,22 @@
 	</update>	
 	
 	
-    <!-- 호텔 insert -->
+	<!-- 호텔 상세페이지 내 비활성화하기 -->
+	<update id="deleteHotel">
+		
+		UPDATE tbl_hotel
+		SET active_yn = 'N'
+		WHERE hotel_id = #{hotel_id}
+		
+	</update>
+		
+	
+	
+    <!-- 호텔 DB insert -->
     <insert id="insertHotel">
 
         <selectKey keyProperty="hotel_id" resultType="int" order="BEFORE">
-            select seq_hotel_id.nextval from dual
+            select seq_hotel.nextval from dual
         </selectKey>
 
         insert into tbl_hotel

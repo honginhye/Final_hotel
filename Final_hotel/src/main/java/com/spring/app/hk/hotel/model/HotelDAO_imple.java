@@ -43,6 +43,11 @@ public class HotelDAO_imple implements HotelDAO {
 		 return sqlsession.update("hotel.updateHotel", param);
 	}
 
+	// 호텔 상세페이지 내 비활성화하기
+	@Override
+	public int deleteHotel(int hotel_id) {
+	    return sqlsession.update("hotel.deleteHotel", hotel_id);
+	}
 	
 
 	
