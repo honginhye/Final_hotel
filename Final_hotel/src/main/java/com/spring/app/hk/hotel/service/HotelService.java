@@ -11,5 +11,8 @@ public interface HotelService {
     // 호텔 + 이미지 저장
     void saveHotel(Map<String, String> map);
 
+    // 호텔 상세페이지 이동
+	Map<String, Object> getHotelDetail(Long hotelId);
+
 	
 }

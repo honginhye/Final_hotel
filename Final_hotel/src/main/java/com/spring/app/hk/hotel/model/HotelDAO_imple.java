@@ -19,6 +19,12 @@ public class HotelDAO_imple implements HotelDAO {
     	 return sqlsession.selectList("hotel.selectHotelList");
 	}
     
+    // 호텔 상세페이지 이동
+    @Override
+	public Map<String, Object> selectHotelDetail(Long hotelId) {
+		return sqlsession.selectOne("hotel.selectHotelDetail", hotelId);
+	}
+    
     // 호텔 insert
     @Override
     public int insertHotel(Map<String, Object> paraMap) {
@@ -30,6 +36,8 @@ public class HotelDAO_imple implements HotelDAO {
     public int insertHotelImage(Map<String, Object> paraMap) {
         return sqlsession.insert("hotel.insertHotelImage", paraMap);
     }
+
+	
 
 	
 }

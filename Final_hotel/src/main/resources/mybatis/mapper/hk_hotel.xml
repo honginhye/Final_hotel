@@ -21,6 +21,29 @@
 		
 		</select>
 	
+	
+	<!-- 호텔 상세페이지 이동 -->
+	<select id="selectHotelDetail" resultType="map">
+
+		SELECT
+		    H.HOTEL_ID,
+		    H.HOTEL_NAME,
+		    H.ADDRESS,
+		    H.CONTACT,
+		    H.HOTEL_DESC,
+		    H.APPROVE_STATUS,
+		    I.IMAGE_URL
+		
+		FROM TBL_HOTEL H
+		
+		LEFT JOIN HOTEL_IMAGE I
+		ON H.HOTEL_ID = I.FK_HOTEL_ID
+		AND I.IS_MAIN = 'Y'
+		
+		WHERE H.HOTEL_ID = #{hotelId}
+		
+		</select>
+	
     <!-- 호텔 insert -->
     <insert id="insertHotel">
 

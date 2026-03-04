@@ -43,6 +43,18 @@ public class HotelController {
     
     
     // 호텔 상세페이지 이동
+    @GetMapping("detail")
+    public String hotelDetail(@RequestParam("hotel_id") Long hotelId,
+                              Model model){
+
+        Map<String,Object> hotel = hotelService.getHotelDetail(hotelId);
+
+        System.out.println("호텔 데이터 = " + hotel);
+        
+        model.addAttribute("hotel", hotel);
+
+        return "hk/admin/hotel/detail";
+    }
     
 
     // 등록 페이지 이동

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<meta charset="UTF-8">
+<title>숙소 상세</title>
+
+<link rel="stylesheet"
+href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+
+<style>
+
+.hotel-img{
+    width:100%;
+    object-fit:cover;
+    border-radius:10px;
+}
+
+.info-box{
+    margin-top:20px;
+}
+
+.info-title{
+    font-weight:bold;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container mt-5">
+
+<h2 class="mb-4">숙소 상세</h2>
+
+<div class="row">
+
+<div class="col-md-6">
+
+<img class="hotel-img"
+     th:src="@{${hotel.IMAGE_URL}}"
+     alt="호텔이미지">
+
+</div>
+
+
+<div class="col-md-6">
+
+<div class="info-box">
+
+<p>
+<span class="info-title">숙소명 :</span>
+<span th:text="${hotel.HOTEL_NAME}"></span>
+</p>
+
+<p>
+<span class="info-title">주소 :</span>
+<span th:text="${hotel['ADDRESS']} ?: '주소 없음'"></span>
+</p>
+
+<p>
+<span class="info-title">연락처 :</span>
+<span th:text="${hotel['CONTACT']} ?: '-'"></span>
+</p>
+
+<p>
+<span class="info-title">설명 :</span>
+<span th:text="${hotel['HOTEL_DESC']} ?: '-'"></span>
+</p>
+
+<p>
+<span class="info-title">상태 :</span>
+
+<span th:if="${hotel.APPROVE_STATUS=='PENDING'}"
+      class="badge bg-warning">
+심사중
+</span>
+
+<span th:if="${hotel.APPROVE_STATUS=='APPROVED'}"
+      class="badge bg-success">
+운영중
+</span>
+
+<span th:if="${hotel.APPROVE_STATUS=='REJECTED'}"
+      class="badge bg-danger">
+반려
+</span>
+
+</p>
+
+</div>
+
+
+<div class="mt-4">
+
+<a class="btn btn-primary"
+   th:href="@{/admin/hotel/edit(hotel_id=${hotel.HOTEL_ID})}">
+수정
+</a>
+
+<button class="btn btn-danger"
+        onclick="deleteHotel()">
+삭제
+</button>
+
+<a class="btn btn-secondary"
+   th:href="@{/admin/hotel/list}">
+목록
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+
+<script>
+
+function deleteHotel(){
+
+if(!confirm("숙소를 삭제하시겠습니까?")) return;
+
+fetch("/final_hotel/admin/hotel/delete?hotel_id=[[${hotel.HOTEL_ID}]]")
+.then(res=>res.json())
+.then(data=>{
+
+if(data.result==1){
+
+alert("삭제 완료");
+
+location.href="/final_hotel/admin/hotel/list";
+
+}
+
+});
+
+}
+
+</script>
+
+</body>
+</html>

@@ -29,8 +29,16 @@ public class HotelService_imple implements HotelService {
 	public List<Map<String, Object>> getHotelList() {
     	  return hotelDAO.selectHotelList();
 	}
+ 
     
+    // 호텔 상세페이지 이동
+   	@Override
+   	public Map<String, Object> getHotelDetail(Long hotelId) {
+   		return hotelDAO.selectHotelDetail(hotelId);
+   	}
+
     
+    // 호텔 등록하기
     @Override
     public void saveHotel(Map<String, String> map) {
 
@@ -62,5 +70,7 @@ public class HotelService_imple implements HotelService {
         System.out.println("호텔 + 이미지 저장 완료");
     }
 
+
+   
 	
 }
