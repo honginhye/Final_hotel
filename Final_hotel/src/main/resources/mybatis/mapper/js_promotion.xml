@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.spring.app.js.promotion.model.PromotionDAO">
+
+    <select id="getPromotionList" parameterType="int" resultType="com.spring.app.js.promotion.domain.PromotionDTO">
+	    SELECT 
+	        m.promotion_id,
+	        b.title,
+	        b.benefits,              
+	        b.image_url,
+	        m.fk_hotel_id,
+	        m.discount_rate,
+	        m.price,
+	        TO_CHAR(m.start_date, 'YYYY-MM-DD') AS start_date, 
+	        TO_CHAR(m.end_date, 'YYYY-MM-DD') AS end_date
+	    FROM PROMOTION_MASTER m
+	    INNER JOIN PROMOTION_BANNER b ON m.promotion_id = b.fk_promotion_id 
+	    WHERE m.fk_hotel_id = #{hotelId}
+	      AND m.is_active = 1
+	      AND b.active_yn = 'Y'
+	      AND b.banner_type = 'CARD' -- 리스트에는 슬라이드용이 아닌 카드용만 노출
+	      AND SYSDATE BETWEEN m.start_date AND m.end_date 
+	    ORDER BY m.start_date DESC
+	</select>
+
+    <select id="getPromotionDetail" parameterType="int" resultType="com.spring.app.js.promotion.domain.PromotionDTO">
+	    SELECT 
+	        m.promotion_id,
+	        m.fk_hotel_id,
+	        m.price,
+	        m.discount_rate,
+	        b.title,
+	        b.subtitle,
+	        b.benefits,  /* 상세 설명 및 혜택으로 활용 */
+	        b.image_url,
+	        TO_CHAR(m.start_date, 'YYYY-MM-DD') AS start_date,
+	        TO_CHAR(m.end_date, 'YYYY-MM-DD') AS end_date
+	    FROM PROMOTION_MASTER m
+	    INNER JOIN PROMOTION_BANNER b ON m.promotion_id = b.fk_promotion_id
+	    WHERE m.promotion_id = #{promotionId}
+	      AND ROWNUM = 1
+	</select>
+
+</mapper>

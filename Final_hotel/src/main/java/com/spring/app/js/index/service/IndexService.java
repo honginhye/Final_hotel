@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface IndexService {
     // 메인 배너 리스트 조회
-    List<BannerDTO> getBannerList();
+    List<BannerDTO> getMainBannerList();
 
     // 메인용 객실 리스트 (최상위 2개)
     List<RoomTypeDTO> getMainRoomList();
@@ -18,5 +18,5 @@ public interface IndexService {
     List<DiningDTO> getMainDiningList();
 
     // 메인용 프로모션 리스트
-    List<PromotionDTO> getPromoList();
+    List<PromotionDTO> getPromoCardList();
 }

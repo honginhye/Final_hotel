@@ -16,7 +16,7 @@ import java.util.List;
 public class IndexController {
 
     @Autowired
-    private IndexService service; // 데이터 조회를 위한 서비스
+    private IndexService service; 
 
     @GetMapping("/")
     public String redirectToIndex() {
@@ -25,20 +25,27 @@ public class IndexController {
 
     @GetMapping("/index")
     public String indexPage(Model model) {
-        // 1. 배너 목록 가져오기
-        List<BannerDTO> bannerList = service.getBannerList();
-        // 2. 객실 목록 (상위 2개) 가져오기
+        
+        // 1. [수정] 메인 비주얼 슬라이더용 (BANNER_TYPE = 'MAIN')
+        // 기존 bannerList 대신 통합된 PromotionDTO 리스트 사용
+        List<BannerDTO> mainBannerList = service.getMainBannerList();
+        
+        // 2. [수정] 하단 프로모션 카드용 (BANNER_TYPE = 'CARD')
+        // 기존 promoList 대신 통합된 PromotionDTO 리스트 사용
+        List<PromotionDTO> promoCardList = service.getPromoCardList();
+
+        // 3. 객실 목록 (상위 2개) 가져오기
         List<RoomTypeDTO> roomList = service.getMainRoomList();
-        // 3. 다이닝 목록 (상위 3개) 가져오기
+        
+        // 4. 다이닝 목록 (상위 3개) 가져오기
         List<DiningDTO> diningList = service.getMainDiningList();
-        // 4. 프로모션 목록 가져오기
-        List<PromotionDTO> promoList = service.getPromoList();
 
         // 뷰(HTML)로 전달
-        model.addAttribute("bannerList", bannerList);
+        // HTML에서 사용하는 th:each 명칭과 일치시켜야 합니다.
+        model.addAttribute("mainBannerList", mainBannerList); // 슬라이더용
+        model.addAttribute("promoCardList", promoCardList);   // 하단 카드용
         model.addAttribute("roomList", roomList);
         model.addAttribute("diningList", diningList);
-        model.addAttribute("promoList", promoList);
 
         return "js/index/index";
     }

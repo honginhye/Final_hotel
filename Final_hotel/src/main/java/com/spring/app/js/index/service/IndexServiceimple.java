@@ -17,8 +17,8 @@ public class IndexServiceimple implements IndexService {
     private IndexDAO inDao; // 데이터베이스 접근 객체
 
     @Override
-    public List<BannerDTO> getBannerList() {
-        return inDao.getBannerList();
+    public List<BannerDTO> getMainBannerList() {
+        return inDao.getMainBannerList();
     }
 
     @Override
@@ -33,7 +33,7 @@ public class IndexServiceimple implements IndexService {
     }
 
     @Override
-    public List<PromotionDTO> getPromoList() {
-        return inDao.getPromoList();
+    public List<PromotionDTO> getPromoCardList() {
+        return inDao.getPromoCardList();
     }
 }

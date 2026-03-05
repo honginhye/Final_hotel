@@ -12,7 +12,7 @@ import java.util.List;
 public interface IndexDAO {
 
     // 메인 배너 리스트 (우선순위 순)
-    List<BannerDTO> getBannerList();
+    List<BannerDTO> getMainBannerList();
 
     // 메인용 객실 리스트 (최신 등록된 2개)
     List<RoomTypeDTO> getMainRoomList();
@@ -21,5 +21,5 @@ public interface IndexDAO {
     List<DiningDTO> getMainDiningList();
 
     // 진행 중인 프로모션 리스트
-    List<PromotionDTO> getPromoList();
+    List<PromotionDTO> getPromoCardList();
 }
