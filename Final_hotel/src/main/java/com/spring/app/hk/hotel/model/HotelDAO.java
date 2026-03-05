@@ -6,7 +6,9 @@ import java.util.Map;
 public interface HotelDAO {
 
 	// 호텔 리스트 가져오기
-	List<Map<String,Object>> selectHotelList();
+	// List<Map<String,Object>> selectHotelList();
+	List<Map<String, Object>> selectApprovedHotelList();
+	List<Map<String, Object>> selectPendingHotelList();
 	
     // 호텔 상세페이지 이동
 	Map<String, Object> selectHotelDetail(Long hotelId);
@@ -22,6 +24,17 @@ public interface HotelDAO {
 
 	// 호텔 상세페이지 내 비활성화하기
 	int deleteHotel(int hotel_id);
+
+	
+	
+	// 호텔 승인 상태 변경
+	void updateHotelStatus(Long hotelId, String string);
+
+	// 호텔 승인/반려 이력 저장
+	void insertApprovalHistory(Long hotelId, String string, Object object);
+
+	
+	
 
 
 }

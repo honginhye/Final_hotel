@@ -25,11 +25,19 @@ public class HotelService_imple implements HotelService {
     private String imagesDir;
 
     // 호텔 리스트 가져오기
+    // 전체 (운영중)
     @Override
-	public List<Map<String, Object>> getHotelList() {
-    	  return hotelDAO.selectHotelList();
+    public List<Map<String,Object>> getApprovedHotelList(){
+        return hotelDAO.selectApprovedHotelList();
+    }
+
+
+    // 승인대기 호텔
+	@Override
+	public List<Map<String,Object>> getPendingHotelList(){
+	    return hotelDAO.selectPendingHotelList();
 	}
- 
+    
     
     // 호텔 상세페이지 이동
    	@Override
@@ -83,6 +91,31 @@ public class HotelService_imple implements HotelService {
 	public int deleteHotel(int hotel_id) {
 		  return hotelDAO.deleteHotel(hotel_id);
 	}
+	
+	
+	
+	// 호텔 등록 승인요청(지점관리자)
+	@Override
+	public void requestApproval(Long hotelId){
+
+	    hotelDAO.updateHotelStatus(hotelId,"PENDING");
+	    hotelDAO.insertApprovalHistory(hotelId,"PENDING",null);
+
+	}
+
+
+	// 상태 변경
+	@Override
+	public void changeStatus(Long hotelId, String status, String reason){
+
+	    hotelDAO.updateHotelStatus(hotelId,status);
+	    hotelDAO.insertApprovalHistory(hotelId,status,reason);
+
+	}
+
+
+	
+	
 
 
    

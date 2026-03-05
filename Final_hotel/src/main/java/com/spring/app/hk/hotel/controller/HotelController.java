@@ -30,13 +30,16 @@ public class HotelController {
     @Value("${file.images-dir}")
     private String imagesDir;
 
+    //  ======================== 1. 호텔 CRUD ============================
     // 호텔 리스트 가져오기
     @GetMapping("list")
     public String hotelList(Model model){
 
-        List<Map<String,Object>> hotelList = hotelService.getHotelList();
+        List<Map<String,Object>> activeHotelList = hotelService.getApprovedHotelList();
+        List<Map<String,Object>> pendingHotelList = hotelService.getPendingHotelList();
 
-        model.addAttribute("hotelList", hotelList);
+        model.addAttribute("activeHotelList", activeHotelList);
+        model.addAttribute("pendingHotelList", pendingHotelList);
 
         return "hk/admin/hotel/list";
     }
@@ -55,6 +58,7 @@ public class HotelController {
 
         return "hk/admin/hotel/detail";
     }
+    
     
     // 호텔 상세페이지 내 수정하기
     @PostMapping("update")
@@ -84,8 +88,7 @@ public class HotelController {
 
         return map;
     }
-    
-    
+      
     
     // 등록 페이지 이동
 	//@PreAuthorize("hasRole('ROLE_HQ')")
@@ -94,6 +97,7 @@ public class HotelController {
         return "hk/admin/hotel/register";
     }
 
+    
     // 호텔 등록
 	//@PreAuthorize("hasRole('ROLE_HQ')")
     @PostMapping("register")
@@ -137,6 +141,97 @@ public class HotelController {
 
         return Map.of("result", 1);
     }
+
+
+    
+//  ======================== 2. 호텔 승인관리 ============================
+    // 승인 요청 (지점 관리자)
+    @PostMapping("requestApproval")
+    @ResponseBody
+    public Map<String,Object> requestApproval(@RequestBody Map<String,Object> param){
+
+        Long hotelId = Long.parseLong(param.get("hotel_id").toString());
+
+        hotelService.requestApproval(hotelId);
+
+        return Map.of("result",1);
+    }
+
+
+    // 검토 시작 (총괄 관리자)
+    @PostMapping("review")
+    @ResponseBody
+    public Map<String,Object> review(@RequestBody Map<String,Object> param){
+
+        Long hotelId = Long.parseLong(param.get("hotel_id").toString());
+
+        hotelService.changeStatus(hotelId,"UNDER_REVIEW",null);
+
+        return Map.of("result",1);
+    }
+
+
+    // 승인
+    @PostMapping("approve")
+    @ResponseBody
+    public Map<String,Object> approve(@RequestBody Map<String,Object> param){
+
+        Long hotelId = Long.parseLong(param.get("hotel_id").toString());
+
+        hotelService.changeStatus(hotelId,"APPROVED",null);
+
+        return Map.of("result",1);
+    }
+
+
+    // 수정 요청
+    @PostMapping("needRevision")
+    @ResponseBody
+    public Map<String,Object> needRevision(@RequestBody Map<String,Object> param){
+
+        Long hotelId = Long.parseLong(param.get("hotel_id").toString());
+        String reason = param.get("reason").toString();
+
+        hotelService.changeStatus(hotelId,"NEED_REVISION",reason);
+
+        return Map.of("result",1);
+    }
+
+
+    // 반려
+    @PostMapping("reject")
+    @ResponseBody
+    public Map<String,Object> reject(@RequestBody Map<String,Object> param){
+
+        Long hotelId = Long.parseLong(param.get("hotel_id").toString());
+        String reason = param.get("reason").toString();
+
+        hotelService.changeStatus(hotelId,"REJECTED",reason);
+
+        return Map.of("result",1);
+    }
+
+
+    // 재신청 (브랜치 관리자)
+    @PostMapping("resubmit")
+    @ResponseBody
+    public Map<String,Object> resubmit(@RequestBody Map<String,Object> param){
+
+        Long hotelId = Long.parseLong(param.get("hotel_id").toString());
+
+        hotelService.changeStatus(hotelId,"PENDING",null);
+
+        return Map.of("result",1);
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     
     

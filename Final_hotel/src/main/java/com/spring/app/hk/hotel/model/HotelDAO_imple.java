@@ -1,5 +1,6 @@
 package com.spring.app.hk.hotel.model;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -14,10 +15,18 @@ public class HotelDAO_imple implements HotelDAO {
     private SqlSessionTemplate sqlsession;
 
     // 호텔 리스트 가져오기
+    // 운영중
     @Override
-	public List<Map<String, Object>> selectHotelList() {
-    	 return sqlsession.selectList("hotel.selectHotelList");
-	}
+    public List<Map<String,Object>> selectApprovedHotelList(){
+        return sqlsession.selectList("hotel.selectApprovedHotelList");
+    }
+
+    // 심사대기
+    @Override
+    public List<Map<String,Object>> selectPendingHotelList(){
+        return sqlsession.selectList("hotel.selectPendingHotelList");
+    }
+	
     
     // 호텔 상세페이지 이동
     @Override
@@ -48,6 +57,40 @@ public class HotelDAO_imple implements HotelDAO {
 	public int deleteHotel(int hotel_id) {
 	    return sqlsession.update("hotel.deleteHotel", hotel_id);
 	}
+
+	
+	
+	
+	// 호텔 승인 상태 변경
+	@Override
+	public void updateHotelStatus(Long hotelId, String status) {
+
+		Map<String,Object> paraMap = new HashMap<>();
+
+		paraMap.put("hotelId", hotelId);
+		paraMap.put("status", status);
+
+		sqlsession.update("hotel.updateHotelStatus", paraMap);
+	}
+
+
+	// 호텔 승인/반려 이력 저장
+	@Override
+	public void insertApprovalHistory(Long hotelId, String status, Object reason) {
+
+		Map<String,Object> paraMap = new HashMap<>();
+
+		paraMap.put("hotelId", hotelId);
+		paraMap.put("status", status);
+		paraMap.put("reason", reason);
+
+		sqlsession.insert("hotel.insertApprovalHistory", paraMap);
+	}
+
+	
+	
+	
+	
 	
 
 	
