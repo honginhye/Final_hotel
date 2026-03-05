@@ -6,10 +6,12 @@ import java.util.Map;
 public interface HotelService {
 
 	// 호텔 리스트 가져오기
-	List<Map<String, Object>> getHotelList();
+	// List<Map<String, Object>> getHotelList(); ---> 전체/ 승인 나눔.
+	List<Map<String, Object>> getApprovedHotelList();
+	List<Map<String, Object>> getPendingHotelList();
 	
     // 호텔 + 이미지 저장
-    void saveHotel(Map<String, String> map);
+    void saveHotel(Map<String, Object> paraMap);
 
     // 호텔 상세페이지 이동
 	Map<String, Object> getHotelDetail(Long hotelId);
@@ -19,6 +21,13 @@ public interface HotelService {
 
 	// 호텔 상세페이지 내 비활성화하기
 	int deleteHotel(int hotel_id);
+
+
+	
+	// 지점관리자 호텔 조회
+	List<Map<String, Object>> getHotelListByManager(Integer adminNo);
+
+
 
 	
 }

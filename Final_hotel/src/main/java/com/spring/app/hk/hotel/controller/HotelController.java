@@ -14,7 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.spring.app.common.FileManager;
 import com.spring.app.hk.hotel.service.HotelService;
-
+import com.spring.app.jh.security.domain.Session_AdminDTO;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,19 +30,24 @@ public class HotelController {
     @Value("${file.images-dir}")
     private String imagesDir;
 
+    //  ======================== 1. 호텔 CRUD ============================
     // 호텔 리스트 가져오기
+    @PreAuthorize("hasRole('ADMIN_HQ')")
     @GetMapping("list")
     public String hotelList(Model model){
 
-        List<Map<String,Object>> hotelList = hotelService.getHotelList();
+        List<Map<String,Object>> activeHotelList = hotelService.getApprovedHotelList();
+        List<Map<String,Object>> pendingHotelList = hotelService.getPendingHotelList();
 
-        model.addAttribute("hotelList", hotelList);
+        model.addAttribute("activeHotelList", activeHotelList);
+        model.addAttribute("pendingHotelList", pendingHotelList);
 
         return "hk/admin/hotel/list";
     }
     
     
     // 호텔 상세페이지 이동
+    @PreAuthorize("hasAnyRole('ADMIN_HQ','ADMIN_BRANCH')")
     @GetMapping("detail")
     public String hotelDetail(@RequestParam("hotel_id") Long hotelId,
                               Model model){
@@ -56,7 +61,9 @@ public class HotelController {
         return "hk/admin/hotel/detail";
     }
     
+    
     // 호텔 상세페이지 내 수정하기
+    @PreAuthorize("hasRole('ADMIN_HQ')")
     @PostMapping("update")
     @ResponseBody
     public Map<String,Object> updateHotel(@RequestBody Map<String,Object> param){ // 호텔 상세페이지 내 수정 완료 클릭 후 json 받는 용도
@@ -71,6 +78,7 @@ public class HotelController {
     
 
     // 호텔 상세페이지 내 비활성화하기
+    @PreAuthorize("hasRole('ADMIN_HQ')")
     @PostMapping("delete")
     @ResponseBody
     public Map<String,Object> deleteHotel(@RequestBody Map<String,Object> param){
@@ -84,34 +92,45 @@ public class HotelController {
 
         return map;
     }
-    
-    
+      
     
     // 등록 페이지 이동
-	//@PreAuthorize("hasRole('ROLE_HQ')")
+	@PreAuthorize("hasRole('ADMIN_HQ')")
     @GetMapping("register")
     public String registerPage() {
         return "hk/admin/hotel/register";
     }
 
+    
     // 호텔 등록
-	//@PreAuthorize("hasRole('ROLE_HQ')")
+	@PreAuthorize("hasRole('ADMIN_HQ')")
     @PostMapping("register")
     @ResponseBody
     public Map<String, Object> register(
             @RequestParam Map<String, String> map,
-            @RequestParam("mainImage") MultipartFile mainImage
-          /*  Authentication authentication*/
+            @RequestParam("mainImage") MultipartFile mainImage,
+            Authentication authentication
     ) {
-
-        Map<String, String> paraMap = new HashMap<>(map);
 
         try {
 
-            // 로그인한 관리자 ID 저장
-			/* paraMap.put("created_by", authentication.getName()); */
-        	paraMap.put("created_by", "DEV_TEST");
+        	// 로그인한 관리자 정보 가져오기
+            Session_AdminDTO loginAdmin = (Session_AdminDTO) authentication.getPrincipal();
 
+            Map<String,Object> paraMap = new HashMap<>(map);
+            
+            // 관리자 번호
+            paraMap.put("admin_no", loginAdmin.getAdmin_no());
+
+            // 승인 상태
+            // 총괄 관리자 등록시 approved로 저장
+            if("HQ".equals(loginAdmin.getAdmin_type())){
+                paraMap.put("approve_status","APPROVED");
+            }else{
+            	// 지점관리자 등록 신청시 pending으로 저장
+                paraMap.put("approve_status","PENDING");
+            }
+                      
             // 대표 이미지 업로드
             if(!mainImage.isEmpty()) {
 
@@ -137,6 +156,18 @@ public class HotelController {
 
         return Map.of("result", 1);
     }
+
+
+    
+  
+    
+    
+    
+    
+    
+    
+    
+    
     
     
     

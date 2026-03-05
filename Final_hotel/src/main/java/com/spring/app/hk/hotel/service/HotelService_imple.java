@@ -25,11 +25,19 @@ public class HotelService_imple implements HotelService {
     private String imagesDir;
 
     // 호텔 리스트 가져오기
+    // 전체 (운영중)
     @Override
-	public List<Map<String, Object>> getHotelList() {
-    	  return hotelDAO.selectHotelList();
+    public List<Map<String,Object>> getApprovedHotelList(){
+        return hotelDAO.selectApprovedHotelList();
+    }
+
+
+    // 승인대기 호텔
+	@Override
+	public List<Map<String,Object>> getPendingHotelList(){
+	    return hotelDAO.selectPendingHotelList();
 	}
- 
+    
     
     // 호텔 상세페이지 이동
    	@Override
@@ -40,12 +48,9 @@ public class HotelService_imple implements HotelService {
     
     // 호텔 등록하기
     @Override
-    public void saveHotel(Map<String, String> map) {
-
-        Map<String, Object> paraMap = new HashMap<>(map);
+    public void saveHotel(Map<String, Object> paraMap) {
 
         // 1️. 기본값 세팅
-        paraMap.put("approve_status", "PENDING");
         paraMap.put("active_yn", "Y");
 
         // 2️. 호텔 insert
@@ -55,9 +60,9 @@ public class HotelService_imple implements HotelService {
         int hotelId = (int) paraMap.get("hotel_id");
 
         // 3️. 대표 이미지 처리
-        if(map.get("main_image") != null) {
+        if(paraMap.get("main_image") != null) {
 
-        	String imagePath = "/file_images/hotel/" + map.get("main_image");
+        	String imagePath = "/file_images/hotel/" + paraMap.get("main_image");
         	
             paraMap.put("fk_hotel_id", hotelId);
             paraMap.put("image_url", imagePath);
@@ -83,6 +88,18 @@ public class HotelService_imple implements HotelService {
 	public int deleteHotel(int hotel_id) {
 		  return hotelDAO.deleteHotel(hotel_id);
 	}
+	
+
+
+	// 지점관리자 호텔 조회
+	@Override
+	public List<Map<String, Object>> getHotelListByManager(Integer adminNo) {
+		  return hotelDAO.selectHotelListByManager(adminNo);
+	}
+
+
+	
+	
 
 
    

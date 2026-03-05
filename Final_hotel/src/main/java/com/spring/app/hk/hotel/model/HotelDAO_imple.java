@@ -1,5 +1,6 @@
 package com.spring.app.hk.hotel.model;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -14,11 +15,18 @@ public class HotelDAO_imple implements HotelDAO {
     private SqlSessionTemplate sqlsession;
 
     // 호텔 리스트 가져오기
+    // 운영중 리스트
     @Override
-	public List<Map<String, Object>> selectHotelList() {
-    	 return sqlsession.selectList("hotel.selectHotelList");
-	}
-    
+    public List<Map<String,Object>> selectApprovedHotelList(){
+        return sqlsession.selectList("hotel.selectApprovedHotelList");
+    }
+
+    // 심사대기 리스트
+    @Override
+    public List<Map<String,Object>> selectPendingHotelList(){
+        return sqlsession.selectList("hotel.selectPendingHotelList");
+    }
+	
     // 호텔 상세페이지 이동
     @Override
 	public Map<String, Object> selectHotelDetail(Long hotelId) {
@@ -48,6 +56,19 @@ public class HotelDAO_imple implements HotelDAO {
 	public int deleteHotel(int hotel_id) {
 	    return sqlsession.update("hotel.deleteHotel", hotel_id);
 	}
+
+
+	
+	// 지점관리자 호텔 조회
+	@Override
+	public List<Map<String, Object>> selectHotelListByManager(Integer adminNo) {
+		return sqlsession.selectList("hotel.selectHotelListByManager", adminNo);
+	}
+
+	
+	
+	
+	
 	
 
 	

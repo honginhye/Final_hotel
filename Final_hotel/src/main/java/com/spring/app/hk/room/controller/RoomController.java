@@ -37,8 +37,8 @@ public class RoomController {
     	// 객실 목록
         List<RoomTypeDTO> roomList = roomService.getRoomList();
 
-        // 호텔 목록
-        List<Map<String,Object>> hotelList = hotelService.getHotelList();
+        // 호텔 목록 (운영중인 호텔만)
+        List<Map<String,Object>> hotelList = hotelService.getApprovedHotelList();
         
         // 디버깅용
         System.out.println("roomList size = " + roomList.size());
