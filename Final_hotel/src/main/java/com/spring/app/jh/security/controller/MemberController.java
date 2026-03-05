@@ -373,25 +373,7 @@ public class MemberController {
     
     
     
-    
-    
-    
-//    
-//    
-//    // 관리자 권한을 가진 사용자만 접근 가능한 URL
-//    @PreAuthorize("hasRole('ADMIN')")
-//    @GetMapping(value="admin/adminOnly")
-//    public String adminOnly(Model model){
-//       
-//       List<MemberDTO> memberDtoList = memberService.getAllMember();
-//       
-//       model.addAttribute("memberDtoList", memberDtoList);
-//       
-//       return "security/admin/memberAllInfo";
-//    // src/main/resources/templates/security/admin/memberAllInfo.html 파일 생성해줘야 함
-//    }
-//    
-    
+   
     
     
     

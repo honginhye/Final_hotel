@@ -21,7 +21,6 @@ import lombok.RequiredArgsConstructor;
 public class GuestAuthController {
 
 	private final GuestAuthService guestAuthService;
-	private final MemberDAO memberDao;
 
 	@GetMapping("/guest/login")
 	public String loginForm() {
@@ -54,13 +53,15 @@ public class GuestAuthController {
         guestSession.setLookupKey(account.getLookupKey());
 
         session.setAttribute("Session_GuestDTO", guestSession);
+        session.removeAttribute("Session_MemberDTO");
 
         return "redirect:/index";
     }
 
-	@GetMapping("/guest/logout")
-	public String logout(HttpSession session) {
-		session.removeAttribute("Session_GuestDTO");
-		return "redirect:/index";
-	}
+	// 게스트 로그아웃
+    @GetMapping("/guest/logout")
+    public String guestLogout(HttpSession session) {
+        session.removeAttribute("Session_GuestDTO");
+        return "redirect:/index";
+    }
 }
