@@ -19,9 +19,6 @@ public interface MemberService {
 
 	// 비밀번호 변경
 	int passwdChange(Map<String, String> paraMap);
-
-	// 전체 회원 조회
-	List<MemberDTO> getAllMember();
 	
 	// 회원정보 수정 저장
 	int update_member_profile(MemberDTO memberdto);

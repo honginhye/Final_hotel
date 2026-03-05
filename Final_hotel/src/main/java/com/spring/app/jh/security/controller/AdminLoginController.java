@@ -1,8 +1,10 @@
 package com.spring.app.jh.security.controller;
 
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -10,7 +12,7 @@ import jakarta.servlet.http.HttpServletRequest;
 @Controller
 @RequestMapping(value="/admin/")
 public class AdminLoginController {
-
+	
 	/*
 	   관리자 로그인/접근실패 안내
 
@@ -30,6 +32,7 @@ public class AdminLoginController {
 	// 관리자 로그인 form 페이지
 	@GetMapping(value="login")
 	public String login(HttpServletRequest request){
+		
 
 		/*
 		   ★ SavedRequest 방식 사용 ★

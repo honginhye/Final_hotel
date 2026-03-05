@@ -47,64 +47,6 @@ public class AdminBranchController {
 	}
 
 
-	// ============================================================
-	// 1. BRANCH 내 정보(프로필) 보기/수정
-	// ============================================================
-
-	@GetMapping("account/myInfo")
-	public String myInfo(HttpSession session, Model model){
-
-		Session_AdminDTO sad = (Session_AdminDTO) session.getAttribute("sessionAdminDTO");
-
-		// 세션이 없다면 비정상 -> 다시 로그인
-		if(sad == null) {
-			return "redirect:/admin/login";
-		}
-
-		AdminDTO adminDto = adminService.getAdminDetail(sad.getAdmin_no()); // TODO
-		model.addAttribute("adminDto", adminDto);
-
-		return "admin/branch/account/myInfo";
-		// src/main/resources/templates/admin/branch/account/myInfo.html
-	}
-
-
-	@GetMapping("account/profileEdit")
-	public String profileEditForm(HttpSession session, Model model){
-
-		Session_AdminDTO sad = (Session_AdminDTO) session.getAttribute("sessionAdminDTO");
-		if(sad == null) {
-			return "redirect:/admin/login";
-		}
-
-		AdminDTO adminDto = adminService.getAdminDetail(sad.getAdmin_no()); // TODO
-		model.addAttribute("adminDto", adminDto);
-
-		return "admin/branch/account/profileEditForm";
-		// src/main/resources/templates/admin/branch/account/profileEditForm.html
-	}
-
-
-	@PostMapping("account/profileEdit")
-	public String profileEditEnd(AdminDTO adminDto, HttpSession session, Model model){
-
-		/*
-		   ★ 핵심: 어떤 관리자인지(PK=admin_no)는 세션에서 강제 주입해야 한다.
-		   - 사용자가 form에서 admin_no를 조작하는 것을 막기 위함.
-		*/
-
-		Session_AdminDTO sad = (Session_AdminDTO) session.getAttribute("sessionAdminDTO");
-		if(sad == null) {
-			return "redirect:/admin/login";
-		}
-
-		adminDto.setAdmin_no(sad.getAdmin_no());
-
-		int n = adminService.updateAdminProfile(adminDto); // TODO (name/email/mobile 등)
-		model.addAttribute("result", n);
-
-		return "admin/branch/account/profileEditResult";
-		// src/main/resources/templates/admin/branch/account/profileEditResult.html
-	}
+	
 
 }
