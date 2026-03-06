@@ -130,7 +130,7 @@
 	<update id="approveRoom">
 		UPDATE room_type
 		SET approve_status = 'APPROVED'
-		WHERE room_type_id = #{room_type_id}
+		WHERE room_type_id = #{roomTypeId}
 	</update>
 	
 	
@@ -138,7 +138,7 @@
 	<update id="rejectRoom">
 		UPDATE room_type
 		SET approve_status = 'REJECTED'
-		WHERE room_type_id = #{room_type_id}
+		WHERE room_type_id = #{roomTypeId}
 	</update>
 	
 	

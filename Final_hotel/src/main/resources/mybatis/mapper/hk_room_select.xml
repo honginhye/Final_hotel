@@ -17,11 +17,13 @@
             rt.bed_type,
             rt.view_type,
             rt.base_price,
+            rt.approve_status,
             ri.image_url
         FROM room_type rt
         LEFT JOIN room_image ri
             ON rt.room_type_id = ri.room_type_id
             AND ri.is_main = 'Y'
+           
         ORDER BY rt.room_type_id DESC
 
     </select>

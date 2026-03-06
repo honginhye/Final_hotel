@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.spring.app.common.FileManager;
@@ -153,7 +152,8 @@ public class AdminRoomController {
     
     // 객실 승인 처리
     @PostMapping("/approve")
-    public String approveRoom(@RequestParam int roomTypeId, HttpSession session) {
+    public String approveRoom(@RequestParam("roomTypeId") int roomTypeId,
+                              HttpSession session) {
 
     	// 로그인 사용자 가져오기
         Session_AdminDTO loginAdmin = (Session_AdminDTO) session.getAttribute("sessionAdminDTO");
@@ -168,7 +168,9 @@ public class AdminRoomController {
     
     // 객실 반려 처리
     @PostMapping("/reject")
-    public String rejectRoom(@RequestParam int roomTypeId, String reason, HttpSession session) {
+    public String rejectRoom(@RequestParam("roomTypeId") int roomTypeId,
+                             @RequestParam("reason") String reason,
+                             HttpSession session) {
 
     	// 로그인 사용자 가져오기
         Session_AdminDTO loginAdmin =  (Session_AdminDTO) session.getAttribute("sessionAdminDTO");
