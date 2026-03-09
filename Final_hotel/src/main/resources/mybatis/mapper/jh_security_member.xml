@@ -35,32 +35,36 @@
 
 	<!-- 회원가입 -->
 	<insert id="insert_member" parameterType="MemberDTO">
-		<selectKey keyProperty="memberNo" resultType="int" order="BEFORE">
-			SELECT seq_tbl_member_security.NEXTVAL FROM dual
-		</selectKey>
-
-		INSERT INTO tbl_member_security
-		(
-		  member_no,
-		  memberid, passwd, enabled,
-		  name, birthday,
-		  email, mobile,
-		  postcode, address, detail_address, extra_address,
-		  point, point_earned_total,
-		  registerday, passwd_modify_date, last_login_date,
-		  grade_code
-		)
-		VALUES
-		(
-		  #{memberNo},
-		  #{memberid}, #{passwd}, '1',
-		  #{name}, #{birthday},
-		  #{email}, #{mobile},
-		  #{postcode}, #{address}, #{detail_address}, #{extra_address},
-		  0, 0,
-		  SYSDATE, SYSDATE, SYSDATE,
-		  default
-		)
+	  <selectKey keyProperty="memberNo" resultType="int" order="BEFORE">
+	    SELECT seq_tbl_member_security.NEXTVAL FROM dual
+	  </selectKey>
+	
+	  INSERT INTO tbl_member_security
+	  (
+	    member_no,
+	    memberid, passwd, enabled,
+	    name, birthday,
+	    email, mobile,
+	    postcode, address, detail_address, extra_address,
+	    point, point_earned_total,
+	    registerday, passwd_modify_date, last_login_date,
+	    grade_code,
+	    member_type,
+	    lookup_key
+	  )
+	  VALUES
+	  (
+	    #{memberNo},
+	    #{memberid}, #{passwd}, '1',
+	    #{name}, #{birthday},
+	    #{email}, #{mobile},
+	    #{postcode}, #{address}, #{detail_address}, #{extra_address},
+	    0, 0,
+	    SYSDATE, SYSDATE, SYSDATE,
+	    default,
+	    'MEMBER',
+	    #{lookupKey}
+	  )
 	</insert>
 
 	<!-- 권한부여(기본 ROLE_USER) : member_no 기반 -->
@@ -69,7 +73,55 @@
 		VALUES(seq_tbl_member_authorities.nextval, #{memberNo}, 'ROLE_USER')
 	</insert>
 	<!-- ROLE_USER 는 기본값이다. ROLE_ 접두어는 필수 규칙이고, 뒤에는 자기 마음 -->
-
+	
+	<!-- lookup_key로 기존 계정 조회(MEMBER/GUEST 공용) -->
+	<select id="findByLookupKey" parameterType="String" resultType="MemberDTO">
+	  SELECT
+	    member_no   AS memberNo,
+	    name,
+	    mobile,
+	    enabled,
+	    member_type AS memberType,
+	    lookup_key  AS lookupKey
+	  FROM tbl_member_security
+	  WHERE lookup_key = #{lookupKey}
+	</select>
+	
+	<select id="findMemberNoByLookupKey" parameterType="String" resultType="Integer">
+	  SELECT member_no
+	  FROM tbl_member_security
+	  WHERE lookup_key = #{lookupKey}
+	</select>
+	
+	<!-- 게스트 생성(옵션2: 비회원 로그인 성공 시 즉시 생성) -->
+	<insert id="insert_guest" parameterType="MemberDTO">
+	  <selectKey keyProperty="memberNo" resultType="int" order="BEFORE">
+	    SELECT seq_tbl_member_security.NEXTVAL FROM dual
+	  </selectKey>
+	
+	  INSERT INTO tbl_member_security
+	  (
+	    member_no,
+	    enabled,
+	    name,
+	    mobile,
+	    registerday, passwd_modify_date, last_login_date,
+	    member_type,
+	    lookup_key,
+	    grade_code         
+	  )
+	  VALUES
+	  (
+	    #{memberNo},
+	    '1',
+	    #{name},
+	    #{mobile},
+	    SYSDATE, SYSDATE, SYSDATE,
+	    'GUEST',
+	    #{lookupKey},
+	    NULL               <!-- DEFAULT 'classic'이기 때문에 비회원은 null로 넣어버림 -->
+	  )
+	</insert>
 
 	<!-- =========================================================
 	     3) 로그인 처리를 위해 사용되어지는 것임
@@ -176,32 +228,10 @@
 
 
 	<!-- =========================================================
-	     7) 관리자/테스트용: 회원 전체 조회
+	     7) 관리자/테스트용: 회원 전체 조회 (삭제)
 	     ========================================================= -->
 
-	<select id="getAllMember" resultType="MemberDTO">
-		SELECT
-		  member_no              AS memberNo,
-		  memberid,
-		  passwd,
-		  enabled,
-		  name,
-		  birthday,
-		  email,
-		  mobile,
-		  postcode,
-		  address,
-		  detail_address,
-		  extra_address,
-		  point,
-		  point_earned_total      AS pointEarnedTotal,
-		  registerday,
-		  passwd_modify_date      AS passwdModifyDate,
-		  last_login_date         AS lastLoginDate,
-		  grade_code              AS gradeCode
-		FROM tbl_member_security
-		ORDER BY memberid ASC
-	</select>
+	
 
 
 	<!-- =========================================================

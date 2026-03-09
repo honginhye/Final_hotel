@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.spring.app.common.AES256;
 import com.spring.app.common.EmailService;
+import com.spring.app.common.util.LookupKeyUtil;
 import com.spring.app.jh.security.domain.MemberDTO;
 import com.spring.app.jh.security.model.MemberDAO;
 
@@ -52,26 +53,51 @@ public class MemberService_imple implements MemberService {
 	@Transactional(rollbackFor = Exception.class)
 	@Override
 	public int insert_member(MemberDTO memberdto) throws Exception {
-		
-		// ★ 비밀번호 해시화(단방향 암호화)는 Service에서 처리한다.
-		String hashedUserPwd = passwordEncoder.encode(memberdto.getPasswd());
-		memberdto.setPasswd(hashedUserPwd);
-		
-		// 양방향 암호화 필요 : email, 휴대폰번호
-		// email
-		memberdto.setEmail(aES256.encrypt(memberdto.getEmail())); 
-		// 휴대폰번호
-		if(memberdto.getHp1() != null && memberdto.getHp1().trim().length() > 0 &&
-		   memberdto.getHp2() != null && memberdto.getHp2().trim().length() > 0 &&
-		   memberdto.getHp3() != null && memberdto.getHp3().trim().length() > 0 ) { // script 부분에서 유효성검사 끝내고 와서 원래 이 조건 필요없긴 하다.
-			
-			memberdto.setMobile( aES256.encrypt(memberdto.getHp1() + memberdto.getHp2() + memberdto.getHp3() ) );
-		}
-		
 
-		int result = 0;
-		// 2개의 테이블에 insert 진행 필요
-		// 회원정보 저장하기(insert)
+	    // ★ 비밀번호 해시화(단방향 암호화)는 Service에서 처리한다.
+	    String hashedUserPwd = passwordEncoder.encode(memberdto.getPasswd());
+	    memberdto.setPasswd(hashedUserPwd);
+
+	    // ================================
+	    // (추가) lookup_key 세팅 (중요)
+	    // - MEMBER/GUEST 중복 방지(lookup_key UNIQUE)
+	    // - 비회원 로그인 시 "회원 존재" 자동 판별/유도
+	    // ================================
+	    String nName  = LookupKeyUtil.normalizeName(memberdto.getName());
+
+	    // 휴대폰 평문(정규화) 확보: hp1/hp2/hp3 기준(암호화 전에!)
+	    String plainPhone = "";
+
+	    if(memberdto.getHp1() != null && memberdto.getHp1().trim().length() > 0 &&
+	       memberdto.getHp2() != null && memberdto.getHp2().trim().length() > 0 &&
+	       memberdto.getHp3() != null && memberdto.getHp3().trim().length() > 0 ) {
+
+	        plainPhone = memberdto.getHp1() + memberdto.getHp2() + memberdto.getHp3();
+	    }
+
+	    String nPhone = LookupKeyUtil.normalizePhone(plainPhone);
+
+	    // lookup_key는 phone|name 기반 해시
+	    String lookupKey = LookupKeyUtil.buildLookupKey(nName, nPhone);
+	    memberdto.setLookupKey(lookupKey);
+	    memberdto.setMemberType("MEMBER"); // (선택) DTO에 세팅해두면 추후 재사용 편함
+
+	    // ================================
+	    // 양방향 암호화 필요 : email, 휴대폰번호
+	    // ================================
+
+	    // email
+	    memberdto.setEmail(aES256.encrypt(memberdto.getEmail()));
+
+	    // 휴대폰번호 (AES 암호문 저장)
+	    if(nPhone != null && nPhone.trim().length() > 0) {
+	        memberdto.setMobile(aES256.encrypt(nPhone));
+	    }
+
+	    int result = 0;
+
+	    // 2개의 테이블에 insert 진행 필요
+	    // 회원정보 저장하기(insert)
 	    int n1 = memberDao.insert_member(memberdto); // selectKey로 memberNo 채워짐
 
 	    if (n1 == 1) {
@@ -221,23 +247,6 @@ public class MemberService_imple implements MemberService {
 	
 	
 
-	@Override
-	public List<MemberDTO> getAllMember() {
-
-		List<MemberDTO> memberDtoList = memberDao.getAllMember();
-
-		if (memberDtoList == null) return null;
-
-		List<MemberDTO> result = new ArrayList<>();
-
-		for (MemberDTO memberDto : memberDtoList) {
-			applyDecrypt(memberDto);
-			applyAuthorities(memberDto);
-			result.add(memberDto);
-		}
-
-		return result;
-	}
 
 	@Override
 	public int lastPasswdChangeMonth(String memberid) {
@@ -302,5 +311,7 @@ public class MemberService_imple implements MemberService {
 		List<String> authorityList = memberDao.authorityListByMemberNo(memberDto.getMemberNo());
 		memberDto.setAuthorities(authorityList);
 	}
+
+	
 	
 }

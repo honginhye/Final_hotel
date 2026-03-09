@@ -34,6 +34,10 @@ public class MemberDTO {
     // 연락처(암호문 저장 전제)
     private String email;
     private String mobile;
+    
+    // 회원/비회원 구분 컬럼, 비회원일 시 이름+전화번호 키 조합으로 특정하는 컬럼 추가
+    private String memberType;
+    private String lookupKey;
 
     // 주소
     private String postcode;

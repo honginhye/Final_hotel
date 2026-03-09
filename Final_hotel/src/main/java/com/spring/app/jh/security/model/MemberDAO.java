@@ -27,8 +27,6 @@ public interface MemberDAO {
 	
 	int passwdModifyDate(@Param("memberid") String memberid);
 
-	List<MemberDTO> getAllMember();
-
 	int lastPasswdChangeMonth(@Param("memberid") String memberid);
 
 	void update_last_login(@Param("memberid") String memberid);
@@ -53,7 +51,13 @@ public interface MemberDAO {
 
 
 	
+	// ===== Guest 로그인/생성(lookup_key) ===== //
+	MemberDTO findByLookupKey(@Param("lookupKey") String lookupKey);
 
+	int insert_guest(MemberDTO memberdto); 
+	// memberdto: name, mobile(암호문), memberType='GUEST', lookupKey
+
+	Integer findMemberNoByLookupKey(@Param("lookupKey") String lookupKey);
 
 
 

@@ -25,6 +25,7 @@ public class PaymentController {
     @Value("${iamport.api-secret}")
     private String apiSecret;
 
+    // 예약
     @PostMapping("/verify")
     public ResponseEntity<String> verify(@RequestBody Map<String, String> map) {
 
@@ -91,18 +92,22 @@ public class PaymentController {
             // 👉 실서비스 전환 시 반드시 정상 검증 로직 복구 필요
             // =========================================================
 
-            System.out.println("결제 검증 실패했지만 예약은 진행 (임시 처리)");
+            //System.out.println("결제 검증 실패했지만 예약은 진행 (임시 처리)");
         }
 
         // ==========================================
         // 4️. 예약 DB 저장 (MyBatis)
         // ==========================================
         // JS에서 room_type_id, check_in, check_out 등 함께 전달해야 함
-        reservationService.saveReservation(map); // 여기 
+        // 예약 저장 + 코드 받기
+        String reservationCode =
+                reservationService.saveReservation(map);
 
         // ==========================================
-        // 5️⃣ 클라이언트에 성공 응답
-        // ==========================================
-        return ResponseEntity.ok("예약이 완료되었습니다.");
+        // 5️. 클라이언트에 성공 응답
+        // ==========================================  
+        return ResponseEntity.ok(reservationCode);    
+        
     }
+    
 }
