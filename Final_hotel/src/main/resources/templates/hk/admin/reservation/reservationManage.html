@@ -58,6 +58,7 @@ cursor:pointer;
 
 <tr>
 <th>예약번호</th>
+<th>예약자</th>
 <th>객실</th>
 <th>체크인</th>
 <th>체크아웃</th>
@@ -69,6 +70,8 @@ cursor:pointer;
 
 <td th:text="${r['RESERVATION_ID']}"></td>
 
+<td th:text="${r['NAME']}"></td>
+
 <td th:text="${r['ROOM_NAME']}"></td>
 
 <!-- 날짜 포맷 -->
@@ -76,7 +79,7 @@ cursor:pointer;
 
 <td th:text="${#dates.format(r['CHECKOUT_DATE'],'yyyy-MM-dd')}"></td>
 
-<td th:text="${r['TOTAL_PRICE']}"></td>
+<td th:text="${#numbers.formatInteger(r['TOTAL_PRICE'],3,'COMMA')} + '원'"></td>
 
 <td>
 
@@ -110,6 +113,7 @@ th:value="${r['RESERVATION_ID']}">
 
 <tr>
 <th>예약번호</th>
+<th>예약자</th>
 <th>객실</th>
 <th>체크인</th>
 <th>체크아웃</th>
@@ -120,6 +124,8 @@ th:value="${r['RESERVATION_ID']}">
 <tr th:each="r : ${stayList}">
 
 <td th:text="${r['RESERVATION_ID']}"></td>
+
+<td th:text="${r['NAME']}"></td>
 
 <td th:text="${r['ROOM_NAME']}"></td>
 
@@ -161,6 +167,7 @@ th:value="${r['RESERVATION_ID']}">
 
 <tr>
 <th>예약번호</th>
+<th>예약자</th>
 <th>객실</th>
 <th>체크인</th>
 <th>체크아웃</th>
@@ -171,6 +178,8 @@ th:value="${r['RESERVATION_ID']}">
 <tr th:each="r : ${checkoutList}">
 
 <td th:text="${r['RESERVATION_ID']}"></td>
+
+<td th:text="${r['NAME']}"></td>
 
 <td th:text="${r['ROOM_NAME']}"></td>
 
@@ -198,6 +207,7 @@ th:value="${r['RESERVATION_ID']}">
 
 <tr>
 <th>예약번호</th>
+<th>예약자</th>
 <th>객실</th>
 <th>체크인</th>
 <th>체크아웃</th>
@@ -208,6 +218,8 @@ th:value="${r['RESERVATION_ID']}">
 <tr th:each="r : ${checkoutCompleteList}">
 
 <td th:text="${r['RESERVATION_ID']}"></td>
+
+<td th:text="${r['NAME']}"></td>
 
 <td th:text="${r['ROOM_NAME']}"></td>
 
