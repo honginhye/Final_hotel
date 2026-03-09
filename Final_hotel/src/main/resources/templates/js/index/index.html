@@ -190,7 +190,7 @@
     </div>
 
     <div id="reserveQuickTab" class="reserve-quick-tab">
-        <form th:action="@{/reservation/search}" method="get">
+        <form th:action="@{/search}" method="get">
             <div class="tab-header">
                 <input type="hidden" name="reserveType" id="reserveType" value="room">
                 <button type="button" class="tab-btn active" id="tab-room-btn" onclick="switchReserveTab('room')">객실</button>
@@ -212,6 +212,7 @@
                     <option value="1">성인 1명</option>
                     <option value="2" selected>성인 2명</option>
                     <option value="3">성인 3명</option>
+                    <option value="4">성인 4명</option>
                 </select>
                 <button type="submit" class="search-submit-btn">검색 하기</button>
             </div>
