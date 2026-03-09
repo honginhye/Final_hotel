@@ -37,6 +37,13 @@ public class HotelService_imple implements HotelService {
 	    return hotelDAO.selectPendingHotelList();
 	}
     
+	
+	// 비활성화 호텔
+	@Override
+	public List<Map<String, Object>> getDisabledHotelList() {
+		return hotelDAO.selectDisabledHotelList();
+	}
+
     
     // 호텔 상세페이지 이동
    	@Override
@@ -96,6 +103,8 @@ public class HotelService_imple implements HotelService {
 		  return hotelDAO.selectHotelListByManager(adminNo);
 	}
 
+
+	
 
 	
 	

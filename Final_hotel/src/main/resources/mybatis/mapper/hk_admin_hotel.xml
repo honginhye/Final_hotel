@@ -44,6 +44,22 @@
 	</select>
 
 
+	<!-- 비활성화 -->
+	<select id="selectDisabledHotelList" resultType="map">
+		SELECT 
+		    H.HOTEL_ID,
+		    H.HOTEL_NAME,
+		    H.APPROVE_STATUS,
+		    H.ACTIVE_YN,
+		    I.IMAGE_URL
+		FROM TBL_HOTEL H
+		LEFT JOIN HOTEL_IMAGE I
+		       ON H.HOTEL_ID = I.FK_HOTEL_ID
+		      AND I.IS_MAIN = 'Y'
+		WHERE H.ACTIVE_YN = 'N'
+		ORDER BY H.HOTEL_ID DESC
+	</select>
+
 	
 	<!-- 호텔 상세페이지 이동 -->
 	<select id="selectHotelDetail" resultType="map">
