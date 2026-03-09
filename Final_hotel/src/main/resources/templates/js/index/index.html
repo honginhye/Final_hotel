@@ -204,16 +204,22 @@
                 </select>
                 <div id="room-fields">
                     <input type="text" name="daterange" class="reserve-field" placeholder="체크인 / 체크아웃" readonly style="background-color: #fff;">
+                    <select name="bedType" class="reserve-field" >
+					    <option value="">침대타입 전체</option>
+					    <option value="DOUBLE">DOUBLE</option>
+					    <option value="TWIN">TWIN</option>
+					    <option value="KING">KING</option>
+					</select>
                 </div>
+                
                 <div id="dining-fields" style="display: none;">
-                    <input type="date" name="visitDate" class="reserve-field">
-                </div>
-                <select name="adults" class="reserve-field">
-                    <option value="1">성인 1명</option>
-                    <option value="2" selected>성인 2명</option>
-                    <option value="3">성인 3명</option>
-                    <option value="4">성인 4명</option>
-                </select>
+				    <select name="diningType" class="reserve-field">
+				        <option value="">다이닝 전체</option>
+				        <option value="dining">레스트랑</option>
+				        <option value="bar">라운지 & 바</option>
+				    </select>
+				</div>	
+                
                 <button type="submit" class="search-submit-btn">검색 하기</button>
             </div>
         </form>
