@@ -24,6 +24,7 @@
             ON rt.room_type_id = ri.room_type_id
             AND ri.is_main = 'Y'
            
+        WHERE rt.approve_status = 'APPROVED'   
         ORDER BY rt.room_type_id DESC
 
     </select>
@@ -83,6 +84,7 @@
 	       AND wr.day_of_week = TO_NUMBER(TO_CHAR(rs.stay_date, 'D'))
 	
 	    WHERE 1=1
+	    AND rt.approve_status = 'APPROVED'
 	
 	    <!-- ===============================
 	         날짜 조건
@@ -169,6 +171,7 @@
 	        ON rt.room_type_id = ri.room_type_id
 	        AND ri.is_main = 'Y'
 	    WHERE rt.room_type_id = #{roomId}
+	    AND rt.approve_status = 'APPROVED'
 	
 	</select>
     
@@ -229,7 +232,8 @@
 	<select id="selectRoomsByIds" parameterType="list" resultType="RoomTypeDTO">
 	    SELECT *
 	    FROM room_type
-	    WHERE room_type_id IN
+	    WHERE approve_status = 'APPROVED' 
+	    AND room_type_id IN
 	    <foreach collection="list" item="id" open="(" close=")" separator=",">
 	        #{id}
 	    </foreach>
@@ -264,6 +268,7 @@
 	        SELECT rt.*
 	        FROM room_type rt
 	        WHERE rt.room_type_id != #{currentRoomId}
+	        AND rt.approve_status = 'APPROVED'
 	          AND rt.room_grade IN (
 	                SELECT DISTINCT r.room_grade
 	                FROM room_view_history vh
