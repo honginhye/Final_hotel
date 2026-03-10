@@ -13,6 +13,8 @@ public interface MemberDAO {
 
 	// ===== MemberUserDetailsService 에서 사용하는 메서드 ===== //
 	MemberDTO findByMemberid(@Param("memberid") String username);
+	MemberDTO findBySocialProvider(@Param("socialProvider") String socialProvider, @Param("providerUserId") String providerUserId);
+	MemberDTO findByMemberNo(@Param("memberNo") Integer memberNo);
 	// ===== MemberUserDetailsService 에서 사용하는 메서드 ===== //
 	
 
@@ -22,6 +24,7 @@ public interface MemberDAO {
 	int emailDuplicateCheck(@Param("email") String email);
 
 	int insert_member(MemberDTO memberdto);
+	int insert_social_member(MemberDTO memberdto);
 
 	int passwdChange(Map<String, String> paraMap);
 	
@@ -30,6 +33,7 @@ public interface MemberDAO {
 	int lastPasswdChangeMonth(@Param("memberid") String memberid);
 
 	void update_last_login(@Param("memberid") String memberid);
+	void update_last_login_by_member_no(@Param("memberNo") Integer memberNo);
 
 	void insertLoginhistory(@Param("memberNo") Integer memberNo,
             				@Param("clientip") String clientip);

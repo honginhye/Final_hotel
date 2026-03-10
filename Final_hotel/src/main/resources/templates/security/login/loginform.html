@@ -7,7 +7,7 @@
 <meta name="_csrf" th:if="${_csrf != null}" th:content="${_csrf.token}"/>
 <meta name="_csrf_header" th:if="${_csrf != null}" th:content="${_csrf.headerName}"/>
 <meta charset="UTF-8">
-<title>로그로그</title>
+<title>로그인</title>
 
 <link rel="stylesheet" href="">
 
@@ -244,6 +244,32 @@
   text-underline-offset: 3px;
 }
 
+.socials{
+  margin-top: 18px;
+  display:grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+.social-btn{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:100%;
+  height:52px;
+  border:1px solid var(--line);
+  border-radius:6px;
+  background:#fff;
+  color:var(--text);
+  text-decoration:none;
+  font-size:15px;
+  font-weight:700;
+}
+.social-btn:hover{
+  text-decoration:none;
+  border-color:#111;
+  color:var(--text);
+}
+
 /* 서버 메시지/에러 박스 */
 .server-msg, .error{
   width: 680px;
@@ -457,6 +483,11 @@ $(document).ready(function(){
             </div>
 
             <button class="btnx" type="submit">로그인</button>
+
+            <div class="socials">
+              <a class="social-btn" th:href="@{/oauth2/authorization/kakao}">카카오로 시작하기</a>
+              <a class="social-btn" th:href="@{/oauth2/authorization/naver}">네이버로 시작하기</a>
+            </div>
 
             <div class="links">
               <a th:href="@{/security/member_id_find}">아이디 찾기</a>

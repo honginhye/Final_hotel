@@ -31,7 +31,280 @@
 
 <!-- ========================================================= -->
 
-<style type="text/css"></style>
+<style type="text/css">
+:root{
+  --bg:#ffffff;
+  --panel:#ffffff;
+  --line:#e7e7e7;
+  --line-2:#d9d9d9;
+  --text:#111111;
+  --muted:#6f6f6f;
+  --danger:#c94b4b;
+  --header-offset:165px;
+  --page-bottom:90px;
+  --radius:10px;
+  --shadow:0 10px 24px rgba(0,0,0,.04);
+}
+
+*{box-sizing:border-box;}
+
+body{
+  margin:0;
+  font-family:'Noto Sans KR', sans-serif;
+  background:#fff;
+  color:var(--text);
+}
+
+#divRegisterFrm{
+  width:100%;
+  margin:0 !important;
+  padding:var(--header-offset) 16px var(--page-bottom);
+  justify-content:center;
+}
+
+#divRegisterFrm > .col-md-12{
+  max-width:980px;
+  flex:0 0 980px;
+  width:100%;
+  padding:0;
+}
+
+form[name="registerFrm"]{
+  width:100%;
+}
+
+#tblMemberRegister{
+  width:100%;
+  border-collapse:separate;
+  border-spacing:0;
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  overflow:hidden;
+  box-shadow:none;
+}
+
+#tblMemberRegister thead th{
+  padding:22px 18px;
+  background:#fafafa;
+  border-bottom:1px solid var(--line);
+  font-size:1.15rem;
+  font-weight:700;
+  color:#111;
+  text-align:center;
+}
+
+#tblMemberRegister tbody td{
+  padding:16px 18px;
+  border-bottom:1px solid var(--line);
+  vertical-align:middle;
+  font-size:.94rem;
+  color:#222;
+  background:#fff;
+}
+
+#tblMemberRegister tbody tr:last-child td{
+  border-bottom:none;
+}
+
+#tblMemberRegister tbody td:first-child{
+  width:190px !important;
+  font-weight:700 !important;
+  color:#333;
+  background:#fcfcfc;
+}
+
+#tblMemberRegister input[type="text"],
+#tblMemberRegister input[type="password"],
+#tblMemberRegister input[type="email"],
+#tblMemberRegister select{
+  height:44px;
+  padding:0 12px;
+  border:1px solid var(--line-2);
+  border-radius:8px;
+  font-size:.94rem;
+  background:#fff;
+  color:#111;
+  outline:none;
+}
+
+#tblMemberRegister input[type="text"]:focus,
+#tblMemberRegister input[type="password"]:focus,
+#tblMemberRegister input[type="email"]:focus,
+#tblMemberRegister select:focus{
+  border-color:#111;
+  box-shadow:0 0 0 4px rgba(17,17,17,.05);
+}
+
+#tblMemberRegister input[readonly]{
+  background:#f8f8f8;
+  color:#666;
+}
+
+#tblMemberRegister input#address,
+#tblMemberRegister input#detail_address,
+#tblMemberRegister input#extra_address{
+  width:calc(100% - 6px);
+  max-width:100%;
+  margin-bottom:8px;
+}
+
+#tblMemberRegister input#postcode{
+  width:120px;
+}
+
+#tblMemberRegister input#hp1,
+#tblMemberRegister input#hp2,
+#tblMemberRegister input#hp3{
+  width:90px;
+  text-align:center;
+}
+
+#tblMemberRegister input#memberid,
+#tblMemberRegister input#email,
+#tblMemberRegister input#passwd,
+#tblMemberRegister input#pwdcheck,
+#tblMemberRegister input#name,
+#tblMemberRegister input#datepicker{
+  width:280px;
+  max-width:100%;
+}
+
+#tblMemberRegister img#idcheck,
+#tblMemberRegister img#zipcodeSearch{
+  vertical-align:middle !important;
+  cursor:pointer;
+  border:1px solid var(--line-2);
+  border-radius:8px;
+  background:#fff;
+  padding:4px 8px;
+  margin-left:8px;
+}
+
+#tblMemberRegister iframe{
+  width:100% !important;
+  max-width:100%;
+  height:180px !important;
+  border:1px solid var(--line) !important;
+  border-radius:8px;
+}
+
+span.error{
+  display:inline-block;
+  margin-left:8px;
+  margin-top:6px;
+  color:#c94b4b;
+  font-size:.82rem;
+  font-weight:500;
+}
+
+span#idcheckResult,
+span#emailCheckResult{
+  display:inline-block;
+  margin-left:10px;
+  margin-top:6px;
+  font-size:.84rem;
+  font-weight:600;
+}
+
+.star{
+  color:#c94b4b;
+  font-weight:700;
+}
+
+#tblMemberRegister input[type="checkbox"]{
+  width:16px;
+  height:16px;
+  accent-color:#111;
+  vertical-align:middle;
+}
+
+#tblMemberRegister button,
+#tblMemberRegister input[type="button"],
+#tblMemberRegister input[type="reset"]{
+  height:46px;
+  min-width:130px;
+  padding:0 18px;
+  border-radius:999px;
+  border:1px solid #111;
+  background:#111;
+  color:#fff;
+  font-weight:700;
+  cursor:pointer;
+}
+
+#tblMemberRegister input[type="reset"]{
+  background:#fff;
+  color:#111;
+  border-color:var(--line-2);
+}
+
+#tblMemberRegister .btn-register-wrap,
+#tblMemberRegister .action-row{
+  display:flex;
+  justify-content:center;
+  gap:10px;
+  padding-top:8px;
+}
+
+@media (max-width:900px){
+  #divRegisterFrm{
+    padding:145px 12px 80px;
+  }
+
+  #divRegisterFrm > .col-md-12{
+    max-width:100%;
+    flex:1 1 auto;
+  }
+
+  #tblMemberRegister,
+  #tblMemberRegister thead,
+  #tblMemberRegister tbody,
+  #tblMemberRegister tr,
+  #tblMemberRegister td,
+  #tblMemberRegister th{
+    display:block;
+    width:100%;
+  }
+
+  #tblMemberRegister thead th{
+    border-bottom:1px solid var(--line);
+  }
+
+  #tblMemberRegister tbody tr{
+    border-bottom:1px solid var(--line);
+  }
+
+  #tblMemberRegister tbody td{
+    border-bottom:none;
+    padding:12px 14px;
+  }
+
+  #tblMemberRegister tbody td:first-child{
+    width:100% !important;
+    background:#fafafa;
+    border-bottom:1px solid var(--line);
+  }
+
+  #tblMemberRegister input#memberid,
+  #tblMemberRegister input#email,
+  #tblMemberRegister input#passwd,
+  #tblMemberRegister input#pwdcheck,
+  #tblMemberRegister input#name,
+  #tblMemberRegister input#datepicker,
+  #tblMemberRegister input#address,
+  #tblMemberRegister input#detail_address,
+  #tblMemberRegister input#extra_address{
+    width:100%;
+  }
+
+  #tblMemberRegister input#hp1,
+  #tblMemberRegister input#hp2,
+  #tblMemberRegister input#hp3{
+    width:calc(33.333% - 8px);
+  }
+}
+</style>
 
 <script th:inline="javascript">
  /*<![CDATA[*/

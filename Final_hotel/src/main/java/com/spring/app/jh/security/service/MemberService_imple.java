@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.spring.app.common.AES256;
 import com.spring.app.common.EmailService;
+import com.spring.app.common.Sha256;
 import com.spring.app.common.util.LookupKeyUtil;
 import com.spring.app.jh.security.domain.MemberDTO;
 import com.spring.app.jh.security.model.MemberDAO;
@@ -260,6 +261,11 @@ public class MemberService_imple implements MemberService {
 	}
 
 	@Override
+	public void updateLastLoginByMemberNo(Integer memberNo) {
+		memberDao.update_last_login_by_member_no(memberNo);
+	}
+
+	@Override
 	public MemberDTO findByMemberid(String memberid) {
 
 		MemberDTO memberDto = memberDao.findByMemberid(memberid);
@@ -270,6 +276,60 @@ public class MemberService_imple implements MemberService {
 		}
 
 		return memberDto;
+	}
+
+	@Override
+	public MemberDTO findByMemberNo(Integer memberNo) {
+
+		MemberDTO memberDto = memberDao.findByMemberNo(memberNo);
+
+		if (memberDto != null) {
+			applyDecrypt(memberDto);
+			applyAuthorities(memberDto);
+		}
+
+		return memberDto;
+	}
+
+	@Transactional(rollbackFor = Exception.class)
+	@Override
+	public MemberDTO findOrCreateSocialMember(String socialProvider, String providerUserId, String email, String name) {
+
+		MemberDTO memberDto = memberDao.findBySocialProvider(socialProvider, providerUserId);
+		if (memberDto != null) {
+			applyDecrypt(memberDto);
+			applyAuthorities(memberDto);
+			return memberDto;
+		}
+
+		MemberDTO newMember = new MemberDTO();
+		newMember.setName(name != null && !name.trim().isEmpty() ? name : socialProvider + "회원");
+		newMember.setEnabled("1");
+		newMember.setMemberType("MEMBER");
+		newMember.setSocialProvider(socialProvider);
+		newMember.setProviderUserId(providerUserId);
+		newMember.setGrade_code("CLASSIC");
+
+		String syntheticId = socialProvider + "_" + Sha256.encrypt(providerUserId).substring(0, 20);
+		newMember.setMemberid(syntheticId);
+		newMember.setPasswd(passwordEncoder.encode(Sha256.encrypt(socialProvider + "|" + providerUserId + "|SOCIAL")));
+
+		if (email != null && !email.trim().isEmpty()) {
+			try {
+				newMember.setEmail(aES256.encrypt(email.trim()));
+			}
+			catch (UnsupportedEncodingException | GeneralSecurityException e) {
+				throw new RuntimeException(e);
+			}
+		}
+
+		memberDao.insert_social_member(newMember);
+		memberDao.insert_member_authority_by_member_no(newMember.getMemberNo());
+
+		MemberDTO savedMember = memberDao.findByMemberNo(newMember.getMemberNo());
+		applyDecrypt(savedMember);
+		applyAuthorities(savedMember);
+		return savedMember;
 	}
 
 	@Override

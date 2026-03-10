@@ -10,6 +10,7 @@ import org.springframework.security.web.authentication.SavedRequestAwareAuthenti
 import com.spring.app.jh.security.domain.CustomUserDetails;
 import com.spring.app.jh.security.domain.MemberDTO;
 import com.spring.app.jh.security.domain.Session_MemberDTO;
+import com.spring.app.jh.security.oauth.OAuth2MemberPrincipal;
 import com.spring.app.jh.security.service.MemberService;
 
 import jakarta.servlet.ServletException;
@@ -84,55 +85,44 @@ public class MemberAuthenticationSuccessHandler extends SavedRequestAwareAuthent
 			                          , HttpServletResponse response
 			                          , Authentication authentication) throws IOException, ServletException {
 
-		
-		
-		// Authentication authentication 은 서버 세션(SecurityContext) 에 저장된 "출입증카드" 이다.
-		// 출입증카드에서 아이디를 알아오는 단축경로
-		String memberid = authentication.getName();
-		System.out.println("~~~~ 2.1 확인용 memberid(아이디) => " + memberid);
-
-		// principal 로부터 상세정보를 꺼내는 경로(회원 전용)
 		Object principal = authentication.getPrincipal();
-		if (!(principal instanceof CustomUserDetails)) {
-			// 이 SuccessHandler는 "회원 로그인 체인"에만 붙는 것이 정상이다.
-			// 만약 예외적으로 다른 principal이 들어오면 기본 성공 처리로 넘긴다.
+		MemberDTO memberDto = null;
+		String memberid = null;
+		int n = 0;
+
+		if (principal instanceof CustomUserDetails customUserDetails) {
+			memberid = customUserDetails.getUsername();
+			memberDto = memberService.findByMemberid(memberid);
+			n = memberService.lastPasswdChangeMonth(memberid);
+			memberService.update_last_login(memberid);
+		}
+		else if (principal instanceof OAuth2MemberPrincipal oauth2MemberPrincipal) {
+			memberDto = oauth2MemberPrincipal.getMemberDto();
+			memberid = memberDto.getMemberid();
+			memberService.updateLastLoginByMemberNo(memberDto.getMemberNo());
+		}
+		else {
 			super.onAuthenticationSuccess(request, response, authentication);
 			return;
 		}
 
-		String username = ((CustomUserDetails) principal).getUsername();
-		System.out.println("~~~~ 2.2 확인용 username(아이디) => " + username);
-
-		// >>> 로그인한 사용자 정보에서 비밀번호를 변경한 날짜가 현재일로 부터 몇개월 전 인지 알아온다.
-		int n = memberService.lastPasswdChangeMonth(memberid);
-		System.out.println("~~~~~~ 3.확인용 비밀번호를 " + n + "개월 전에 변경했음");
-
-		// >>> 로그인한 사용자 정보에서 마지막 로그인 날짜를 현재일자로 업데이트 하도록 함.
-		memberService.update_last_login(memberid);
-
-		// >>> !!! 로그인한 사용자 정보(아이디/성명/회원번호)를 세션에 저장하도록 함. <<< !!!
-		// DDL 기준으로 이후 마이페이지/예약/히스토리 등은 member_no(FK) 중심으로 조회/수정하는 경우가 많으므로
-		// 세션에도 memberNo 를 함께 보관해두는 것이 유지보수에 유리하다.
-		MemberDTO memberDto = memberService.findByMemberid(memberid);
-
 		Session_MemberDTO sessionMemberDTO = new Session_MemberDTO();
 		sessionMemberDTO.setMemberid(memberDto.getMemberid());
 		sessionMemberDTO.setName(memberDto.getName());
-		sessionMemberDTO.setMemberNo(memberDto.getMemberNo());  // ★ member_no 저장
+		sessionMemberDTO.setMemberNo(memberDto.getMemberNo());
 
 		HttpSession session = request.getSession();
-		// 회원 로그인 성공 시 비회원 세션 제거
 		session.removeAttribute("Session_GuestDTO");
-		session.setAttribute("sessionMemberDTO", sessionMemberDTO); // 키값이 sessionMemberDTO 임.
+		session.setAttribute("sessionMemberDTO", sessionMemberDTO);
 
-		// >>> 로그인한 사용자 정보를 tbl_loginhistory 테이블에 입력 하도록 함.
-		// ※ 우리 프로젝트에서는 tbl_loginhistory 가 memberid 가 아니라 member_no 로 저장한다.
-		//    따라서 insertLoginhistory()는 (memberNo, clientip) 형태로 호출하는 것이 가장 깔끔하다.
-		String clientip = request.getRemoteAddr(); // 클라이언트 IP 주소
+		String clientip = request.getRemoteAddr();
 		memberService.insertLoginhistory(memberDto.getMemberNo(), clientip);
 
-		// 로그인한 사용자 정보에서 비밀번호를 변경한 날짜가 현재일로 부터 6개월 전 이라면
-		if (n >= 6) {
+		boolean shouldAskPasswordChange = memberid != null
+				&& memberDto.getSocialProvider() == null
+				&& n >= 6;
+
+		if (shouldAskPasswordChange) {
 
 			/*
 			   ★ URL 하드코딩 제거 ★
