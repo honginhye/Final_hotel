@@ -21,10 +21,7 @@ public class GuestAuthController {
 
 	private final GuestAuthService guestAuthService;
 
-	@GetMapping("/guest/login")
-	public String loginForm() {
-		return "guest/guest_login";
-	}
+	
 
 	@PostMapping("/guest/loginEnd")
     public String loginEnd(@RequestParam("name") String name,
@@ -51,8 +48,8 @@ public class GuestAuthController {
         guestSession.setGuestPhone(phone);
         guestSession.setLookupKey(account.getLookupKey());
 
-        session.setAttribute("Session_GuestDTO", guestSession);
-        session.removeAttribute("Session_MemberDTO");
+        session.setAttribute("guestSession", guestSession);
+        session.removeAttribute("sessionMemberDTO");
 
         return "redirect:/index";
     }
@@ -60,7 +57,7 @@ public class GuestAuthController {
 	// 게스트 로그아웃
     @GetMapping("/guest/logout")
     public String guestLogout(HttpSession session) {
-        session.removeAttribute("Session_GuestDTO");
+        session.removeAttribute("guestSession");
         return "redirect:/index";
     }
 }

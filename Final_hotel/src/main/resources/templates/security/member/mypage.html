@@ -9,445 +9,281 @@
 
 <link rel="stylesheet" href="">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;500;600&display=swap');
-
-
-
 :root{
   --bg:#ffffff;
   --panel:#ffffff;
-  --line:#e6e6e6;
-  --line-soft:#f1f1f1;
+  --line:#e7e7e7;
+  --line-soft:#f4f4f4;
   --text:#111111;
-  --muted:#777777;
-
+  --muted:#6f6f6f;
   --brand:#1a1a1a;
-  --accent:#b89b72;
-  --accent-soft:#f8f5f1;
+  --accent:#d4af37;
+  --shadow:0 10px 24px rgba(0,0,0,.04);
 
-  --shadow: 0 12px 30px rgba(0,0,0,.05);
+  --radius:8px;
+  --radius-lg:10px;
 
-  --radius: 8px;
-  --radius-lg: 10px;
-
-  --header-offset: 110px;
-  --max: 1380px;
-  --pad: 22px;
+  --header-offset:165px;
+  --max:1360px;
+  --pad:22px;
 }
 
 *{box-sizing:border-box}
-
 body{
   margin:0;
-  font-family: "Noto Serif KR", serif;
-  background: var(--bg);
-  color: var(--text);
+  font-family:'Noto Sans KR', sans-serif;
+  background:var(--bg);
+  color:var(--text);
 }
+a{color:inherit;text-decoration:none;}
+a:hover{color:inherit;text-decoration:none;}
 
-a{ color: inherit; text-decoration:none; }
-a:hover{ text-decoration:none; color: inherit; }
+.container{width:100%;}
 
-.container{
-  width:100%;
-}
-
-.reserve-quick-tab {
-    position: fixed;
-    right: 40px;
-    bottom: 140px;
-    width: 360px;
-    background: rgba(255, 255, 255, 0.98);
-    backdrop-filter: blur(10px);
-    border-radius: 15px;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-    display: none;
-    z-index: 2400;
-    animation: slideUp 0.4s ease;
-}
-.reserve-quick-tab.active {
-    display: block;
-}
-
-.tab-header {
-    display: flex;
-    background: #f4f4f4;
-    border-radius: 15px 15px 0 0;
-    overflow: hidden;
-}
-.tab-btn {
-    flex: 1;
-    padding: 18px;
-    border: none;
-    font-weight: 700;
-    color: #666;
-    transition: 0.3s;
-    cursor: pointer;
-    background: transparent;
-}
-.tab-btn.active {
-    background: #1a1a1a;
-    color: #fff;
-}
-.tab-body {
-    padding: 30px;
-}
-
-.reserve-field {
-    width: 100%;
-    padding: 15px;
-    margin-bottom: 15px;
-    background: #f8f9fa;
-    border: 1px solid #eee;
-    border-radius: 5px;
-    text-align: left;
-    font-size: 0.95rem;
-    display: block;
-    color: #333;
-}
-
-.search-submit-btn {
-    width: 100%;
-    padding: 15px;
-    background: #1a1a1a;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    font-weight: 700;
-    cursor: pointer;
-}
-
-@keyframes slideUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-/* ===== Layout ===== */
 .layout{
-  max-width: var(--max);
-  margin: 0 auto;
-  padding: 80px 24px 80px;
+  max-width:var(--max);
+  margin:0 auto;
+  padding:var(--header-offset) 24px 90px;
   display:grid;
-  grid-template-columns: 270px 1fr;
-  gap: 28px;
+  grid-template-columns:270px 1fr;
+  gap:28px;
   align-items:start;
 }
 
-/* ===== Sidebar ===== */
 .sidebar{
-  position: sticky;
-  top: var(--header-offset);
-  background: var(--panel);
+  position:sticky;
+  top:140px;
+  background:#fff;
   border:1px solid var(--line);
-  border-radius: var(--radius-lg);
+  border-radius:var(--radius-lg);
   overflow:hidden;
 }
-
 .side-title{
-  padding:22px 20px;
+  padding:20px 18px;
   border-bottom:1px solid var(--line);
   text-align:center;
-  font-size:1.15rem;
-  font-weight:500;
-  letter-spacing:2px;
+  font-size:1.05rem;
+  font-weight:700;
+  letter-spacing:1px;
   background:#fafafa;
 }
-
 .side-section{
-  padding:18px 18px 14px;
+  padding:18px 16px 12px;
   border-bottom:1px solid var(--line);
 }
-.side-section:last-child{ border-bottom:none; }
-
+.side-section:last-child{border-bottom:none;}
 .side-section h3{
   margin:0 0 12px;
-  font-size:0.92rem;
-  font-weight:500;
-  color: var(--text);
+  font-size:.93rem;
+  font-weight:700;
+  color:#222;
 }
-
 .side-section a{
   display:flex;
-  align-items:center;
   justify-content:space-between;
-  padding:11px 10px;
+  align-items:center;
+  padding:10px 10px;
   margin-bottom:4px;
-  font-size:0.95rem;
+  border-radius:6px;
   color:#333;
-  border-radius: 6px;
-  transition: background .2s ease, color .2s ease, transform .2s ease;
+  font-size:.94rem;
+  transition:.18s ease;
 }
 .side-section a:hover{
   background:#f7f7f7;
-  color:#000;
-  transform: translateX(2px);
+  transform:translateX(2px);
 }
 .side-section a span{
   color:#999;
-  font-size:0.85rem;
+  font-size:.85rem;
 }
 
-/* ===== Main ===== */
-.main{
-  min-width:0;
-  margin-top: 0 !important;
-}
-
+.main{min-width:0;}
 .page-title{
-  margin: 6px 0 26px;
-  font-size: 2.25rem;
-  font-weight:400;
-  letter-spacing:4px;
-  text-align:left;
+  margin:4px 0 24px;
+  font-size:2rem;
+  font-weight:700;
+  letter-spacing:-.4px;
   color:#111;
 }
 
-/* ===== Section ===== */
-.section{
-  margin-top: 28px;
-}
+.section{margin-top:28px;}
 .section-head{
   display:flex;
   align-items:flex-end;
   justify-content:space-between;
   gap:12px;
-  margin-bottom: 14px;
+  margin-bottom:14px;
 }
 .section-head h2{
   margin:0;
-  font-size:1.6rem;
-  font-weight:400;
-  letter-spacing:1px;
-  color:#111;
+  font-size:1.35rem;
+  font-weight:700;
+  letter-spacing:-.3px;
 }
 .section-head p{
   margin:0;
-  font-size:0.88rem;
-  color: var(--muted);
+  font-size:.86rem;
+  color:var(--muted);
 }
 
-/* ===== Common Card ===== */
 .card{
-  background: var(--panel);
+  background:#fff;
   border:1px solid var(--line);
-  border-radius: var(--radius-lg);
-  box-shadow: none;
-  transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+  border-radius:var(--radius-lg);
+  transition:border-color .2s ease, box-shadow .2s ease, transform .2s ease;
 }
 .card:hover{
-  transform: translateY(-3px);
-  box-shadow: var(--shadow);
   border-color:#d8d8d8;
+  box-shadow:var(--shadow);
+  transform:translateY(-2px);
 }
 
-/* ===== Top Profile ===== */
 .mypage-top{
   background:#fff;
   border:1px solid var(--line);
-  border-radius: var(--radius-lg);
+  border-radius:var(--radius-lg);
   overflow:hidden;
 }
-
 .mypage-topbar{
   display:flex;
   align-items:center;
   justify-content:space-between;
   gap:14px;
-  padding:26px 28px;
+  padding:22px 24px;
   background:#1a1a1a;
   color:#fff;
 }
-
 .topbar-left{
   display:flex;
   flex-direction:column;
-  gap:14px;
+  gap:12px;
 }
-
 .user-chip{
   display:flex;
   align-items:center;
   gap:12px;
 }
-
 .user-icon{
-  width:38px;
-  height:38px;
-  border-radius:50%;
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
+  width:36px;height:36px;border-radius:50%;
+  display:inline-flex;align-items:center;justify-content:center;
   background:rgba(255,255,255,.12);
   border:1px solid rgba(255,255,255,.18);
-  font-size:1rem;
 }
-
 .user-name{
-  font-size:1.3rem;
-  font-weight:500;
-  letter-spacing:.4px;
+  font-size:1.2rem;
+  font-weight:700;
 }
-
 .name-go-edit{
-  width:30px;
-  height:30px;
-  border-radius:50%;
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
+  width:28px;height:28px;border-radius:50%;
+  display:inline-flex;align-items:center;justify-content:center;
   background:rgba(255,255,255,.12);
   border:1px solid rgba(255,255,255,.18);
   color:#fff;
-  font-size:1rem;
-  transition: background .2s ease, transform .2s ease;
 }
-.name-go-edit:hover{
-  background:rgba(255,255,255,.22);
-  transform: translateX(2px);
-}
-
 .sns-row{
   display:flex;
   align-items:center;
   gap:10px;
-  font-size:0.95rem;
+  font-size:.92rem;
 }
-
-.sns-label{
-  color:rgba(255,255,255,.82);
-}
-
+.sns-label{color:rgba(255,255,255,.8);}
 .sns-pill{
   display:inline-flex;
   align-items:center;
   gap:8px;
   padding:7px 12px;
-  background:rgba(255,255,255,.08);
-  border:1px solid rgba(255,255,255,.18);
   border-radius:999px;
-  font-size:0.9rem;
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.16);
 }
-
 .sns-dot{
-  width:9px;
-  height:9px;
-  border-radius:50%;
-  background: var(--accent);
-  display:inline-block;
+  width:8px;height:8px;border-radius:50%;
+  background:var(--accent);
 }
 
-.grade-card{
-  padding:30px 28px;
-  background:#fff;
-}
+.grade-card{padding:26px 24px;background:#fff;}
 .grade-card-body{
   display:grid;
-  grid-template-columns: 260px 1fr;
-  gap:28px;
+  grid-template-columns:260px 1fr;
+  gap:26px;
   align-items:center;
 }
-
 .grade-logo-area{
   display:flex;
   flex-direction:column;
-  align-items:flex-start;
   gap:12px;
 }
-
 .grade-logo{
-  width:112px;
-  height:112px;
-  border-radius:50%;
+  width:110px;height:110px;border-radius:50%;
   border:1px solid #222;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  background:#faf7f2;
+  background:#fbfbfb;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
 }
 .grade-letter{
-  font-size:2.7rem;
-  font-weight:600;
+  font-size:2.5rem;
+  font-weight:700;
   line-height:1;
 }
 .grade-label{
-  font-size:0.8rem;
-  color: var(--muted);
+  font-size:.78rem;
+  color:var(--muted);
 }
-.grade-now{
-  font-size:1rem;
-  color:#333;
-}
-.grade-now b{
-  font-weight:600;
-}
-.grade-id{
-  color:#666;
-  font-size:0.85rem;
-}
+.grade-now{font-size:.98rem;color:#333;}
+.grade-id{font-size:.86rem;color:#666;}
 
-.benefit-area{
-  display:flex;
-  justify-content:flex-end;
-}
+.benefit-area{display:flex;justify-content:flex-end;}
 .benefit-box{
   width:min(500px,100%);
-  padding:20px 22px;
+  padding:18px 20px;
   border:1px solid var(--line);
-  border-radius: var(--radius);
+  border-radius:var(--radius);
   background:#fcfcfc;
 }
 .benefit-title{
-  font-size:1.05rem;
-  font-weight:500;
+  font-size:1rem;
+  font-weight:700;
   margin-bottom:6px;
 }
 .benefit-sub{
-  font-size:0.82rem;
-  color: var(--muted);
-  margin-bottom:12px;
+  font-size:.83rem;
+  color:var(--muted);
+  margin-bottom:10px;
 }
 .benefit-list{
   margin:0;
   padding-left:18px;
   color:#333;
-  line-height:1.9;
-  font-size:0.95rem;
+  line-height:1.8;
+  font-size:.92rem;
 }
 
-/* ===== Grid ===== */
 .grid3{
   display:grid;
-  grid-template-columns:repeat(3, 1fr);
+  grid-template-columns:repeat(3,1fr);
   gap:16px;
 }
 .grid2{
   display:grid;
-  grid-template-columns:repeat(2, 1fr);
+  grid-template-columns:repeat(2,1fr);
   gap:16px;
 }
 
-/* ===== Mini Summary Cards ===== */
 .mini{
   display:flex;
   align-items:center;
   gap:16px;
-  padding:22px 20px;
-  min-height:118px;
+  padding:20px 18px;
+  min-height:112px;
 }
-
 .icon{
-  width:64px;
-  height:64px;
-  border:1px solid #1a1a1a;
-  border-radius:50%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
+  width:60px;height:60px;border-radius:50%;
+  border:1px solid #222;
   background:#fafafa;
-  font-size:1.45rem;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.35rem;
   flex-shrink:0;
 }
-
 .mini .info{
   flex:1;
   min-width:0;
@@ -455,193 +291,208 @@ a:hover{ text-decoration:none; color: inherit; }
   flex-direction:column;
   gap:6px;
 }
-.mini .info .title{
-  font-size:1.08rem;
-  font-weight:500;
+.mini .title{
+  font-size:1rem;
+  font-weight:700;
   color:#111;
 }
-.mini .info .desc{
-  font-size:0.9rem;
-  color: var(--muted);
+.mini .desc{
+  font-size:.88rem;
+  color:var(--muted);
   white-space:nowrap;
   overflow:hidden;
   text-overflow:ellipsis;
 }
 .mini .arrow{
-  font-size:1.15rem;
+  font-size:1.1rem;
   color:#999;
 }
 
-/* ===== KV Box ===== */
 .kv{
   display:grid;
   grid-template-columns:120px 1fr;
   gap:10px 12px;
   padding:16px;
   border:1px solid var(--line);
-  border-radius: var(--radius);
+  border-radius:var(--radius);
   background:#fff;
-  font-size:0.95rem;
+  font-size:.92rem;
 }
-.kv .k{
-  color: var(--muted);
-}
-.kv .v{
-  color:#111;
-  font-weight:500;
-}
+.kv .k{color:var(--muted);}
+.kv .v{font-weight:700;color:#111;}
 
-/* ===== Favorites ===== */
+.inline-move{
+  display:inline-block;
+  margin-top:10px;
+  color:#111;
+  font-weight:700;
+  font-size:.92rem;
+}
+.inline-move:hover{opacity:.75;}
+
 .favorites{
   display:flex;
   align-items:center;
   justify-content:space-between;
   gap:18px;
-  padding:26px 22px;
+  padding:24px 20px;
 }
-
 .fav-item{
   display:flex;
   align-items:center;
   justify-content:center;
   gap:14px;
   flex:1;
-  transition: transform .2s ease;
 }
-.fav-item:hover{
-  transform: translateY(-2px);
-}
-
 .divider{
   width:1px;
   align-self:stretch;
-  background: var(--line);
+  background:var(--line);
 }
-
 .fav-icon{
-  width:58px;
-  height:58px;
-  border-radius:50%;
-  border:1px solid #1a1a1a;
-  display:flex;
-  align-items:center;
-  justify-content:center;
+  width:56px;height:56px;border-radius:50%;
+  border:1px solid #222;
   background:#fafafa;
-  font-size:1.25rem;
-  flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.2rem;
 }
 .fav-text{
   display:flex;
   flex-direction:column;
-  gap:4px;
+  gap:3px;
 }
 .fav-text b{
-  font-size:1rem;
-  font-weight:500;
+  font-size:.98rem;
+  font-weight:700;
 }
 .fav-text span{
-  font-size:0.88rem;
-  color: var(--muted);
+  font-size:.87rem;
+  color:var(--muted);
 }
 
-/* ===== Promo Cards ===== */
 .promos{
   display:grid;
-  grid-template-columns:repeat(3, 1fr);
+  grid-template-columns:repeat(3,1fr);
   gap:16px;
 }
-
 .promo{
   display:block;
   padding:16px;
 }
-
 .promo .thumb{
   height:170px;
   border:1px solid var(--line);
-  border-radius: 6px;
-  background: linear-gradient(135deg, #f7f7f7 0%, #efefef 100%);
-  display:flex;
-  align-items:center;
-  justify-content:center;
+  border-radius:6px;
+  background:linear-gradient(135deg,#f7f7f7 0%, #efefef 100%);
+  display:flex;align-items:center;justify-content:center;
   color:#777;
-  font-size:0.95rem;
-  margin-bottom:16px;
-  overflow:hidden;
+  font-size:.94rem;
+  margin-bottom:14px;
 }
-
 .promo h3{
   margin:0 0 8px;
-  font-size:1.12rem;
-  font-weight:500;
+  font-size:1.05rem;
+  font-weight:700;
   line-height:1.5;
-  color:#111;
 }
 .promo .meta{
   margin:0;
-  font-size:0.86rem;
-  color: var(--muted);
-  line-height:1.8;
   white-space:pre-line;
+  font-size:.84rem;
+  color:var(--muted);
+  line-height:1.7;
 }
 
-/* ===== Inline Links ===== */
-.inline-move{
-  display:inline-block;
-  margin-top:10px;
-  color:#111;
-  font-weight:500;
-  font-size:0.95rem;
-  transition: opacity .2s ease, transform .2s ease;
-}
-.inline-move:hover{
-  opacity:.8;
-  transform: translateX(2px);
-}
-
-/* --- 예약 플로팅 버튼 및 탭 --- */
-.fixed-reserve-btn {
-    position: fixed; right: 40px; bottom: 40px; width: 90px; height: 90px;
-    background-color: rgba(70, 60, 50, 0.85); color: white; border-radius: 50%;
-    display: flex; flex-direction: column; justify-content: center; align-items: center;
-    cursor: pointer; z-index: 2500; box-shadow: 0 4px 20px rgba(0,0,0,0.4);
-    transition: all 0.3s ease; border: 1px solid rgba(255,255,255,0.1);
-}
-.fixed-reserve-btn:hover { background-color: #d4af37; transform: scale(1.05); color: #000; }
-
-/* ===== Floating Button ===== */
-.reserve-sticky{
+.fixed-reserve-btn{
   position:fixed;
-  right:38px;
-  bottom:38px;
-  width:92px;
-  height:92px;
-  border-radius:50%;
-  background:#1a1a1a;
+  right:40px;
+  bottom:40px;
+  width:88px;
+  height:88px;
+  background:rgba(26,26,26,.92);
   color:#fff;
+  border-radius:50%;
   display:flex;
-  align-items:center;
+  flex-direction:column;
   justify-content:center;
-  text-align:center;
-  font-size:0.98rem;
-  font-weight:500;
-  letter-spacing:.5px;
-  box-shadow: 0 16px 35px rgba(0,0,0,.18);
+  align-items:center;
+  cursor:pointer;
   z-index:2500;
-  transition: transform .25s ease, background .25s ease, color .25s ease;
+  box-shadow:0 10px 28px rgba(0,0,0,.22);
+  border:1px solid rgba(255,255,255,.12);
+  transition:.2s ease;
 }
-.reserve-sticky:hover{
-  background:#fff;
+.fixed-reserve-btn:hover{
+  background:#d4af37;
   color:#111;
-  border:1px solid #111;
-  transform: scale(1.05);
+  transform:scale(1.05);
 }
 
-/* ===== Responsive ===== */
-@media (max-width: 1100px){
+.reserve-quick-tab{
+  position:fixed;
+  right:40px;
+  bottom:138px;
+  width:360px;
+  background:rgba(255,255,255,.98);
+  backdrop-filter:blur(10px);
+  border:1px solid var(--line);
+  border-radius:12px;
+  box-shadow:0 16px 34px rgba(0,0,0,.16);
+  display:none;
+  z-index:2400;
+  animation:slideUp .25s ease;
+}
+.reserve-quick-tab.active{display:block;}
+.tab-header{
+  display:flex;
+  background:#f5f5f5;
+  border-radius:12px 12px 0 0;
+  overflow:hidden;
+}
+.tab-btn{
+  flex:1;
+  padding:16px;
+  border:none;
+  font-weight:700;
+  color:#666;
+  background:transparent;
+  cursor:pointer;
+}
+.tab-btn.active{
+  background:#111;
+  color:#fff;
+}
+.tab-body{padding:22px;}
+.reserve-field{
+  width:100%;
+  padding:14px;
+  margin-bottom:12px;
+  border:1px solid var(--line);
+  border-radius:6px;
+  background:#fff;
+  color:#333;
+  font-size:.94rem;
+}
+.search-submit-btn{
+  width:100%;
+  padding:14px;
+  border:none;
+  border-radius:999px;
+  background:#111;
+  color:#fff;
+  font-weight:700;
+  cursor:pointer;
+}
+
+@keyframes slideUp{
+  from{opacity:0;transform:translateY(16px);}
+  to{opacity:1;transform:translateY(0);}
+}
+
+@media (max-width:1100px){
   .layout{
     grid-template-columns:1fr;
-    padding: 56px 16px 70px;
+    padding:145px 16px 80px;
   }
   .sidebar{
     position:relative;
@@ -653,31 +504,23 @@ a:hover{ text-decoration:none; color: inherit; }
   .benefit-area{
     justify-content:flex-start;
   }
-  .grid3{
-    grid-template-columns:1fr;
-  }
-  .grid2{
-    grid-template-columns:1fr;
-  }
-  .promos{
+  .grid3,.grid2,.promos{
     grid-template-columns:1fr;
   }
 }
-
-@media (max-width: 680px){
+@media (max-width:680px){
   .page-title{
-    font-size:1.8rem;
-    letter-spacing:2px;
+    font-size:1.7rem;
   }
   .section-head{
     flex-direction:column;
     align-items:flex-start;
   }
   .mypage-topbar{
-    padding:20px 18px;
+    padding:18px 16px;
   }
   .grade-card{
-    padding:22px 18px;
+    padding:20px 16px;
   }
   .favorites{
     flex-direction:column;
@@ -687,12 +530,14 @@ a:hover{ text-decoration:none; color: inherit; }
     width:100%;
     height:1px;
   }
-  .reserve-sticky{
-    width:78px;
-    height:78px;
-    right:18px;
-    bottom:18px;
-    font-size:0.9rem;
+  .fixed-reserve-btn{
+    width:76px;height:76px;right:18px;bottom:18px;font-size:.9rem;
+  }
+  .reserve-quick-tab{
+    right:16px;
+    left:16px;
+    width:auto;
+    bottom:110px;
   }
 }
 </style>
@@ -702,44 +547,46 @@ a:hover{ text-decoration:none; color: inherit; }
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 <script th:inline="javascript">
 /*<![CDATA[*/
-	$(document).ready(function() {
-        $('input[name="daterange"]').daterangepicker({
-            autoUpdateInput: false,
-            minDate: moment(),
-            opens: 'left',
-            locale: {
-                format: 'YYYY-MM-DD',
-                applyLabel: "적용",
-                cancelLabel: "취소",
-                daysOfWeek: ["일", "월", "화", "수", "목", "금", "토"],
-                monthNames: ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"]
-            }
-        });
-
-        $('input[name="daterange"]').on('apply.daterangepicker', function(ev, picker) {
-            $(this).val(
-                picker.startDate.format('YYYY-MM-DD') + ' ~ ' +
-                picker.endDate.format('YYYY-MM-DD')
-            );
-        });
-    });
-    function toggleReserveTab() {
-        $('#reserveQuickTab').toggleClass('active');
+$(document).ready(function() {
+  $('input[name="daterange"]').daterangepicker({
+    autoUpdateInput: false,
+    minDate: moment(),
+    opens: 'left',
+    locale: {
+      format: 'YYYY-MM-DD',
+      applyLabel: "적용",
+      cancelLabel: "취소",
+      daysOfWeek: ["일", "월", "화", "수", "목", "금", "토"],
+      monthNames: ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"]
     }
-  function switchReserveTab(type) {
-      $('.tab-btn').removeClass('active');
-      $('#reserveType').val(type);
+  });
 
-      if (type === 'room') {
-          $('#tab-room-btn').addClass('active');
-          $('#room-fields').show();
-          $('#dining-fields').hide();
-      } else {
-          $('#tab-dining-btn').addClass('active');
-          $('#room-fields').hide();
-          $('#dining-fields').show();
-      }
+  $('input[name="daterange"]').on('apply.daterangepicker', function(ev, picker) {
+    $(this).val(
+      picker.startDate.format('YYYY-MM-DD') + ' ~ ' +
+      picker.endDate.format('YYYY-MM-DD')
+    );
+  });
+});
+
+function toggleReserveTab() {
+  $('#reserveQuickTab').toggleClass('active');
+}
+
+function switchReserveTab(type) {
+  $('.tab-btn').removeClass('active');
+  $('#reserveType').val(type);
+
+  if (type === 'room') {
+    $('#tab-room-btn').addClass('active');
+    $('#room-fields').show();
+    $('#dining-fields').hide();
+  } else {
+    $('#tab-dining-btn').addClass('active');
+    $('#room-fields').hide();
+    $('#dining-fields').show();
   }
+}
 /*]]>*/
 </script>
 </head>
@@ -793,7 +640,7 @@ a:hover{ text-decoration:none; color: inherit; }
     </aside>
 
     <main class="main">
-      <div class="page-title">MY PAGE</div>
+      <div class="page-title">마이페이지</div>
 
       <section class="mypage-top">
         <div class="mypage-topbar">
@@ -885,7 +732,7 @@ a:hover{ text-decoration:none; color: inherit; }
 
         <div class="grid2">
           <div class="card" style="padding:20px;">
-            <div style="font-weight:500;font-size:1.05rem;margin-bottom:12px;">결제/환불 상태</div>
+            <div style="font-weight:700;font-size:1rem;margin-bottom:12px;">결제/환불 상태</div>
             <div class="kv">
               <div class="k">결제 대기</div><div class="v" th:text="|${payWaiting}건|">1건</div>
               <div class="k">결제 완료</div><div class="v" th:text="|${payDone}건|">4건</div>
@@ -895,7 +742,7 @@ a:hover{ text-decoration:none; color: inherit; }
           </div>
 
           <div class="card" style="padding:20px;">
-            <div style="font-weight:500;font-size:1.05rem;margin-bottom:12px;">내 QnA</div>
+            <div style="font-weight:700;font-size:1rem;margin-bottom:12px;">내 QnA</div>
             <div class="kv">
               <div class="k">미답변</div><div class="v" th:text="|${qnaOpen}건|">1건</div>
               <div class="k">답변 완료</div><div class="v" th:text="|${qnaDone}건|">5건</div>
@@ -965,39 +812,39 @@ a:hover{ text-decoration:none; color: inherit; }
     </main>
   </div>
 
-    <div class="fixed-reserve-btn" onclick="toggleReserveTab()">
-      <i class="far fa-calendar-alt"></i>
-      <span>예약하기</span>
-    </div>
-    
-    <div id="reserveQuickTab" class="reserve-quick-tab">
-        <form th:action="@{/reservation/search}" method="get">
-            <div class="tab-header">
-                <input type="hidden" name="reserveType" id="reserveType" value="room">
-                <button type="button" class="tab-btn active" id="tab-room-btn" onclick="switchReserveTab('room')">객실</button>
-                <button type="button" class="tab-btn" id="tab-dining-btn" onclick="switchReserveTab('dining')">다이닝</button>
-            </div>
-            <div class="tab-body">
-                <select name="hotelId" class="reserve-field" required>
-                    <option value="" disabled selected hidden>호텔 선택</option>
-                    <option value="1">CIEL HOTEL</option>
-                    <option value="2">LE CIEL</option>
-                </select>
-                <div id="room-fields">
-                    <input type="text" name="daterange" class="reserve-field" placeholder="체크인 / 체크아웃" readonly style="background-color: #fff;">
-                </div>
-                <div id="dining-fields" style="display: none;">
-                    <input type="date" name="visitDate" class="reserve-field">
-                </div>
-                <select name="adults" class="reserve-field">
-                    <option value="1">성인 1명</option>
-                    <option value="2" selected>성인 2명</option>
-                    <option value="3">성인 3명</option>
-                </select>
-                <button type="submit" class="search-submit-btn">검색 하기</button>
-            </div>
-        </form>
-    </div>
+  <div class="fixed-reserve-btn" onclick="toggleReserveTab()">
+    <i class="far fa-calendar-alt"></i>
+    <span>예약하기</span>
+  </div>
+
+  <div id="reserveQuickTab" class="reserve-quick-tab">
+    <form th:action="@{/reservation/search}" method="get">
+      <div class="tab-header">
+        <input type="hidden" name="reserveType" id="reserveType" value="room">
+        <button type="button" class="tab-btn active" id="tab-room-btn" onclick="switchReserveTab('room')">객실</button>
+        <button type="button" class="tab-btn" id="tab-dining-btn" onclick="switchReserveTab('dining')">다이닝</button>
+      </div>
+      <div class="tab-body">
+        <select name="hotelId" class="reserve-field" required>
+          <option value="" disabled selected hidden>호텔 선택</option>
+          <option value="1">CIEL HOTEL</option>
+          <option value="2">LE CIEL</option>
+        </select>
+        <div id="room-fields">
+          <input type="text" name="daterange" class="reserve-field" placeholder="체크인 / 체크아웃" readonly style="background-color:#fff;">
+        </div>
+        <div id="dining-fields" style="display:none;">
+          <input type="date" name="visitDate" class="reserve-field">
+        </div>
+        <select name="adults" class="reserve-field">
+          <option value="1">성인 1명</option>
+          <option value="2" selected>성인 2명</option>
+          <option value="3">성인 3명</option>
+        </select>
+        <button type="submit" class="search-submit-btn">검색 하기</button>
+      </div>
+    </form>
+  </div>
 </div>
 </body>
 </html>

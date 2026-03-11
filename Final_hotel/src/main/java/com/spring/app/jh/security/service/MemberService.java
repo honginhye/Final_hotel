@@ -40,6 +40,8 @@ public interface MemberService {
 	// ===== MemberUserDetailsService 에서 사용하는 메서드들 ==== //
 	// !!!! 로그인 처리를 위해 사용되어지는 것임. !!!! //
 	MemberDTO findByMemberid(String memberid);
+	MemberDTO findByMemberNo(Integer memberNo);
+	MemberDTO findOrCreateSocialMember(String socialProvider, String providerUserId, String email, String name);
 	// ===== MemberUserDetailsService 에서 사용하는 메서드들 ==== //
 	
 	
@@ -49,6 +51,7 @@ public interface MemberService {
 
 	// 가장 최근 로그인 한 일자를 지금으로 변경
 	void update_last_login(String memberid);
+	void updateLastLoginByMemberNo(Integer memberNo);
 
 	// 로그인 기록 테이블에 최근 로그인 기록 저장
 	void insertLoginhistory(Integer memberNo, String clientip);

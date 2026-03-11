@@ -10,98 +10,166 @@
 <link rel="stylesheet" href="">
 
 <style>
-  :root{
-    --bg:#f6f1ea;
-    --panel:#ffffff;
-    --line:#eadfd3;
-    --line-2:#d8c6b3;
-    --text:#2a2320;
-    --muted:#7a6a61;
-    --brand:#8b6a52;
-    --accent:#cda57a;
-    --danger:#c94b4b;
-    --shadow:0 18px 45px rgba(54,38,25,.10);
-    --radius:18px;
-  }
-  *{ box-sizing:border-box; }
-  body{
-    margin:0;
-    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Noto Sans KR", Arial, "Apple SD Gothic Neo", sans-serif;
-    background: radial-gradient(1200px 600px at 20% 10%, #fff, transparent 55%),
-                radial-gradient(900px 500px at 80% 90%, #fff, transparent 50%),
-                var(--bg);
-    color:var(--text);
-    min-height:100vh;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    padding:28px 14px;
-  }
-  .wrap{ width: 520px; max-width: 100%; }
-  .brandbar{ display:flex; justify-content:center; margin-bottom:14px; letter-spacing:.14em; font-weight:800; color:var(--brand); }
-  .card{ background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden; }
-  .header{ padding:20px 18px 12px; text-align:center; border-bottom:1px solid var(--line); background: linear-gradient(180deg, #fff, #fff7ef); }
-  .header h1{ margin:0; font-size:20px; letter-spacing:.04em; }
-  .header p{ margin:6px 0 0; color:var(--muted); font-size:13px; }
-
-  .body{ padding:18px; }
-  .hint{
-    font-size:12.5px;
-    color:var(--muted);
-    line-height:1.55;
-    background:#fffaf5;
-    border:1px solid var(--line);
-    border-radius:12px;
-    padding:10px;
-    margin-bottom:12px;
-  }
-  .grid2{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-  .field{ margin-bottom:12px; }
-  .label{ display:flex; align-items:center; justify-content:space-between; margin-bottom:6px; font-size:13px; color:var(--muted); font-weight:700; }
-  .input{
-    width:100%;
-    padding:12px 12px;
-    border:1px solid var(--line-2);
-    border-radius:12px;
-    outline:none;
-    background:#fff;
-    font-size:14px;
-    transition:border-color .15s, box-shadow .15s;
-  }
-  .input:focus{ border-color:var(--accent); box-shadow:0 0 0 4px rgba(205,165,122,.22); }
-
-  .btnrow{ display:flex; gap:10px; margin-top:14px; }
-  .btn{
-    flex:1;
-    border:0;
-    border-radius:14px;
-    padding:12px 14px;
-    font-weight:900;
-    cursor:pointer;
-    letter-spacing:.04em;
-  }
-  .btn-main{ background: linear-gradient(180deg, var(--brand), #6f513f); color:#fff; }
-  .btn-sub{ background:#fff; color:var(--brand); border:1px solid var(--line-2); }
-
-  .error{
-    display:none;
-    margin-top:10px;
-    font-size:12.5px;
-    color:#fff;
-    background:var(--danger);
-    border-radius:12px;
-    padding:10px 10px;
-    line-height:1.45;
-  }
-  .error.show{ display:block; }
-
-  .links{ margin-top:12px; display:flex; justify-content:center; gap:12px; flex-wrap:wrap; color:var(--muted); font-size:12.5px; }
-  .links a{ color:var(--muted); text-decoration:none; border-bottom:1px dashed transparent; }
-  .links a:hover{ color:var(--brand); border-bottom-color: rgba(139,106,82,.5); }
-
-  @media (max-width:560px){
-    .grid2{ grid-template-columns:1fr; }
-  }
+:root{
+  --bg:#ffffff;
+  --panel:#ffffff;
+  --line:#e7e7e7;
+  --line-2:#d9d9d9;
+  --text:#111111;
+  --muted:#6f6f6f;
+  --danger:#c94b4b;
+  --header-offset:165px;
+  --page-bottom:90px;
+  --radius:10px;
+  --shadow:0 10px 24px rgba(0,0,0,.04);
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:'Noto Sans KR', sans-serif;
+  background:#fff;
+  color:var(--text);
+}
+.container{
+  min-height:calc(100vh - 40px);
+  display:flex;
+  align-items:flex-start;
+  justify-content:center;
+  padding:var(--header-offset) 16px var(--page-bottom);
+}
+.wrap{
+  width:720px;
+  max-width:100%;
+}
+.brandbar{
+  display:flex;
+  justify-content:center;
+  margin-bottom:18px;
+  font-size:.92rem;
+  letter-spacing:.24em;
+  color:#111;
+  font-weight:700;
+}
+.card{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  overflow:hidden;
+}
+.header{
+  padding:24px 22px 18px;
+  text-align:center;
+  border-bottom:1px solid var(--line);
+  background:#fafafa;
+}
+.header h1{
+  margin:0;
+  font-size:1.45rem;
+  font-weight:700;
+}
+.header p{
+  margin:10px 0 0;
+  color:var(--muted);
+  font-size:.9rem;
+}
+.body{padding:22px;}
+.hint{
+  font-size:.84rem;
+  color:var(--muted);
+  line-height:1.7;
+  background:#fafafa;
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:13px;
+  margin-bottom:18px;
+}
+.grid2{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px;
+}
+.field{margin-bottom:14px;}
+.label{
+  margin-bottom:7px;
+  font-size:.9rem;
+  color:#444;
+  font-weight:700;
+}
+.input{
+  width:100%;
+  padding:14px 14px;
+  border:1px solid var(--line-2);
+  border-radius:8px;
+  outline:none;
+  background:#fff;
+  font-size:.95rem;
+  font-family:inherit;
+}
+.input:focus{
+  border-color:#111;
+  box-shadow:0 0 0 4px rgba(17,17,17,.05);
+}
+.input[readonly]{
+  background:#f8f8f8;
+  color:#666;
+}
+.error{
+  display:none;
+  margin-top:12px;
+  font-size:.84rem;
+  color:#fff;
+  background:var(--danger);
+  border-radius:8px;
+  padding:11px 12px;
+  line-height:1.5;
+}
+.error.show{display:block;}
+.btnrow{
+  display:flex;
+  gap:10px;
+  margin-top:16px;
+}
+.btn{
+  flex:1;
+  border-radius:999px;
+  padding:14px 16px;
+  font-weight:700;
+  cursor:pointer;
+  font-size:.94rem;
+  transition:.2s ease;
+}
+.btn:hover{
+  transform:translateY(-2px);
+  box-shadow:var(--shadow);
+}
+.btn-main{
+  background:#111;
+  color:#fff;
+  border:1px solid #111;
+}
+.btn-sub{
+  background:#fff;
+  color:#111;
+  border:1px solid var(--line-2);
+}
+.links{
+  margin-top:16px;
+  display:flex;
+  justify-content:center;
+  gap:12px;
+  flex-wrap:wrap;
+  color:var(--muted);
+  font-size:.83rem;
+}
+.links a{
+  color:var(--muted);
+  text-decoration:none;
+}
+.links a:hover{color:#111;}
+@media (max-width:560px){
+  .grid2{grid-template-columns:1fr;}
+  .btnrow{flex-direction:column;}
+}
 </style>
 
 <script th:inline="javascript">
@@ -124,7 +192,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const address = frm.address.value.trim();
     const detail = frm.detail_address.value.trim();
 
-    // 최소 검증(원하면 더 빡세게)
     if(mobile && mobile.replaceAll('-', '').length < 10){
       return show("휴대폰번호를 다시 확인하세요.");
     }
@@ -148,6 +215,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 /*]]>*/
 </script>
+</head>
 
 <body>
 <div class="container"
@@ -169,12 +237,12 @@ document.addEventListener('DOMContentLoaded', () => {
     <section class="card" aria-label="회원정보 수정 카드">
       <div class="header">
         <h1>회원정보 수정</h1>
-        <p>연락처/주소 정보를 변경합니다.</p>
+        <p>연락처 및 주소 정보를 수정합니다.</p>
       </div>
 
       <div class="body">
         <div class="hint">
-          아이디/이메일은 정책상 수정 불가로 두고, 연락처/주소만 수정합니다.
+          아이디와 이메일은 정책상 수정 불가이며, 연락처와 주소 정보만 변경 가능합니다.
         </div>
 
         <form id="profileFrm" name="profileFrm">
