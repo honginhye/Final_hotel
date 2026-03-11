@@ -212,6 +212,36 @@ h1 {
     gap:15px;
     flex-wrap:wrap;
 }
+
+/* 비교 모달 */
+.compare-table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:20px;
+}
+
+.compare-table th{
+    font-size:18px;
+    font-weight:600;
+    padding:15px;
+}
+
+.compare-table td{
+    padding:14px;
+    border-bottom:1px solid #eee;
+}
+
+.compare-table tr:hover{
+    background:#fafafa;
+}
+
+.compare-room-img{
+    width:150px;
+    height:100px;
+    object-fit:cover;
+    border-radius:6px;
+    margin-bottom:8px;
+}
 </style>
 
 <!-- FullCalendar CSS -->
@@ -416,8 +446,15 @@ h1 {
 		<div id="compareModal"
 			style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 10000;">
 
-			<div
-				style="background: white; width: 1000px; margin: 60px auto; padding: 30px; position: relative;">
+			<div style="
+			background:white;
+			width:1100px;
+			margin:80px auto;
+			padding:40px;
+			border-radius:10px;
+			box-shadow:0 10px 40px rgba(0,0,0,0.2);
+			position:relative;
+			">
 
 				<button onclick="closeCompareModal()"
 					style="position: absolute; right: 15px; top: 15px;">X</button>
@@ -897,11 +934,13 @@ function removeFromCompare(roomId){
     updateCompareFooter();
 }
 
-// 비교하기 모달 렌더링하기
+// 비교하기 모달 렌더링하기 (이미지 추가)
 function renderCompareModal(data){
 
     const modal = document.getElementById("compareModal");
     const body = document.getElementById("compareModalBody");
+
+    let compareList = JSON.parse(localStorage.getItem("compareList")) || [];
 
     if(data.length === 0){
         body.innerHTML = "<p>비교 데이터가 없습니다.</p>";
@@ -910,38 +949,45 @@ function renderCompareModal(data){
     }
 
     let html = `
-        <table border="1" style="width:100%; border-collapse:collapse; text-align:center;">
-            <tr>
-                <th>항목</th>
-                ${data.map(r => `<th>${r.room_name}</th>`).join("")}
-            </tr>
+    	<table class="compare-table">
 
-            <tr>
-                <td>가격</td>
-                ${data.map(r => `
-	                <td class="compare-price"
-	                    data-base-price="${r.base_price}">
-	                    ${calculateFinalPrice(r.base_price)}
-	                </td>
-	            `).join("")}
-            </tr>
+    	<tr>
+    	    <th>객실</th>
+    	    ${compareList.map(r => `
+    	        <th>
+    	            <img src="${r.image}" class="compare-room-img">
+    	            <div>${r.name}</div>
+    	        </th>
+    	    `).join("")}
+    	</tr>
 
-            <tr>
-                <td>등급</td>
-                ${data.map(r => `<td>${r.room_grade}</td>`).join("")}
-            </tr>
+    	<tr>
+    	    <td>가격</td>
+    	    ${data.map(r => `
+    	        <td class="compare-price"
+    	            data-base-price="${r.base_price}">
+    	            ${calculateFinalPrice(r.base_price)}
+    	        </td>
+    	    `).join("")}
+    	</tr>
 
-            <tr>
-                <td>침대</td>
-                ${data.map(r => `<td>${r.bed_type}</td>`).join("")}
-            </tr>
+    	<tr>
+    	    <td>등급</td>
+    	    ${data.map(r => `<td>${r.room_grade}</td>`).join("")}
+    	</tr>
 
-            <tr>
-                <td>전망</td>
-                ${data.map(r => `<td>${r.view_type}</td>`).join("")}
-            </tr>
-        </table>
-    `;
+    	<tr>
+    	    <td>침대</td>
+    	    ${data.map(r => `<td>${r.bed_type}</td>`).join("")}
+    	</tr>
+
+    	<tr>
+    	    <td>전망</td>
+    	    ${data.map(r => `<td>${r.view_type}</td>`).join("")}
+    	</tr>
+
+    	</table>
+    	`;
 
     body.innerHTML = html;
 
