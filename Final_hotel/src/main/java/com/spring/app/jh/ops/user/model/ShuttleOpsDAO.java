@@ -18,15 +18,43 @@ public interface ShuttleOpsDAO {
     ReservationForShuttleDTO selectReservationForShuttle(@Param("reservationId") long reservationId);
 
     List<ShuttleTimetableDTO> selectTimetableList(@Param("hotelId") int hotelId,
-                                                  @Param("legType") String legType);
+                                                  @Param("legType") String legType,
+                                                  @Param("rideDate") Date rideDate);
+
+    Long selectBookingIdByReservation(@Param("reservationId") long reservationId);
+
+    List<ShuttleLegDTO> selectBookedLegListByBookingAndType(@Param("bookingId") long bookingId,
+                                                            @Param("legType") String legType);
+
+    ShuttleLegDTO selectLegByBookingAndTimetable(@Param("bookingId") long bookingId,
+                                                 @Param("timetableId") long timetableId,
+                                                 @Param("rideDate") Date rideDate);
 
     ShuttleTimetableDTO selectTimetableOne(@Param("timetableId") long timetableId);
+
+    SlotStockDTO selectSlotForUpdate(@Param("timetableId") long timetableId,
+                                     @Param("rideDate") Date rideDate);
 
     SlotStockDTO selectSlotForDisplay(@Param("timetableId") long timetableId,
                                       @Param("rideDate") Date rideDate);
 
-    SlotStockDTO selectSlotForUpdate(@Param("timetableId") long timetableId,
-                                     @Param("rideDate") Date rideDate);
+    int insertBookingHeader(@Param("reservationId") long reservationId,
+                            @Param("hotelId") int hotelId,
+                            @Param("memberNo") int memberNo,
+                            @Param("rideDate") Date rideDate);
+
+    int insertLeg(@Param("bookingId") long bookingId,
+                  @Param("timetableId") long timetableId,
+                  @Param("legType") String legType,
+                  @Param("rideDate") Date rideDate,
+                  @Param("placeCode") String placeCode,
+                  @Param("departTime") String departTime,
+                  @Param("ticketQty") int ticketQty);
+
+    int updateLegQtyBooked(@Param("shuttleLegId") long shuttleLegId,
+                           @Param("ticketQty") int ticketQty);
+
+    int cancelLeg(@Param("shuttleLegId") long shuttleLegId);
 
     int updateBookedQtyPlus(@Param("timetableId") long timetableId,
                             @Param("rideDate") Date rideDate,
@@ -36,50 +64,15 @@ public interface ShuttleOpsDAO {
                              @Param("rideDate") Date rideDate,
                              @Param("qty") int qty);
 
-    Long selectBookingIdByReservation(@Param("reservationId") long reservationId);
-
-    int insertBookingHeader(@Param("reservationId") long reservationId,
-                            @Param("hotelId") int hotelId,
-                            @Param("memberNo") int memberNo,
-                            @Param("rideDate") Date rideDate);
+    int updateHeaderBooked(@Param("bookingId") long bookingId);
 
     int updateHeaderCanceled(@Param("bookingId") long bookingId);
 
-   
-    int insertLeg(@Param("bookingId") long bookingId,
-                  @Param("timetableId") long timetableId,
-                  @Param("legType") String legType,
-                  @Param("rideDate") Date rideDate,
-                  @Param("placeCode") String placeCode,
-                  @Param("departTime") String departTime,
-                  @Param("ticketQty") int ticketQty);
-
-    
-    // bookingId + timetableId (+ rideDate) 로 레그 1건 찾기
-    ShuttleLegDTO selectLegByBookingAndTimetable(@Param("bookingId") long bookingId,
-                                                 @Param("timetableId") long timetableId,
-                                                 @Param("rideDate") Date rideDate);
-
-    // bookingId + legType 으로 BOOKED 레그 목록 (화면/계산용)
-    List<ShuttleLegDTO> selectBookedLegListByBookingAndType(@Param("bookingId") long bookingId,
-                                                            @Param("legType") String legType);
-
-    // 레그 수량/상태 BOOKED로 업데이트(부활 포함)
-    int updateLegQtyBooked(@Param("legId") long legId,
-                           @Param("ticketQty") int ticketQty);
-
-    // 레그 취소
-    int cancelLeg(@Param("legId") long legId);
-    
-    int updateHeaderBooked(long bookingId);
-    
     List<ShuttleConfirmCardDTO> selectActiveShuttleBookings(@Param("memberNo") int memberNo);
 
-    List<ShuttleLegDTO> selectBookedLegsByBooking(long bookingId);
+    ReservationForShuttleDTO selectReservationForCard(@Param("reservationId") long reservationId);
 
-    ReservationForShuttleDTO selectReservationForCard(long reservationId);
+    List<ShuttleLegDTO> selectBookedLegsByBooking(@Param("bookingId") long bookingId);
 
     String selectMemberName(@Param("memberNo") int memberNo);
-    
-    Long selectBookingIdByReservationNullable(long reservationId);
 }

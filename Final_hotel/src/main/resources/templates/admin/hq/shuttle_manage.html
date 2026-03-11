@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html th:replace="~{js/layout/layout_main :: layout(~{::title}, ~{::link}, ~{::style}, ~{::script}, ~{::div.container})}"
+      lang="ko"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<meta charset="UTF-8">
+<title>셔틀 운영 관리(HQ)</title>
+
+<link rel="stylesheet" href="">
+
+<style>
+  :root{
+    --bg:#f6f1ea;
+    --panel:#ffffff;
+    --line:#eadfd3;
+    --line-2:#d8c6b3;
+    --text:#2a2320;
+    --muted:#7a6a61;
+    --brand:#8b6a52;
+    --accent:#cda57a;
+    --danger:#c94b4b;
+    --warn:#c98a2e;
+    --ok:#2f7d4c;
+    --shadow:0 18px 45px rgba(54,38,25,.10);
+    --radius:18px;
+  }
+
+  *{ box-sizing:border-box; }
+
+  body{
+    margin:0;
+    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Noto Sans KR", Arial, "Apple SD Gothic Neo", sans-serif;
+    background:
+      radial-gradient(1200px 600px at 20% 10%, #fff, transparent 55%),
+      radial-gradient(900px 500px at 80% 90%, #fff, transparent 50%),
+      var(--bg);
+    color:var(--text);
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:28px 14px;
+  }
+
+  .container{ width:100%; }
+
+  .wrap{
+    width:min(1280px, 100%);
+    margin:0 auto;
+  }
+
+  .brandbar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    margin-bottom:14px;
+  }
+  .brandbar .left{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    letter-spacing:.14em;
+    font-weight:900;
+    color:var(--brand);
+  }
+  .brandbar .right{
+    display:flex;
+    gap:10px;
+    align-items:center;
+    flex-wrap:wrap;
+  }
+
+  .chip{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:8px 12px;
+    border-radius:999px;
+    background:#fff;
+    border:1px solid var(--line);
+    box-shadow:var(--shadow);
+    font-size:12.5px;
+    color:var(--muted);
+    font-weight:800;
+    text-decoration:none;
+  }
+
+  .card{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+    overflow:hidden;
+  }
+
+  .header{
+    padding:20px 18px 12px;
+    border-bottom:1px solid var(--line);
+    background:linear-gradient(180deg, #fff, #fff7ef);
+  }
+  .header h1{
+    margin:0;
+    font-size:20px;
+    letter-spacing:.04em;
+    font-weight:900;
+  }
+  .header p{
+    margin:6px 0 0;
+    color:var(--muted);
+    font-size:13px;
+  }
+
+  .body{ padding:18px; }
+
+  .section{
+    margin-bottom:16px;
+    border:1px solid var(--line);
+    border-radius:16px;
+    overflow:hidden;
+    background:#fff;
+  }
+  .section-head{
+    padding:14px 16px;
+    background:#fffaf5;
+    border-bottom:1px solid var(--line);
+    font-weight:900;
+    color:#443a34;
+  }
+  .section-body{
+    padding:16px;
+  }
+
+  .grid{
+    display:grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap:12px;
+  }
+  .col-2{ grid-column: span 2; }
+  .col-3{ grid-column: span 3; }
+  .col-4{ grid-column: span 4; }
+  .col-6{ grid-column: span 6; }
+  .col-12{ grid-column: span 12; }
+
+  .field{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+  }
+  .label{
+    font-size:12.5px;
+    color:var(--muted);
+    font-weight:800;
+  }
+
+  .input, .select{
+    width:100%;
+    padding:11px 12px;
+    border:1px solid var(--line-2);
+    border-radius:12px;
+    outline:none;
+    background:#fff;
+    font-size:14px;
+  }
+  .input:focus, .select:focus{
+    border-color:var(--accent);
+    box-shadow:0 0 0 4px rgba(205,165,122,.22);
+  }
+
+  .btn{
+    border:0;
+    border-radius:14px;
+    padding:12px 14px;
+    font-weight:900;
+    cursor:pointer;
+    letter-spacing:.04em;
+    text-decoration:none;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    white-space:nowrap;
+  }
+  .btn-main{ background:linear-gradient(180deg, var(--brand), #6f513f); color:#fff; }
+  .btn-sub{ background:#fff; color:var(--brand); border:1px solid var(--line-2); }
+  .btn-danger{ background:linear-gradient(180deg, var(--danger), #a83a3a); color:#fff; }
+  .btn-warn{ background:linear-gradient(180deg, var(--warn), #a66d20); color:#fff; }
+  .btn-ok{ background:linear-gradient(180deg, var(--ok), #23603a); color:#fff; }
+
+  .tools{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+    margin-bottom:10px;
+    flex-wrap:wrap;
+  }
+  .count{
+    color:var(--muted);
+    font-size:12.5px;
+    font-weight:800;
+  }
+  .count b{ color:var(--text); }
+
+  .table-wrap{
+    border:1px solid var(--line);
+    border-radius:14px;
+    overflow:hidden;
+    background:#fff;
+  }
+  table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:13.5px;
+  }
+  thead th{
+    text-align:left;
+    padding:12px 12px;
+    background:#fffaf5;
+    border-bottom:1px solid var(--line);
+    color:#443a34;
+    font-weight:900;
+    white-space:nowrap;
+  }
+  tbody td{
+    padding:12px 12px;
+    border-bottom:1px solid #eee;
+    vertical-align:top;
+  }
+  tbody tr:hover{ background:#faf7f3; }
+
+  .muted{ color:var(--muted); font-size:12.5px; }
+
+  .badge{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    padding:6px 10px;
+    border-radius:999px;
+    font-weight:900;
+    font-size:12px;
+    border:1px solid var(--line);
+    background:#fff;
+    white-space:nowrap;
+  }
+  .badge-ok{ color:#1b5e34; border-color:#bfe6cc; background:#f2fbf5; }
+  .badge-off{ color:#8a3a3a; border-color:#f1c3c3; background:#fff4f4; }
+
+  .actions{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+  }
+
+  .danger-box{
+    border:1px solid #efc5c5;
+    background:#fff7f7;
+    border-radius:14px;
+    padding:14px;
+  }
+
+  @media (max-width: 980px){
+    .grid{ grid-template-columns: 1fr; }
+    .col-2, .col-3, .col-4, .col-6, .col-12{ grid-column: span 1; }
+  }
+</style>
+
+<script th:inline="javascript">
+/*<![CDATA[*/
+document.addEventListener('DOMContentLoaded', function() {
+
+  const routeForm = document.getElementById('routeAddForm');
+  const blockForm = document.getElementById('blockAddForm');
+
+  if(routeForm){
+    routeForm.addEventListener('submit', function(e){
+      const startPlaceCode = document.getElementById('startPlaceCode').value;
+      const endPlaceCode = document.getElementById('endPlaceCode').value;
+
+      if(startPlaceCode === endPlaceCode){
+        alert('출발지와 도착지는 같을 수 없습니다.');
+        e.preventDefault();
+        return;
+      }
+    });
+  }
+
+  if(blockForm){
+    blockForm.addEventListener('submit', function(e){
+      const startDate = document.getElementById('startDate').value;
+      const endDate   = document.getElementById('endDate').value;
+
+      if(startDate && endDate && startDate > endDate){
+        alert('차단 종료일은 시작일보다 빠를 수 없습니다.');
+        e.preventDefault();
+        return;
+      }
+    });
+  }
+
+});
+/*]]>*/
+</script>
+</head>
+
+<body>
+<div class="container">
+  <div class="wrap">
+
+    <div class="brandbar">
+      <div class="left">CIEL · HQ</div>
+      <div class="right">
+        <span class="chip">셔틀운영관리</span>
+        <a class="chip" th:href="@{/admin/hq/dashboard}">대시보드</a>
+      </div>
+    </div>
+
+    <section class="card" aria-label="셔틀 운영 관리 카드">
+      <div class="header">
+        <h1>셔틀 운영 관리</h1>
+        <p>HQ 전용 기능 · 호텔별 셔틀 노선, 차단, 기간 연장, 과거 데이터 정리를 관리합니다.</p>
+      </div>
+
+      <div class="body">
+
+        <!-- 1. 호텔 선택 -->
+        <section class="section">
+          <div class="section-head">호텔 선택</div>
+          <div class="section-body">
+            <form th:action="@{/admin/hq/shuttle}" method="get">
+              <div class="grid">
+                <div class="field col-4">
+                  <div class="label">관리 호텔</div>
+                  <select name="hotelId" id="hotelId" class="select" required>
+                    <option value="">호텔 선택</option>
+                    <option th:each="h : ${hotelList}"
+                            th:value="${h.hotelId}"
+                            th:text="${h.hotelName}"
+                            th:selected="${selectedHotelId != null and selectedHotelId == h.hotelId}">
+                    </option>
+                  </select>
+                </div>
+
+                <div class="field col-2">
+                  <div class="label">작업</div>
+                  <button type="submit" class="btn btn-main">조회</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </section>
+
+        <div th:if="${selectedHotelId != null}">
+
+          <!-- 2. 노선 추가 -->
+          <section class="section">
+            <div class="section-head">노선 추가</div>
+            <div class="section-body">
+              <form id="routeAddForm" th:action="@{/admin/hq/shuttle/route/add}" method="post">
+                <input type="hidden" name="hotelId" th:value="${selectedHotelId}" />
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+                <div class="grid">
+                  <div class="field col-2">
+                    <div class="label">구분</div>
+                    <select name="routeType" id="routeType" class="select" required>
+                      <option value="">선택</option>
+                      <option value="TO_HOTEL">TO_HOTEL</option>
+                      <option value="FROM_HOTEL">FROM_HOTEL</option>
+                    </select>
+                  </div>
+
+                  <div class="field col-3">
+                    <div class="label">출발지</div>
+                    <select name="startPlaceCode" id="startPlaceCode" class="select" required>
+                      <option value="">출발지 선택</option>
+                      <option th:each="p : ${placeList}"
+                              th:value="${p.placeCode}"
+                              th:text="${p.placeName}">
+                      </option>
+                    </select>
+                  </div>
+
+                  <div class="field col-3">
+                    <div class="label">도착지</div>
+                    <select name="endPlaceCode" id="endPlaceCode" class="select" required>
+                      <option value="">도착지 선택</option>
+                      <option th:each="p : ${placeList}"
+                              th:value="${p.placeCode}"
+                              th:text="${p.placeName}">
+                      </option>
+                    </select>
+                  </div>
+
+                  <div class="field col-4">
+                    <div class="label">노선명</div>
+                    <input type="text"
+                           name="routeName"
+                           id="routeName"
+                           class="input"
+                           placeholder="예: 서울역 -> 호텔 시엘"
+                           required />
+                  </div>
+
+                  <div class="field col-2">
+                    <div class="label">등록</div>
+                    <button type="submit" class="btn btn-ok">노선 추가</button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </section>
+
+          <!-- 3. 노선 목록 -->
+          <section class="section">
+            <div class="section-head">노선 목록</div>
+            <div class="section-body">
+              <div class="tools">
+                <div class="count">총 <b th:text="${routeList != null ? #lists.size(routeList) : 0}">0</b>건</div>
+                <div class="muted">노선 비활성화 시 해당 노선 시간표도 함께 중단 처리됩니다.</div>
+              </div>
+
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th style="width:90px;">노선ID</th>
+                      <th style="width:140px;">구분</th>
+                      <th>노선명</th>
+                      <th>출발지</th>
+                      <th>도착지</th>
+                      <th style="width:100px;">상태</th>
+                      <th style="width:140px;">액션</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr th:if="${routeList == null or #lists.isEmpty(routeList)}">
+                      <td colspan="7" class="muted" style="text-align:center; padding:18px;">등록된 노선이 없습니다.</td>
+                    </tr>
+
+                    <tr th:each="r : ${routeList}">
+                      <td th:text="${r.routeId}">1</td>
+                      <td th:text="${r.routeType}">TO_HOTEL</td>
+                      <td th:text="${r.routeName}">서울역 -> 호텔 시엘</td>
+                      <td th:text="${r.startPlaceName}">서울역</td>
+                      <td th:text="${r.endPlaceName}">호텔 시엘</td>
+                      <td>
+                        <span class="badge badge-ok" th:if="${r.activeYn == 'Y'}">활성</span>
+                        <span class="badge badge-off" th:if="${r.activeYn != 'Y'}">비활성</span>
+                      </td>
+                      <td>
+                        <form th:action="@{'/admin/hq/shuttle/route/' + ${r.routeId} + '/deactivate'}"
+                              method="post"
+                              onsubmit="return confirm('해당 노선을 비활성화하시겠습니까?');">
+                          <input type="hidden" name="hotelId" th:value="${selectedHotelId}" />
+                          <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                          <button type="submit" class="btn btn-danger" th:disabled="${r.activeYn != 'Y'}">비활성화</button>
+                        </form>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+
+          <!-- 4. 시간표 목록 -->
+          <section class="section">
+            <div class="section-head">시간표 목록</div>
+            <div class="section-body">
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th style="width:90px;">시간표ID</th>
+                      <th>노선명</th>
+                      <th style="width:140px;">구분</th>
+                      <th>출발지</th>
+                      <th>도착지</th>
+                      <th style="width:110px;">출발시간</th>
+                      <th style="width:90px;">정원</th>
+                      <th style="width:100px;">상태</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr th:if="${timetableList == null or #lists.isEmpty(timetableList)}">
+                      <td colspan="8" class="muted" style="text-align:center; padding:18px;">등록된 시간표가 없습니다.</td>
+                    </tr>
+
+                    <tr th:each="t : ${timetableList}">
+                      <td th:text="${t.timetableId}">1</td>
+                      <td th:text="${t.routeName}">서울역 -> 호텔 시엘</td>
+                      <td th:text="${t.routeType}">TO_HOTEL</td>
+                      <td th:text="${t.startPlaceName}">서울역</td>
+                      <td th:text="${t.endPlaceName}">호텔 시엘</td>
+                      <td th:text="${t.departTime}">12:00</td>
+                      <td th:text="${t.capacity}">20</td>
+                      <td>
+                        <span class="badge badge-ok" th:if="${t.activeYn == 'Y'}">활성</span>
+                        <span class="badge badge-off" th:if="${t.activeYn != 'Y'}">비활성</span>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+
+          <!-- 5. 운행 차단 등록 -->
+          <section class="section">
+            <div class="section-head">운행 차단 등록</div>
+            <div class="section-body">
+              <form id="blockAddForm" th:action="@{/admin/hq/shuttle/block/add}" method="post">
+                <input type="hidden" name="hotelId" th:value="${selectedHotelId}" />
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+                <div class="grid">
+                  <div class="field col-3">
+                    <div class="label">노선</div>
+                    <select name="routeId" id="routeId" class="select" required>
+                      <option value="">노선 선택</option>
+                      <option th:each="r : ${routeList}"
+                              th:value="${r.routeId}"
+                              th:text="${r.routeName + ' (' + r.routeType + ')'}">
+                      </option>
+                    </select>
+                  </div>
+
+                  <div class="field col-3">
+                    <div class="label">시간표(선택)</div>
+                    <select name="timetableId" id="timetableId" class="select">
+                      <option value="">전체 시간대 차단</option>
+                      <option th:each="t : ${timetableList}"
+                              th:value="${t.timetableId}"
+                              th:text="${t.routeName + ' / ' + t.departTime}">
+                      </option>
+                    </select>
+                  </div>
+
+                  <div class="field col-2">
+                    <div class="label">시작일</div>
+                    <input type="date" name="startDate" id="startDate" class="input" required />
+                  </div>
+
+                  <div class="field col-2">
+                    <div class="label">종료일</div>
+                    <input type="date" name="endDate" id="endDate" class="input" required />
+                  </div>
+
+                  <div class="field col-2">
+                    <div class="label">사유</div>
+                    <input type="text" name="reason" id="reason" class="input" />
+                  </div>
+
+                  <div class="field col-2">
+                    <div class="label">등록</div>
+                    <button type="submit" class="btn btn-warn">차단 등록</button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </section>
+
+          <!-- 6. 운행 차단 목록 -->
+          <section class="section">
+            <div class="section-head">운행 차단 목록</div>
+            <div class="section-body">
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th style="width:90px;">차단ID</th>
+                      <th>노선명</th>
+                      <th style="width:130px;">구분</th>
+                      <th style="width:140px;">시간표</th>
+                      <th style="width:220px;">차단기간</th>
+                      <th>사유</th>
+                      <th style="width:130px;">액션</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr th:if="${blockList == null or #lists.isEmpty(blockList)}">
+                      <td colspan="7" class="muted" style="text-align:center; padding:18px;">등록된 차단 정보가 없습니다.</td>
+                    </tr>
+
+                    <tr th:each="b : ${blockList}">
+                      <td th:text="${b.shuttleBlockId}">1</td>
+                      <td th:text="${b.routeName}">서울역 -> 호텔 시엘</td>
+                      <td th:text="${b.routeType}">TO_HOTEL</td>
+                      <td th:text="${b.departTime != null ? b.departTime : '전체 시간대'}">전체 시간대</td>
+                      <td th:text="${b.blockStartDate + ' ~ ' + b.blockEndDate}">2026-03-01 ~ 2026-03-03</td>
+                      <td th:text="${b.reason}">점검</td>
+                      <td>
+                        <form th:action="@{'/admin/hq/shuttle/block/' + ${b.shuttleBlockId} + '/deactivate'}"
+                              method="post"
+                              onsubmit="return confirm('해당 차단을 해제하시겠습니까?');">
+                          <input type="hidden" name="hotelId" th:value="${selectedHotelId}" />
+                          <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                          <button type="submit" class="btn btn-sub">차단 해제</button>
+                        </form>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+
+          <!-- 7. 기간 연장 -->
+          <section class="section">
+            <div class="section-head">셔틀 기간 연장</div>
+            <div class="section-body">
+              <form th:action="@{/admin/hq/shuttle/extend}" method="post">
+                <input type="hidden" name="hotelId" th:value="${selectedHotelId}" />
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+                <div class="grid">
+                  <div class="field col-3">
+                    <div class="label">생성 종료일</div>
+                    <input type="date" name="endDate" id="extendEndDate" class="input" required />
+                  </div>
+
+                  <div class="field col-2">
+                    <div class="label">실행</div>
+                    <button type="submit" class="btn btn-main">기간 연장</button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </section>
+
+          <!-- 8. 과거 데이터 정리 -->
+          <section class="section">
+            <div class="section-head">과거 데이터 정리</div>
+            <div class="section-body">
+              <div class="danger-box">
+                <p style="margin:0 0 12px 0; font-weight:800;">
+                  현재 기준 1달 이전의 셔틀 예약/재고 데이터를 삭제합니다.
+                </p>
+
+                <form th:action="@{/admin/hq/shuttle/purge}"
+                      method="post"
+                      onsubmit="return confirm('1달 이전 셔틀 데이터를 삭제하시겠습니까?');">
+                  <input type="hidden" name="hotelId" th:value="${selectedHotelId}" />
+                  <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                  <button type="submit" class="btn btn-danger">과거 데이터 삭제</button>
+                </form>
+              </div>
+            </div>
+          </section>
+
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+</body>
+</html>

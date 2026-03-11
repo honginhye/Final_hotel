@@ -269,7 +269,7 @@ function func_AdminLogin() {
 
       console.log("관리자 로그인 결과 : ", JSON.stringify(json));
 
-      if(("accessToken" in json) && json.accessToken) {
+      if (("accessToken" in json) && json.accessToken) {
         alert("관리자 로그인 성공!!");
         sessionStorage.setItem("JWT", JSON.stringify(json));
       }
@@ -279,7 +279,16 @@ function func_AdminLogin() {
         return;
       }
 
-      location.href = contextPath + "admin/hq/dashboard";
+      if (json.adminType === "HQ") {
+        location.href = contextPath + "admin/hq/dashboard";
+      }
+      else if (json.adminType === "BRANCH") {
+        location.href = contextPath + "admin/branch/dashboard";
+      }
+      else {
+        alert("관리자 유형(adminType) 정보가 없습니다.");
+        sessionStorage.removeItem("JWT");
+      }
     },
     error: function(request, status, error){
 
