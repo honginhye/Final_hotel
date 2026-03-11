@@ -9,6 +9,7 @@ public interface HotelService {
 	// List<Map<String, Object>> getHotelList(); ---> 전체/ 승인 나눔.
 	List<Map<String, Object>> getApprovedHotelList();
 	List<Map<String, Object>> getPendingHotelList();
+	List<Map<String, Object>> getDisabledHotelList();
 	
     // 호텔 + 이미지 저장
     void saveHotel(Map<String, Object> paraMap);
@@ -26,6 +27,7 @@ public interface HotelService {
 	
 	// 지점관리자 호텔 조회
 	List<Map<String, Object>> getHotelListByManager(Integer adminNo);
+	
 
 
 

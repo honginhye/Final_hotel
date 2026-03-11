@@ -126,7 +126,12 @@ public class AdminRoomService_imple implements AdminRoomService {
     // 객실 승인
     @Override
     public void approveRoom(int roomTypeId, int adminId) {
-        adminRoomDAO.approveRoom(roomTypeId, adminId);
+        
+    	// 1. 객실 승인
+    	adminRoomDAO.approveRoom(roomTypeId, adminId);
+    	
+    	// 2 ROOM_STOCK 생성 (365일)
+        adminRoomDAO.insertRoomStock365(roomTypeId);
     }
 
     // 객실 반려

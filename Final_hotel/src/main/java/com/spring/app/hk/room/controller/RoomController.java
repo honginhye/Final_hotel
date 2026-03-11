@@ -65,6 +65,7 @@ public class RoomController {
 	     @RequestParam(name="room_grade", defaultValue="") String roomGrade,
 	     @RequestParam(name="bed_type", defaultValue="") String bedType,
 	     @RequestParam(name="view_type", defaultValue="") String viewType,
+	     @RequestParam(name="capacity", required=false) String capacity,
 	     @RequestParam(name="sort", defaultValue="") String sort,
 	
 	     // 체크인 날짜/ 체크아웃 날짜
@@ -77,6 +78,7 @@ public class RoomController {
 	     paraMap.put("room_grade", roomGrade);
 	     paraMap.put("bed_type", bedType);
 	     paraMap.put("view_type", viewType);
+	     paraMap.put("capacity", capacity);
 	     paraMap.put("sort", sort);
 	
 	     // 날짜 추가 _ 재고와 연결
