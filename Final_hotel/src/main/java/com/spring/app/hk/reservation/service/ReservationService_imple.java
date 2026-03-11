@@ -11,6 +11,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.spring.app.hk.reservation.mail.ReservationMailService;
 import com.spring.app.hk.reservation.model.ReservationDAO;
 import com.spring.app.hk.room.service.RoomStockService;
 import com.spring.app.jh.security.domain.CustomUserDetails;
@@ -24,6 +25,8 @@ public class ReservationService_imple implements ReservationService {
 
     private final ReservationDAO reservationDAO;
     private final RoomStockService roomStockService;
+    
+    private final ReservationMailService reservationMailService; // 추가 : 메일
 
     // 결제 성공 후 db 저장하기
     @Override
@@ -75,6 +78,23 @@ public class ReservationService_imple implements ReservationService {
                 + "-"
                 + String.format("%04d", reservationId);
 
+        // 메일 전송
+        try {
+            reservationMailService.sendReservationMail(
+                    userDetails.getMemberDto().getEmail(),
+                    userDetails.getMemberDto().getName(),
+                    reservationCode,
+                    map.get("hotel_name"),
+                    map.get("room_name"),
+                    map.get("check_in"),
+                    map.get("check_out"),
+                    String.valueOf(paraMap.get("total_price"))
+            );
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
         return reservationCode;
     }
 

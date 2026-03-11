@@ -245,7 +245,10 @@ function requestPay() {
                     check_out: document.querySelector("input[name='check_out']").value,
                     guest_count: document.getElementById("guestCount").value,
                     breakfast_count: document.getElementById("breakfastCount").value,
-                    total_price: totalAmount
+                    total_price: totalAmount,
+                    
+                    hotel_name: "[[${hotel_name}]]",
+                    room_name: "[[${room_name}]]"
                 })
             })
             .then(res => res.text())
