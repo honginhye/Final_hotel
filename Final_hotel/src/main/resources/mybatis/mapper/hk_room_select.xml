@@ -119,6 +119,11 @@
 	    <if test="view_type != null and view_type != ''">
 	        AND rt.view_type = #{view_type}
 	    </if>
+	    
+	    <!-- 투숙 인원 -->
+		<if test="capacity != null and capacity != ''">
+		    AND rt.max_capacity >= #{capacity}
+		</if>
 	
 	    <!-- MIN 사용했으므로 GROUP BY 필수 -->
 	    GROUP BY

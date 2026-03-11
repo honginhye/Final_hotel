@@ -322,7 +322,15 @@ h1 {
 			                <option value="">전망 전체</option>
 			                <option value="CITY">CITY</option>
 			                <option value="RIVER">RIVER</option>
-			            </select>           
+			            </select>        
+			               
+			            <select name="capacity">
+						    <option value="">인원 전체</option>
+						    <option value="1">1명</option>
+						    <option value="2">2명</option>
+						    <option value="3">3명</option>
+						    <option value="4">4명 이상</option>
+						</select>   
 			
 			        </form>
 			
@@ -734,6 +742,7 @@ function loadRooms() {
     const roomGrade = document.querySelector("[name='room_grade']").value;
     const bedType = document.querySelector("[name='bed_type']").value;
     const viewType = document.querySelector("[name='view_type']").value;
+    const capacity = document.querySelector("[name='capacity']").value;
     const sort = document.getElementById("sortSelect").value;
     
     // 날짜 값
@@ -741,7 +750,7 @@ function loadRooms() {
     const checkOut = document.getElementById("filterCheckOut").value;
 
     // 날짜 없으면 재고 조건 없이 조회
-    let url = `/final_hotel/room/filter?hotel=${hotel}&room_grade=${roomGrade}&bed_type=${bedType}&view_type=${viewType}&sort=${sort}`;
+    let url = `/final_hotel/room/filter?hotel=${hotel}&room_grade=${roomGrade}&bed_type=${bedType}&view_type=${viewType}&capacity=${capacity}&sort=${sort}`;
 
     // 체크인 체크아웃 선택 하면 재고 조건 포함하여 조회 (예약 마감)
     if(checkIn && checkOut){
