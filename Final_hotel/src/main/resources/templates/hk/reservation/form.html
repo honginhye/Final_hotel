@@ -128,21 +128,20 @@ button:hover {
     <h3>결제 요약</h3>
 
     <p>객실 요금:
-        <span id="roomPrice"
-              th:text="${base_price}"></span> 원
-    </p>
-
-    <p>조식 요금:
-        <span id="breakfastPrice">0</span> 원
-    </p>
-
-    <hr>
-
-    <p class="summary-price">
-        총 결제 금액:
-        <span id="totalPrice"
-              th:text="${base_price}"></span> 원
-    </p>
+    <span id="currencySymbol">₩</span>
+    <span id="roomPrice" th:text="${room_price}"></span>
+	</p>
+	
+	<p>조식 요금:
+	    <span id="currencySymbol2">₩</span>
+	    <span id="breakfastPrice">0</span>
+	</p>
+	
+	<p class="summary-price">
+	    총 결제 금액:
+	    <span id="currencySymbol3">₩</span>
+	    <span id="totalPrice" th:text="${base_price}"></span>
+	</p>
 
 </div>
 
@@ -154,25 +153,65 @@ button:hover {
 var IMP = window.IMP;
 IMP.init("imp76388561");
 
-const baseRoomPrice = [[${base_price}]];
+const baseRoomPrice = [[${room_price}]];
 const nights = [[${nights}]];
 const BREAKFAST_PRICE = 67500;
+const currency = "[[${currency}]]";
+const includeTax = [[${tax}]];
 
+/* 통화 표시 */
+function getCurrencySymbol(){
+
+    if(currency === "USD") return "$";
+    if(currency === "JPY") return "¥";
+    if(currency === "EUR") return "€";
+
+    return "₩";
+}
+
+
+/* 합산금액 */
 function calculateTotal() {
 
-    const guestCount = parseInt(document.getElementById("guestCount").value);
     const breakfastCount = parseInt(document.getElementById("breakfastCount").value);
 
-    const breakfastTotal = breakfastCount * nights * BREAKFAST_PRICE;
-    const total = baseRoomPrice + breakfastTotal;
+    let roomTotal = baseRoomPrice;
+
+    let breakfastTotal = breakfastCount * nights * BREAKFAST_PRICE;
+
+    let subtotal = roomTotal + breakfastTotal;
+
+    if(includeTax){
+        subtotal *= 1.1;
+    }
+
+    let rate = 1;
+
+    if(currency === "USD") rate = 0.00074;
+    if(currency === "JPY") rate = 0.11;
+    if(currency === "EUR") rate = 0.00068;
+
+    const roomConverted = roomTotal * rate;
+    const breakfastConverted = breakfastTotal * rate;
+    const total = subtotal * rate;
+
+    const symbol = getCurrencySymbol();
+
+    document.getElementById("currencySymbol").innerText = symbol;
+    document.getElementById("currencySymbol2").innerText = symbol;
+    document.getElementById("currencySymbol3").innerText = symbol;
+
+    document.getElementById("roomPrice").innerText =
+        roomConverted.toLocaleString();
 
     document.getElementById("breakfastPrice").innerText =
-        breakfastTotal.toLocaleString();
+        breakfastConverted.toLocaleString();
 
     document.getElementById("totalPrice").innerText =
         total.toLocaleString();
 }
 
+/* 결제 */
 function requestPay() {
 
     const totalAmount =

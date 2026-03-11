@@ -387,8 +387,7 @@ h1 {
 					</div>
 
 					<div class="price">
-						<span class="price-value" data-base-price="${room.base_price}">
-							₩ ${room.base_price} </span>
+						가격 조회 중 ...
 					</div>
 
 					<div style="margin-top: 20px;">
@@ -485,6 +484,10 @@ let currentCurrency = "KRW";
 // 체크박스 (세금봉사료)
 let includeExtraFee = false;
 
+// 숙박 가격 합산용
+let calendarData = [];
+let currentRoomId = null;
+
 // ===============================
 // 달력 모달
 // ===============================
@@ -502,7 +505,9 @@ function openCalendar(roomId) {
         .then(res => res.json())
         .then(data => {
 
-        	// 서버에서 받은 날짜별 가격 → 달력 이벤트 형식으로 변환
+        	 calendarData = data; // 추가
+
+        	 // 서버에서 받은 날짜별 가격 → 달력 이벤트 형식으로 변환
             const events = data.map(day => ({
 			    title: day.AVAILABLE_COUNT === 0 
 			           ? "예약마감" 
@@ -633,8 +638,31 @@ function applyDateToPage(checkIn, checkOut){
 
     const roomId = currentRoomId;  // 선택한 객실
 
-    // 바로 예약 페이지로 이동
-    location.href = `/final_hotel/reservation/form?room_type_id=${roomId}&check_in=${checkIn}&check_out=${checkOut}`;
+     // 날짜별 가격 합 계산
+    const totalRoomPrice = calculateStayPrice(checkIn, checkOut);
+    
+    // 환율 + 세금
+    const currency = currentCurrency;
+    const tax = includeExtraFee;
+
+    // 예약 페이지로 이동
+    location.href = `/final_hotel/reservation/form?room_type_id=${roomId}&check_in=${checkIn}&check_out=${checkOut}&room_price=${totalRoomPrice}&currency=${currency}&tax=${tax}`;
+}
+
+// 날짜별 가격 합 계산 함수
+function calculateStayPrice(checkIn, checkOut){
+
+    let total = 0;
+
+    calendarData.forEach(day => {
+
+        if(day.STAY_DATE >= checkIn && day.STAY_DATE < checkOut){
+            total += day.FINAL_PRICE;
+        }
+
+    });
+
+    return total;
 }
 
 
@@ -649,13 +677,49 @@ function calculateNights(start, end){
 }
 
 
-//예약 버튼 클릭 처리 함수
+// 예약 버튼 클릭 처리 함수
 function handleReserveClick(roomId) {
 
     currentRoomId = roomId;
 
     // 무조건 달력 열기
     openCalendar(roomId);
+}
+
+
+// 최저가 계산 함수
+function getMinPrice(calendarData){
+
+    if(!calendarData || calendarData.length === 0){
+        return null;
+    }
+
+    return Math.min(...calendarData.map(d => d.FINAL_PRICE));
+}
+
+// 객실별 calendar API 호출 함수
+function loadMinPrice(roomId){
+
+    fetch(`/final_hotel/room/calendar?room_id=${roomId}`)
+        .then(res => res.json())
+        .then(data => {
+
+            const minPrice = getMinPrice(data);
+
+            const priceArea = document.querySelector(`.price-${roomId}`);
+
+            if(minPrice){
+
+                priceArea.dataset.basePrice = minPrice;
+
+                priceArea.innerText =
+                    "최저 " + calculateFinalPrice(minPrice) + " ~";
+
+            }else{
+                priceArea.innerText = "가격 정보 없음";
+            }
+
+        });
 }
 
 
@@ -761,11 +825,8 @@ function loadRooms() {
                             <div>등급: ${room.room_grade}</div>
                             <div>침대: ${room.bed_type}</div>
                             <div>전망: ${room.view_type}</div>
-                            <div class="price">
-	                            <span class="price-value"
-	                                  data-base-price="${room.base_price}">
-	                                ₩ ${room.base_price}
-	                            </span>
+                            <div class="price price-${room.room_type_id}">
+	                            가격 조회 중...
 	                        </div>
                             ${stockHtml}
                             
@@ -778,6 +839,9 @@ function loadRooms() {
                         </div>
                     </div>
                 `;
+                
+                // 츠가
+                loadMinPrice(room.room_type_id);
                 
             });
 
@@ -1022,14 +1086,16 @@ function updatePricesByCurrency(currency){
 
     currentCurrency = currency;
 
-    const rate = exchangeRates[currency];
-
-    document.querySelectorAll(".price-value")
+    document.querySelectorAll(".price")
         .forEach(el => {
 
             const basePrice = Number(el.dataset.basePrice);
 
-            el.innerText = calculateFinalPrice(basePrice);
+            if(basePrice){
+                el.innerText =
+                    "최저 " + calculateFinalPrice(basePrice) + " ~";
+            }
+
         });
 }
 
