@@ -206,9 +206,11 @@ h1 {
 	outline: none;
 }
 
-#compareBar {
-	position: fixed;
-	bottom: 80px; /* footer 높이 만큼 */
+#compareItems{
+    display:flex;
+    align-items:center;
+    gap:15px;
+    flex-wrap:wrap;
 }
 </style>
 
@@ -268,7 +270,7 @@ h1 {
 			                    th:value="${hotel.HOTEL_ID}"
 			                    th:text="${hotel.HOTEL_NAME}"
 			                    th:selected="${searchParams != null and #strings.equals(hotel.HOTEL_ID, searchParams.hotelId)}">
-			            </option>
+			           	   </option>
 			            </select>
 			
 			            <select name="room_grade">
@@ -763,13 +765,19 @@ document.getElementById("sortSelect").addEventListener("change", function(){
 
 
 //======================================
-//비교하기 버튼 클릭시 푸터에 나오게끔 (비교함에 3개까지 저장 가능) + localstorage에 저장
+//비교하기 버튼 클릭시 푸터에 나오게끔 (비교함에 3개까지 저장 가능) + localstorage에 저장 + 이미지 연결
 //======================================
 function addToCompare(roomId){
 
     let compareList = JSON.parse(localStorage.getItem("compareList")) || [];
 
-    if(compareList.includes(roomId)){
+    // 클릭한 카드 찾기
+    const card = event.target.closest(".room-card");
+
+    const name = card.querySelector(".room-name a").innerText;
+    const image = card.querySelector(".room-image img").src;
+
+    if(compareList.some(r => r.id === roomId)){
         alert("이미 비교함에 추가된 객실입니다.");
         return;
     }
@@ -779,15 +787,16 @@ function addToCompare(roomId){
         return;
     }
 
-    compareList.push(roomId);
+    compareList.push({
+        id: roomId,
+        name: name,
+        image: image
+    });
 
     localStorage.setItem("compareList", JSON.stringify(compareList));
 
     updateCompareFooter();
-
-    alert("비교함에 저장 성공");
 }
-
 
 // 푸터에 표시 (비교 바)
 function updateCompareFooter(){
@@ -806,13 +815,32 @@ function updateCompareFooter(){
 
     bar.style.display = "block";
 
-    compareList.forEach(id => {
+    compareList.forEach(room => {
+
         items.innerHTML += `
-            <span style="margin-right:15px;">
-                객실 ${id}
-                <button onclick="removeFromCompare(${id})"
-                        style="margin-left:5px;">X</button>
-            </span>
+            <div style="
+                display:flex;
+                align-items:center;
+                margin-right:20px;
+                background:white;
+                color:black;
+                padding:6px 12px;
+                border-radius:5px;
+            ">
+
+                <img src="${room.image}"
+                     style="width:60px;height:40px;
+                     object-fit:cover;margin-right:10px;">
+
+                <span style="margin-right:10px;">
+                    ${room.name}
+                </span>
+
+                <button onclick="removeFromCompare(${room.id})">
+                    X
+                </button>
+
+            </div>
         `;
     });
 }
@@ -844,10 +872,12 @@ function openCompareModal(){
         return;
     }
 
+    const ids = compareList.map(r => r.id);
+
     fetch("/final_hotel/room/compare", { 
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(compareList) // 여기서 compare List 형태 : [1, 3, 5] -> roomcontroller의 requestbody로 받음. (json에서 데이터를 자바 객체로 변환해주는 것.)
+        body: JSON.stringify(ids)
     })
     .then(res => res.json())
     .then(data => {
@@ -855,19 +885,17 @@ function openCompareModal(){
     });
 }
 
-
 // 삭제하기
 function removeFromCompare(roomId){
 
     let compareList = JSON.parse(localStorage.getItem("compareList")) || [];
 
-    compareList = compareList.filter(id => id !== roomId);
+    compareList = compareList.filter(r => r.id !== roomId);
 
     localStorage.setItem("compareList", JSON.stringify(compareList));
 
     updateCompareFooter();
 }
-
 
 // 비교하기 모달 렌더링하기
 function renderCompareModal(data){
