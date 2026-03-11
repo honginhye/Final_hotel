@@ -2,6 +2,8 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="_csrf" th:content="${_csrf.token}">
+    <meta name="_csrf_header" th:content="${_csrf.headerName}">
     <title>DINING | LOTTE HOTEL & RESORTS</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
     <style>
@@ -13,7 +15,6 @@
             color: #333;
         }
 
-        /* 헤더 타이틀 */
         .dining-header {
             margin-top: 80px;
             margin-bottom: 50px;
@@ -25,7 +26,6 @@
             font-weight: 300;
         }
 
-        /* 필터 버튼 스타일 */
         .filter-wrap {
             display: flex;
             justify-content: center;
@@ -48,7 +48,6 @@
             border-color: #1a1a1a;
         }
 
-        /* 호텔 선택 셀렉트 박스 */
         .hotel-select-wrap {
             display: flex;
             justify-content: flex-end;
@@ -62,7 +61,6 @@
             font-family: 'Noto Serif KR', serif;
         }
 
-        /* 다이닝 카드 스타일 */
         .dining-card {
             margin-bottom: 70px;
             display: block;
@@ -70,7 +68,6 @@
             color: inherit !important;
         }
         
-        /* 이미지 영역 */
         .img-wrapper {
             position: relative;
             width: 100%;
@@ -89,7 +86,6 @@
             transform: scale(1.05);
         }
 
-        /* 매장명 위 배지(호텔명, 타입) */
         .badge-container {
             display: flex;
             gap: 8px;
@@ -111,7 +107,6 @@
             font-weight: 500;
         }
 
-        /* 텍스트 정보 */
         .res-name {
             font-size: 1.8rem;
             margin-bottom: 18px;
@@ -133,7 +128,6 @@
             color: #444;
         }
 
-        /* 데이터 없을 때 */
         .no-data {
             padding: 100px 0;
             text-align: center;
