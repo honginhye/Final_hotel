@@ -18,6 +18,8 @@ import com.spring.app.jh.security.auth.domain.TokenRequestDTO;
 import com.spring.app.jh.security.domain.AdminDTO;
 import com.spring.app.jh.security.domain.MemberDTO;
 import com.spring.app.jh.security.domain.RefreshTokenDTO;
+import com.spring.app.jh.security.domain.Session_AdminDTO;
+import com.spring.app.jh.security.domain.Session_MemberDTO;
 import com.spring.app.jh.security.jwt.JwtToken;
 import com.spring.app.jh.security.jwt.JwtTokenProvider;
 import com.spring.app.jh.security.model.AdminDAO;
@@ -56,7 +58,6 @@ public class JwtAuthService_imple implements JwtAuthService {
 
     private final MemberDAO memberDAO;
     private final AdminDAO adminDAO;
-
 
     // 생성자를 직접 작성하여 어떤 Bean 을 넣을지 명확하게 지정한다.
     public JwtAuthService_imple(
@@ -107,10 +108,10 @@ public class JwtAuthService_imple implements JwtAuthService {
                            jwtToken.getRefreshToken());
 
         saveAuthenticationToSession(authentication, request);
+        saveMemberSessionDto(member, request);
 
         return jwtToken;
     }
-
 
     // =====================================================================
     // 2) 관리자 로그인
@@ -149,10 +150,10 @@ public class JwtAuthService_imple implements JwtAuthService {
                            jwtToken.getRefreshToken());
 
         saveAuthenticationToSession(authentication, request);
+        saveAdminSessionDto(admin, request);
 
         return jwtToken;
     }
-
 
     // =====================================================================
     // 3) 토큰 재발급
@@ -233,7 +234,6 @@ public class JwtAuthService_imple implements JwtAuthService {
         return newJwtToken;
     }
 
-
     // =====================================================================
     // 4) 로그아웃
     // =====================================================================
@@ -252,7 +252,6 @@ public class JwtAuthService_imple implements JwtAuthService {
             session.invalidate();
         }
     }
-
 
     // =====================================================================
     // 5) refresh token insert / update 공통처리
@@ -283,7 +282,6 @@ public class JwtAuthService_imple implements JwtAuthService {
         }
     }
 
-
     // =====================================================================
     // 6) 하이브리드 구조용 세션 저장
     // =====================================================================
@@ -296,5 +294,31 @@ public class JwtAuthService_imple implements JwtAuthService {
 
         HttpSession session = request.getSession(true);
         session.setAttribute("SPRING_SECURITY_CONTEXT", context);
+    }
+
+    private void saveMemberSessionDto(MemberDTO member, HttpServletRequest request) {
+
+        HttpSession session = request.getSession(true);
+
+        Session_MemberDTO smd = new Session_MemberDTO();
+        smd.setMemberNo(member.getMemberNo());
+        smd.setMemberid(member.getMemberid());
+        smd.setName(member.getName());
+
+        session.setAttribute("sessionMemberDTO", smd);
+    }
+
+    private void saveAdminSessionDto(AdminDTO admin, HttpServletRequest request) {
+
+        HttpSession session = request.getSession(true);
+
+        Session_AdminDTO sad = new Session_AdminDTO();
+        sad.setAdmin_no(admin.getAdmin_no());
+        sad.setAdminid(admin.getAdminid());
+        sad.setName(admin.getName());
+        sad.setAdmin_type(admin.getAdmin_type());
+        sad.setFk_hotel_id(admin.getFk_hotel_id());
+
+        session.setAttribute("sessionAdminDTO", sad);
     }
 }

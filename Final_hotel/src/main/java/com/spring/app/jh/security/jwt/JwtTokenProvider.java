@@ -84,6 +84,9 @@ public class JwtTokenProvider {
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .accessTokenExpireTime(accessTokenExpiresIn.getTime())
+                .principalType(principalType)
+                .adminType(adminType)
+                .hotelId(hotelId)
                 .build();
     }
 

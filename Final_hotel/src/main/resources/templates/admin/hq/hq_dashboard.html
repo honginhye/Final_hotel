@@ -53,6 +53,7 @@
       <div>
         <a class="chip" th:href="@{/admin/hq/account/myInfo}">내 정보</a>
         <a class="chip" th:href="@{/admin/hq/admins}" style="margin-left:6px">지점 관리자 관리</a>
+        <a class="chip" th:href="@{/admin/hq/shuttle}" style="margin-left:6px">셔틀 운영 관리</a>
       </div>
     </div>
 
@@ -140,6 +141,20 @@
         </div>
         <!-- [DUMMY-END] -->
       </div>
+      
+      <div class="card" style="grid-column: span 4;">
+		  <div class="card-head">
+		    <h3 style="margin:0">운영 바로가기</h3>
+		  </div>
+		
+		  <div style="margin-top:10px">
+		    <a class="link-btn" th:href="@{/admin/hq/shuttle}">셔틀 운영 관리</a>
+		  </div>
+		
+		  <div class="muted" style="margin-top:10px">
+		    호텔별 셔틀 노선 관리, 운행 차단, 기간 연장, 과거 데이터 정리
+		  </div>
+		</div>
 
     </div>
 
