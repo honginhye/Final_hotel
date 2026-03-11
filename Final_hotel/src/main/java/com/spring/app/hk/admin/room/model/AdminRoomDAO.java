@@ -18,6 +18,9 @@ public interface AdminRoomDAO {
 	// 2. 이미지 저장
 	void insertRoomImage(Map<String, Object> paraMap);
 	
+	// 3. 승인시 room stock 등록
+	void insertRoomStock365(int roomTypeId);
+	
 	// 이미지 교체 후 수정
 	void updateRoom(Map<String, String> map);
 	void updateRoomImage(Map<String, Object> imageMap);

@@ -41,7 +41,7 @@
 	
 	<!-- 객실 등록 신청 -->	
 	
-	<!-- 1. 객실 등록 -->
+	<!-- 1. 객실 등록(roomtype) -->
 	<insert id="insertRoom">
 
 		<selectKey keyProperty="room_type_id" resultType="int" order="AFTER">
@@ -82,7 +82,7 @@
 	
 	</insert>
 		
-	<!-- 2. 이미지 저장 -->
+	<!-- 2. roomtype 이미지 저장 -->
 	<insert id="insertRoomImage">	
 		INSERT INTO ROOM_IMAGE
 		(
@@ -100,6 +100,32 @@
 		    'Y',
 		    1
 		)		
+	</insert>
+	
+	
+	<!-- 3. 승인시 roomstock 생성 -->
+	<insert id="insertRoomStock365">	
+		INSERT INTO ROOM_STOCK (
+		    stock_id,
+		    room_type_id,
+		    stay_date,
+		    available_count,
+		    is_closed,
+		    min_stay
+		)
+		
+		SELECT
+		    SEQ_ROOM_STOCK.NEXTVAL,
+		    #{roomTypeId},
+		    TRUNC(SYSDATE) + (LEVEL - 1),
+		    (SELECT total_count
+		     FROM ROOM_TYPE
+		     WHERE room_type_id = #{roomTypeId}),
+		    'N',
+		    1
+		
+		FROM dual
+		CONNECT BY LEVEL &lt;= 365	
 	</insert>
 	
 	

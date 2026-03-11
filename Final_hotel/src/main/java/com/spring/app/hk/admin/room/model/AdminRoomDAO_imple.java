@@ -50,6 +50,13 @@ public class AdminRoomDAO_imple implements AdminRoomDAO {
    	    sqlsession.update("adminRoom.updateRoomImage", imageMap);
    	}
    	
+    // 3. 승인시 room stock 등록
+ 	@Override
+ 	public void insertRoomStock365(int roomTypeId) {
+ 		sqlsession.insert("adminRoom.insertRoomStock365", roomTypeId);
+ 		
+ 	}
+   	
    	// 반려 후 재상신
 	@Override
 	public void resubmitRoom(int roomTypeId) {
@@ -125,6 +132,8 @@ public class AdminRoomDAO_imple implements AdminRoomDAO {
 	public List<Map<String, Object>> getBranchApprovalHistoryList(Integer adminNo) {
 		return sqlsession.selectList("adminRoom.getBranchApprovalHistoryList", adminNo);
 	}
+
+	
 
 	
 
