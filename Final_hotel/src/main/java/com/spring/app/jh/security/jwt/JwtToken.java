@@ -26,4 +26,8 @@ public class JwtToken {
     private String accessToken;          // 인증용 access token
     private String refreshToken;         // 재발급용 refresh token
     private Long accessTokenExpireTime;  // access token 만료시각(epoch milli)
+    
+    private String principalType;
+    private String adminType;
+    private Long hotelId;
 }
