@@ -30,6 +30,56 @@ public class AdminRoomService_imple implements AdminRoomService {
     }
     
     
+    // 운영중 객실 수정
+    @Override
+    public void modifyApprovedRoom(Map<String, String> map, MultipartFile roomImage) {
+
+        // 객실 기본 정보 수정
+        adminRoomDAO.modifyApprovedRoom(map);
+
+        // 객실 ID
+        int roomTypeId = Integer.parseInt(map.get("roomTypeId"));
+
+        // 이미지 교체 시
+        if(roomImage != null && !roomImage.isEmpty()){
+
+            try {
+
+            	String fileName = System.currentTimeMillis() + "_" + roomImage.getOriginalFilename();
+
+                // 파일 저장 경로
+                String uploadPath = "./file_images/room/";
+
+                java.io.File dir = new java.io.File(uploadPath);
+                if(!dir.exists()){
+                    dir.mkdirs();
+                }
+
+                java.io.File saveFile =
+                        new java.io.File(uploadPath + fileName);
+
+                roomImage.transferTo(saveFile);
+
+                // 이미지 url
+                String imageUrl = "/file_images/room/" + fileName;
+
+                Map<String,Object> imageMap = new java.util.HashMap<>();
+
+                imageMap.put("roomTypeId", roomTypeId);
+                imageMap.put("image_url", imageUrl);
+
+                // 이미지 업데이트
+                adminRoomDAO.updateRoomImage(imageMap);
+
+            } catch(Exception e){
+                e.printStackTrace();
+            }
+
+        }
+        
+    }
+    
+    
     // 객실 등록 신청시 객실 + 이미지 저장
     @Override
     public void saveRoom(Map<String, Object> paraMap) {
@@ -54,7 +104,7 @@ public class AdminRoomService_imple implements AdminRoomService {
     }
 
     
- // 객실 반려 후 수정 (이미지 교체 처리)
+    // 객실 반려 후 수정 (이미지 교체 처리)
  	@Override
  	public void updateRoom(Map<String, String> map, MultipartFile roomImage) {
 
@@ -161,6 +211,9 @@ public class AdminRoomService_imple implements AdminRoomService {
 	    return adminRoomDAO.getApprovalHistoryList();
 
 	}
+
+
+	
 
 
 

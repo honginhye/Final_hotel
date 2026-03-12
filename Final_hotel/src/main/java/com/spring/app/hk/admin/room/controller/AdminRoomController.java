@@ -94,6 +94,19 @@ public class AdminRoomController {
         return "hk/branch/room/roomlist";
     }
 
+    // 운영중 객실 수정
+    @PostMapping("/modify")
+    @PreAuthorize("hasRole('ADMIN_BRANCH')")
+    public String modifyApprovedRoom(
+            @RequestParam Map<String,String> map,
+            @RequestParam(value="roomImage", required=false) MultipartFile roomImage){
+
+        roomService.modifyApprovedRoom(map, roomImage);
+
+        return "redirect:/admin/room/branch/list";
+    }
+    
+    
 	 // 객실 등록 페이지 진입
 	 @PreAuthorize("hasRole('ADMIN_BRANCH')")
 	 @GetMapping("/register")
