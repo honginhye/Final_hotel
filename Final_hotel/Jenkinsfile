@@ -14,7 +14,6 @@ pipeline {
     }
 
     stages {
-
         stage('Checkout') {
             steps {
                 checkout scm
@@ -50,9 +49,14 @@ pipeline {
 
         stage('Deploy to EC2') {
             steps {
-                sshagent(['SERVER_SSH_KEY']) {
+                withCredentials([sshUserPrivateKey(
+                    credentialsId: 'SERVER_SSH_KEY',
+                    keyFileVariable: 'SSH_KEY',
+                    usernameVariable: 'SSH_USER'
+                )]) {
                     sh """
-                        ssh -o StrictHostKeyChecking=no ubuntu@${SERVER_IP} '
+                        chmod 600 \$SSH_KEY
+                        ssh -i \$SSH_KEY -o StrictHostKeyChecking=no \$SSH_USER@${SERVER_IP} '
                             docker pull ${IMAGE_NAME}
                             docker stop ${CONTAINER_NAME} || true
                             docker rm ${CONTAINER_NAME} || true
