@@ -43,13 +43,12 @@ public class HotelController {
     @GetMapping("list")
     public String hotelList(Model model){
 
-        List<Map<String,Object>> activeHotelList = hotelService.getApprovedHotelList();
-        List<Map<String,Object>> pendingHotelList = hotelService.getPendingHotelList();
-        List<Map<String,Object>> disabledHotelList = hotelService.getDisabledHotelList(); // 추가 (비활성화 호텔)
-        
-        model.addAttribute("activeHotelList", activeHotelList);
-        model.addAttribute("pendingHotelList", pendingHotelList);
-        model.addAttribute("disabledHotelList", disabledHotelList); // 추가	
+    	List<Map<String,Object>> activeHotelList = hotelService.getApprovedHotelList();
+    	List<Map<String,Object>> pendingHotelList = hotelService.getPendingHotelList();
+    	List<Map<String,Object>> disabledHotelList = hotelService.getDisabledHotelList();
+
+    	model.addAttribute("activeHotelList", activeHotelList);
+    	model.addAttribute("disabledHotelList", disabledHotelList);
         
         return "hk/admin/hotel/list";
     }

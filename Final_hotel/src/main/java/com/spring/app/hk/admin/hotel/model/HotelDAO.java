@@ -26,16 +26,6 @@ public interface HotelDAO {
 	// 호텔 상세페이지 내 비활성화하기
 	int deleteHotel(int hotel_id);
 
-	
-
-	
-	// 지점관리자 호텔 조회
-	List<Map<String, Object>> selectHotelListByManager(Integer adminNo);
-	
-	
-
-	
-	
 
 
 }
