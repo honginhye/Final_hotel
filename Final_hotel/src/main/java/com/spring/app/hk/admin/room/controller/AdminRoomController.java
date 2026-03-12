@@ -48,6 +48,9 @@ public class AdminRoomController {
     @GetMapping("/branch/list")
     public String roomList(Model model, HttpSession session) {
     	
+    	System.out.println("컨트롤러 세션 ID = " + session.getId());
+        System.out.println("sessionAdminDTO = " + session.getAttribute("sessionAdminDTO"));
+    	
     	// 로그인 사용자 가져오기
     	Session_AdminDTO loginAdmin = (Session_AdminDTO) session.getAttribute("sessionAdminDTO");
 
@@ -91,6 +94,19 @@ public class AdminRoomController {
         return "hk/branch/room/roomlist";
     }
 
+    // 운영중 객실 수정
+    @PostMapping("/modify")
+    @PreAuthorize("hasRole('ADMIN_BRANCH')")
+    public String modifyApprovedRoom(
+            @RequestParam Map<String,String> map,
+            @RequestParam(value="roomImage", required=false) MultipartFile roomImage){
+
+        roomService.modifyApprovedRoom(map, roomImage);
+
+        return "redirect:/admin/room/branch/list";
+    }
+    
+    
 	 // 객실 등록 페이지 진입
 	 @PreAuthorize("hasRole('ADMIN_BRANCH')")
 	 @GetMapping("/register")

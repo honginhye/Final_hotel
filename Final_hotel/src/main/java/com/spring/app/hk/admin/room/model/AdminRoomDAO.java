@@ -11,6 +11,9 @@ public interface AdminRoomDAO {
 	// 지점 객실 목록 조회
 	List<RoomTypeDTO> getRoomListByManager(Integer adminNo);
 	
+	// 운영중 객실 수정
+	void modifyApprovedRoom(Map<String, String> map);
+	
 	// 객실 등록 신청시
 	// 1. 객실 등록
 	void insertRoom(Map<String, Object> paraMap);
@@ -50,6 +53,8 @@ public interface AdminRoomDAO {
 
 	// 객실 전체 승인 히스토리 조회용
 	List<Map<String, Object>> getApprovalHistoryList();
+
+	
 
   
 	

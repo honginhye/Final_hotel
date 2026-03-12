@@ -4,6 +4,9 @@
 
 <head>
 <meta charset="UTF-8">
+
+<meta name="_csrf" th:content="${_csrf.token}">
+<meta name="_csrf_header" th:content="${_csrf.headerName}">
 <title>호텔 등록</title>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -22,6 +25,9 @@ $(document).ready(function(){
         const formData =
             new FormData($("form[name='hotelFrm']").get(0));
 
+        const token = $("meta[name='_csrf']").attr("content");
+        const header = $("meta[name='_csrf_header']").attr("content");
+
         $.ajax({
             url: "[[@{/admin/hotel/register}]]",
             type: "post",
@@ -29,6 +35,9 @@ $(document).ready(function(){
             processData: false,
             contentType: false,
             dataType: "json",
+            beforeSend: function(xhr){
+                xhr.setRequestHeader(header, token);
+            },
             success: function(json){
 
                 if(json.result == 1){

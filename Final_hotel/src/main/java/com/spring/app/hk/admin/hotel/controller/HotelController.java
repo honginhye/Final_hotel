@@ -172,18 +172,6 @@ public class HotelController {
 
         return Map.of("result", 1);
     }
-
-
-    
-  
-    
-    
-    
-    
-    
-    
-    
-    
     
     
     
