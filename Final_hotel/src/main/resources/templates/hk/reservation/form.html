@@ -2,6 +2,9 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8">
+
+<meta name="_csrf" th:content="${_csrf.token}">
+<meta name="_csrf_header" th:content="${_csrf.headerName}">
 <title>예약 정보 입력</title>
 
 <style>
@@ -215,7 +218,7 @@ function calculateTotal() {
         total.toLocaleString();
 }
 
-/* 결제 */
+/* 결제 */ 
 function requestPay() {
 
     const totalAmount =
@@ -233,9 +236,15 @@ function requestPay() {
 
         if (rsp.success) {
 
+        	const token = document.querySelector("meta[name='_csrf']").content;
+        	const header = document.querySelector("meta[name='_csrf_header']").content;
+        	
             fetch("/final_hotel/payment/verify", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: {
+                    "Content-Type": "application/json",
+                    [header]: token
+                },
                 body: JSON.stringify({
                     imp_uid: rsp.imp_uid,
                     merchant_uid: rsp.merchant_uid,
