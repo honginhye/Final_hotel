@@ -1,5 +1,6 @@
 package com.spring.app.hk.reservation.model;
 
+import java.util.List;
 import java.util.Map;
 
 public interface ReservationDAO {
@@ -16,6 +17,7 @@ public interface ReservationDAO {
     // 예약 페이지 내 객실 기본 정보 조회
 	Map<String, Object> getRoomInfo(int room_type_id);
 
-	
+	// 마이페이지 예약 목록 조회
+	List<Map<String, Object>> selectMyReservationList(int memberNo);
 
 }

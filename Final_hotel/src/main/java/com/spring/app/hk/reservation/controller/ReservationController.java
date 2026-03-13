@@ -2,6 +2,7 @@ package com.spring.app.hk.reservation.controller;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.security.core.Authentication;
@@ -82,7 +83,7 @@ public class ReservationController {
     
     
     // 예약 저장용
- // ReservationController.java 내 수정
+    // ReservationController.java 내 수정
 
     @PostMapping("/save")
     public String saveReservation(@RequestParam Map<String, String> map, Model model) {
@@ -117,5 +118,26 @@ public class ReservationController {
 
         return "hk/reservation/complete";
     }
+    
+	 // =======================================================
+	 // 마이페이지 : 로그인 회원의 예약 목록 조회
+	 // =======================================================
+	 @GetMapping("/mypage")
+	 public String myReservationList(Authentication auth, Model model) {
+	
+	     // 로그인 사용자 정보 가져오기
+	     CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();
+	     int memberNo = userDetails.getMemberDto().getMemberNo();
+	
+	     // 예약 목록 조회
+	     List<Map<String,Object>> reservationList =
+	             reservationService.selectMyReservationList(memberNo);
+	
+	     // 화면에 전달
+	     model.addAttribute("reservationList", reservationList);
+	
+	     return "hk/reservation/reservationList";
+	 }
+	    
     
 }

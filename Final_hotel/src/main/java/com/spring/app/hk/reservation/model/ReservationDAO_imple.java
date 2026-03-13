@@ -1,5 +1,6 @@
 package com.spring.app.hk.reservation.model;
 
+import java.util.List;
 import java.util.Map;
 
 import org.mybatis.spring.SqlSessionTemplate;
@@ -34,5 +35,11 @@ public class ReservationDAO_imple implements ReservationDAO {
 	@Override
 	public Map<String, Object> getRoomInfo(int room_type_id) {
 		return sqlsession.selectOne("reservation.getRoomInfo", room_type_id);
+	}
+
+	// 마이페이지 예약 목록 조회
+	@Override
+	public List<Map<String, Object>> selectMyReservationList(int memberNo) {
+		 return sqlsession.selectList("reservation.selectMyReservationList", memberNo);
 	}
 }
