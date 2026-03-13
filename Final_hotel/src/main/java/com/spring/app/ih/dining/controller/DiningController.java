@@ -16,6 +16,9 @@ import java.util.Map;
 import com.spring.app.ih.dining.model.DiningDTO;
 import com.spring.app.ih.dining.model.DiningReservationDTO;
 import com.spring.app.ih.dining.service.DiningService;
+import com.spring.app.jh.security.domain.MemberDTO;
+import com.spring.app.jh.security.domain.Session_MemberDTO;
+import com.spring.app.jh.security.service.MemberService;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -29,7 +32,9 @@ public class DiningController {
 
     @Autowired
     private DiningService diningService;
-
+    
+    @Autowired
+    private MemberService memberService;
 
     @GetMapping("/all") // http://localhost:9081/final_hotel/dining/all
     public String getAll(
@@ -62,32 +67,49 @@ public class DiningController {
         return "dining/detail"; // templates/dining/detail.html
     }
     
-
     @GetMapping("/reserve/{dining_id}")
-    public String showReservationPage(@PathVariable("dining_id") int dining_id, Model model) {
+    public String showReservationPage(@PathVariable("dining_id") int dining_id, 
+                                      HttpSession session, 
+                                      Model model) {
+        
         DiningDTO dining = diningService.getDiningDetail(dining_id);
-        
-        String[] allTimes = dining.getAvailable_times().split(",");
-        
-        List<String> lunchSlots = new ArrayList<>();
-        List<String> dinnerSlots = new ArrayList<>();
-
-        for (String time : allTimes) {
-            int hour = Integer.parseInt(time.split(":")[0]);
-            if (hour < 15) { // 15시 이전은 Lunch
-                lunchSlots.add(time);
-            } else {         // 15시 이후는 Dinner
-                dinnerSlots.add(time);
-            }
+        if (dining == null) {
+            return "redirect:/dining/all"; 
         }
+        
+        if (dining.getAvailable_times() != null && !dining.getAvailable_times().isEmpty()) {
+            String[] allTimes = dining.getAvailable_times().split(",");
+            List<String> lunchSlots = new ArrayList<>();
+            List<String> dinnerSlots = new ArrayList<>();
 
+            for (String time : allTimes) {
+                String trimmedTime = time.trim(); // 공백 제거
+                int hour = Integer.parseInt(trimmedTime.split(":")[0]);
+                if (hour < 15) {
+                    lunchSlots.add(trimmedTime);
+                } else {
+                    dinnerSlots.add(trimmedTime);
+                }
+            }
+            model.addAttribute("lunchSlots", lunchSlots);
+            model.addAttribute("dinnerSlots", dinnerSlots);
+        }
+        
         model.addAttribute("dining", dining);
-        model.addAttribute("lunchSlots", lunchSlots);
-        model.addAttribute("dinnerSlots", dinnerSlots);
+
+        // 로그인 여부 체크 및 회원 정보 전달
+        Session_MemberDTO sessionUser = (Session_MemberDTO) session.getAttribute("sessionMemberDTO");
+
+        if (sessionUser != null) {
+            MemberDTO fullMemberInfo = memberService.findByMemberid(sessionUser.getMemberid());
+            model.addAttribute("isMember", true);
+            model.addAttribute("memberInfo", fullMemberInfo); 
+        } else {
+            model.addAttribute("isMember", false);
+        }
         
         return "dining/reservation";
     }
-    
     
 
     
@@ -123,7 +145,9 @@ public class DiningController {
         }
         reservationDTO.setDiningId(diningId);
         
-        int result = diningService.registerReservation(reservationDTO, impUid);
+        Session_MemberDTO member = (Session_MemberDTO) session.getAttribute("loginUser");
+        
+        int result = diningService.registerReservation(reservationDTO, impUid, member);
         
         if(result > 0) {
             session.removeAttribute("tempReservation");
