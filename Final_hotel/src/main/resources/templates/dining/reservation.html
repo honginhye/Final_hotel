@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{js/layout/layout_main :: layout(~{::title}, ~{::link}, ~{::style}, ~{::script}, ~{::content})}">
 <head>
     <meta charset="UTF-8">
     <meta name="_csrf" th:content="${_csrf.token}">
@@ -82,6 +83,30 @@
         .btn-reserve-submit:disabled { background-color: #ccc; cursor: not-allowed; }
 
         .section-title { font-weight: 500; border-left: 4px solid var(--hotel-gold); padding-left: 15px; margin-bottom: 25px; }
+    
+    	/* 시간 버튼 기본 스타일 */
+		.btn-outline-time {
+		    border: 1px solid #ddd; color: #666; padding: 10px 0;
+		    font-weight: 400; transition: all 0.2s;
+		}
+		
+		/* 마우스 올렸을 때 */
+		.btn-outline-time:hover {
+		    border-color: #d4af37; color: #d4af37;
+		}
+		
+		/* ★중요: 라디오 버튼이 체크됐을 때 라벨 스타일 */
+		.btn-check:checked + .btn-outline-time {
+		    background-color: #d4af37 !important; /* 시엘 골드 색상 */
+		    border-color: #d4af37 !important; color: #fff !important; font-weight: 600;
+		}
+		
+		/* 비활성화(예약마감) 스타일 */
+		.btn-check:disabled + .btn-outline-time {
+		    background-color: #f1f1f1 !important; color: #ccc !important;
+		    border-color: #eee !important; text-decoration: line-through; cursor: not-allowed;
+		}
+    
     </style>
 
     <script th:inline="javascript">
@@ -182,16 +207,22 @@
                         <input type="text" id="selectedDate" name="resDate" class="form-control bg-light" readonly placeholder="달력에서 날짜를 선택해 주세요.">
                     </div>
 
-                    <div class="mb-4">
-                        <label class="form-label">RESERVATION TIME</label>
-                        <div class="time-slot-group">
-                            <div th:if="${not #lists.isEmpty(lunchSlots)}">
-                                <h5>LUNCH</h5>
-                                <div class="row row-cols-4 g-2">
-                                    <div th:each="time : ${lunchSlots}" class="col">
-                                        <input type="radio" class="btn-check" name="resTime" th:id="${'lunch_' + time}" th:value="${time}" 
-                                               th:disabled="${reservedSlots != null && reservedSlots.contains(time)}" required>
-                                        <label class="btn btn-outline-time w-100" th:for="${'lunch_' + time}" th:text="${time}">12:00</label>
+                        <div class="mb-4">
+                            <label class="form-label">RESERVATION TIME</label>
+                            
+                            <div th:if="${#lists.isEmpty(lunchSlots) and #lists.isEmpty(dinnerSlots)}" class="alert alert-light text-center">
+							    <p class="mb-0">선택 가능한 예약 시간이 없습니다.</p>
+							</div>
+                            
+                            <div class="time-slot-group">
+                                <div th:if="${not #lists.isEmpty(lunchSlots)}">
+                                    <h5>LUNCH</h5>
+                                    <div class="row row-cols-4 g-2">
+                                        <div th:each="time : ${lunchSlots}" class="col">
+                                            <input type="radio" class="btn-check" name="resTime" th:id="${'lunch_' + time}" th:value="${time}" 
+                                                   th:disabled="${reservedSlots != null && reservedSlots.contains(time)}" required>
+                                            <label class="btn btn-outline-time w-100" th:for="${'lunch_' + time}" th:text="${time}">12:00</label>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -205,6 +236,11 @@
                                         <label class="btn btn-outline-time w-100" th:for="${'dinner_' + time}" th:text="${time}">18:00</label>
                                     </div>
                                 </div>
+                                
+                                <div class="invalid-feedback d-none" id="time-error-msg">
+						            방문하실 시간을 선택해 주세요.
+						        </div>
+                                
                             </div>
                         </div>
                     </div>
@@ -227,17 +263,29 @@
                         </div>
                     </div>
 
-                    <div class="pt-4 border-top mt-4" th:if="${session.loginUser == null}">
-                        <div class="alert alert-warning py-2 small mb-3">비회원 예약을 위한 필수 정보입니다.</div>
-                        <div class="row g-2 mb-2">
-                            <div class="col-6">
-                                <label class="form-label">NAME</label>
-                                <input type="text" name="guestName" class="form-control" required>
+                        <div class="pt-4 border-top mt-4" th:if="${session.loginUser == null}">
+                            <div class="alert alert-warning py-2 small mb-3">예약을 위한 필수 정보입니다.</div>
+                            <div class="row g-2 mb-2">
+                                <div class="form-group col-6">
+                                    <label class="form-label">NAME</label>
+                                    <input type="text" name="guestName" class="form-control" th:value="${isMember ? memberInfo.name : ''}" required>
+                                </div>
+                                <div class="form-group col-6">
+                                    <label class="form-label">PHONE</label>
+                                    <input type="text" name="guestPhone" class="form-control" placeholder="010-0000-0000" th:value="${isMember ? memberInfo.mobile : ''}" required>
+                                </div>
                             </div>
-                            <div class="col-6">
-                                <label class="form-label">PHONE</label>
-                                <input type="text" name="guestPhone" class="form-control" placeholder="010-0000-0000" required>
+                            <div class="form-group mb-2">
+                                <label class="form-label">EMAIL</label>
+                                <input type="text" name="guestEmail" class="form-control" placeholder="이메일" th:value="${isMember ? memberInfo.email : ''}" required>
                             </div>
+                            <div class="form-group mb-2" th:if="${!isMember}">
+							    <label>비회원 확인 번호 (숫자 4자리)</label>
+							    <input type="password" name="resPassword" class="form-control" 
+							           maxlength="4" inputmode="numeric" pattern="[0-9]{4}" placeholder="예약 조회 시 사용할 번호" 
+							           th:required="${!isMember}"> 
+							    <small class="text-muted">* 비회원 예약 조회 시 필요합니다.</small>
+							</div>
                         </div>
                         <div class="mb-2">
                             <label class="form-label">이메일</label>

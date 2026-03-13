@@ -2,6 +2,8 @@ package com.spring.app.ih.dining.mapper;
 
 import com.spring.app.ih.dining.model.DiningDTO;
 import com.spring.app.ih.dining.model.DiningReservationDTO;
+import com.spring.app.jh.security.domain.MemberDTO;
+import com.spring.app.jh.security.domain.Session_MemberDTO;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -16,11 +18,11 @@ public interface DiningMapper {
 
     DiningDTO getDiningDetail(@Param("dining_id") int dining_id);
     
-    int registerReservation(DiningReservationDTO reservationDTO);
+    int registerReservation(DiningReservationDTO reservationDTO, String impUid, Session_MemberDTO member);
 
 	int insertReservation(DiningReservationDTO reservationDTO);
 
 	int insertPayment(Map<String, Object> payMap);
 
-	String getDiningName(Long outletId);
+	String getDiningName(Long diningId);
 }
