@@ -15,29 +15,31 @@
             .promo-title-area h2 { font-size: 2.8rem; font-weight: 700; letter-spacing: 2px; color: #1a1a1a; }
             .promo-title-area p { color: #888; margin-top: 15px; font-size: 1.1rem; }
 
-            /* 호텔 선택 탭 */
             .hotel-tabs { display: flex; justify-content: center; gap: 30px; margin-bottom: 50px; }
             .tab-link { padding: 12px 35px; border: 1px solid #ddd; color: #777; text-decoration: none; transition: 0.3s; }
             .tab-link.active { background: #1a1a1a; color: #fff; border-color: #1a1a1a; font-weight: 600; }
 
-            /* 그리드 레이아웃 */
             .promo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 30px; padding: 0 20px; }
             
             .promo-item { background: #fff; border: 1px solid #eee; overflow: hidden; transition: 0.4s ease; position: relative; }
             .promo-item:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
 
-            /* 이미지 영역 */
+            /* ★ 비활성 아이템 스타일 ★ */
+            .promo-item.is-hidden { opacity: 0.7; filter: grayscale(0.8); }
+            .badge-hidden { 
+                position: absolute; top: 0; left: 0; background: #666; color: #fff; 
+                padding: 10px 18px; font-weight: 700; z-index: 10; font-size: 0.9rem;
+            }
+
             .promo-thumb { position: relative; height: 260px; overflow: hidden; }
             .promo-thumb img { width: 100%; height: 100%; object-fit: cover; transition: 0.6s; }
             .promo-item:hover .promo-thumb img { transform: scale(1.1); }
 
-            /* 할인 배지 */
             .badge-discount { 
                 position: absolute; top: 0; right: 0; background: #d4af37; color: #fff; 
                 padding: 10px 18px; font-weight: 700; z-index: 10; font-size: 1.1rem;
             }
 
-            /* 텍스트 정보 */
             .promo-info { padding: 30px; text-align: center; }
             .promo-info .p-hotel { font-size: 0.85rem; color: #d4af37; font-weight: 700; margin-bottom: 10px; display: block; }
             .promo-info .p-title { font-size: 1.4rem; font-weight: 600; color: #1a1a1a; margin-bottom: 15px; min-height: 3.4rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
@@ -48,37 +50,14 @@
 
             .no-list { grid-column: 1/-1; text-align: center; padding: 100px 0; color: #bbb; font-size: 1.2rem; }
             
-            /* 관리자 액션 영역 및 버튼 스타일 */
-			.admin-action-area {
-			    display: flex;
-			    justify-content: flex-end;
-			}
-			
+			.admin-action-area { display: flex; justify-content: flex-end; }
 			.btn-admin-add {
-			    background-color: #d4af37;
-			    color: #fff;
-			    padding: 12px 25px;
-			    font-size: 0.95rem;
-			    font-weight: 600;
-			    text-decoration: none;
-			    border: 1px solid #d4af37;
-			    transition: 0.3s;
-			    display: inline-flex;
-			    align-items: center;
-			    gap: 8px;
+			    background-color: #d4af37; color: #fff; padding: 12px 25px;
+			    font-size: 0.95rem; font-weight: 600; text-decoration: none;
+			    border: 1px solid #d4af37; transition: 0.3s; display: inline-flex;
+			    align-items: center; gap: 8px;
 			}
-			
-			.btn-admin-add:hover {
-			    background-color: #1a1a1a;
-			    border-color: #1a1a1a;
-			    color: #fff;
-			    text-decoration: none;
-			    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-			}
-			
-			.btn-admin-add i {
-			    font-size: 1.1rem;
-			}
+			.btn-admin-add:hover { background-color: #1a1a1a; border-color: #1a1a1a; color: #fff; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
         </style>
     </th:block>
 </head>
@@ -101,11 +80,10 @@
         </div>
         
         <div class="admin-action-area" 
-		     sec:authorize="hasAnyRole('ADMIN_BRANCH', 'ROLE_ADMIN_BRANCH')" 
+		     sec:authorize="hasAnyRole('ADMIN_BRANCH', 'ROLE_ADMIN_BRANCH', 'ROLE_ADMIN', 'ADMIN')" 
 		     style="max-width: 1200px; margin: 0 auto 30px; padding: 0 20px; text-align: right;">
 		    
-		    <a th:href="@{/promotion/write(hotelId=${hotelId})}" 
-		       class="btn-admin-add">
+		    <a th:href="@{/promotion/write(hotelId=${hotelId})}" class="btn-admin-add">
 		        <i class="bi bi-plus-lg"></i> 프로모션 등록하기
 		    </a>
 		</div>
@@ -116,8 +94,13 @@
                 현재 진행 중인 프로모션이 없습니다.
             </div>
 
-            <div th:each="promo : ${promoList}" class="promo-item">
+            <div th:each="promo : ${promoList}" class="promo-item" th:classappend="${promo.is_active == 0} ? 'is-hidden'">
+                
                 <div class="promo-thumb">
+                    <div class="badge-hidden" th:if="${promo.is_active == 0}">
+                        <i class="bi bi-eye-slash-fill"></i> HIDDEN
+                    </div>
+
                     <div class="badge-discount" th:if="${promo.discount_rate > 0}">
                         <span th:text="${#numbers.formatDecimal(promo.discount_rate, 0, 0)}">0</span>% OFF
                     </div>
@@ -126,7 +109,10 @@
                 </div>
                 
                 <div class="promo-info">
-                    <span class="p-hotel" th:text="${promo.fk_hotel_id == 1 ? 'CIEL HOTEL' : 'LE CIEL'}">HOTEL NAME</span>
+                    <span class="p-hotel">
+                        <span th:text="${promo.fk_hotel_id == 1 ? 'CIEL HOTEL' : 'LE CIEL'}"></span>
+                        <small th:if="${promo.is_active == 0}" style="color:#e74c3c; font-weight:700;">[비활성]</small>
+                    </span>
                     
                     <h3 class="p-title" th:text="${promo.title}">프로모션 제목</h3>
                     
@@ -142,8 +128,7 @@
 </th:block>
 
 <th:block th:fragment="script">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-</th:block>
+    </th:block>
 
 </body>
 </html>

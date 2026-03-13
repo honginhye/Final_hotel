@@ -1,0 +1,82 @@
+pipeline {
+    agent any
+
+    options {
+        skipDefaultCheckout(true)
+    }
+
+    environment {
+        IMAGE_NAME      = "jehyung/final-hotel:latest"
+        SERVER_IP       = "13.209.77.22"
+        CONTAINER_NAME  = "final-hotel"
+        APP_PORT        = "9081"
+        PROJECT_DIR     = "Final_hotel"
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Build with Gradle') {
+            steps {
+                dir("${PROJECT_DIR}") {
+                    sh 'chmod +x ./gradlew'
+                    sh './gradlew clean build -x test'
+                }
+            }
+        }
+
+        stage('Docker Build & Push') {
+            steps {
+                withCredentials([usernamePassword(
+                    credentialsId: 'dockerhub_info',
+                    usernameVariable: 'DOCKER_USER',
+                    passwordVariable: 'DOCKER_PASS'
+                )]) {
+                    dir("${PROJECT_DIR}") {
+                        sh '''
+                            echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+                            docker build -t "$IMAGE_NAME" .
+                            docker push "$IMAGE_NAME"
+                        '''
+                    }
+                }
+            }
+        }
+
+        stage('Deploy to EC2') {
+            steps {
+                withCredentials([sshUserPrivateKey(
+                    credentialsId: 'SERVER_SSH_KEY',
+                    keyFileVariable: 'SSH_KEY',
+                    usernameVariable: 'SSH_USER'
+                )]) {
+                    sh """
+                        chmod 600 \$SSH_KEY
+                        ssh -i \$SSH_KEY -o StrictHostKeyChecking=no \$SSH_USER@${SERVER_IP} '
+                            docker pull ${IMAGE_NAME}
+                            docker stop ${CONTAINER_NAME} || true
+                            docker rm ${CONTAINER_NAME} || true
+                            docker run -d --name ${CONTAINER_NAME} -p ${APP_PORT}:${APP_PORT} ${IMAGE_NAME}
+                        '
+                    """
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo '배포 성공'
+        }
+        failure {
+            echo '배포 실패'
+        }
+        always {
+            cleanWs()
+        }
+    }
+}
