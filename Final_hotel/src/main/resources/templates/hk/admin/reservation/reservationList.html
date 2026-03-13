@@ -60,6 +60,24 @@ button:hover{
     background:#495057;
 }
 
+.search-box{
+    background:white;
+    padding:15px;
+    margin-bottom:20px;
+    border-radius:6px;
+    box-shadow:0 2px 6px rgba(0,0,0,0.05);
+}
+
+.search-box form{
+    display:flex;
+    gap:10px;
+    align-items:center;
+}
+
+.search-box input,
+.search-box select{
+    padding:6px;
+}
 </style>
 
 </head>
@@ -69,6 +87,28 @@ button:hover{
 <div class="container">
 
 <h2>전체 예약 관리</h2>
+
+<div class="search-box">
+
+	<form method="get" th:action="@{/admin/reservation/list}">
+	
+	회원 이름
+	<input type="text" name="name" th:value="${name}" placeholder="회원 이름">
+	
+	예약 상태
+	<select name="status" th:value="${status}">
+	<option value="">전체</option>
+	<option value="CONFIRMED">예약완료</option>
+	<option value="CHECKED_IN">체크인</option>
+	<option value="CHECKED_OUT">체크아웃</option>
+	</select>
+	
+	<button type="submit">검색</button>
+	
+	</form>
+
+</div>
+
 
 <div class="top-bar">
 
