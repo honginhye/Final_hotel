@@ -73,8 +73,19 @@ public class AdminRoomDAO_imple implements AdminRoomDAO {
 		
 	}
     
-    
 	
+	// 객실 비활성화
+	@Override
+	public void deactivateRoom(int roomTypeId) {
+		 sqlsession.update("adminRoom.deactivateRoom", roomTypeId);	
+	}
+
+	
+	// 비활성 객실 조회
+	@Override
+	public List<RoomTypeDTO> getInactiveRoomListByManager(Integer adminNo) {
+		return sqlsession.selectList("adminRoom.getInactiveRoomListByManager", adminNo);
+	}
 	
     // 총관관리자
     // 승인 대기 객실 목록 조회 (안씀)
@@ -142,13 +153,9 @@ public class AdminRoomDAO_imple implements AdminRoomDAO {
 		return sqlsession.selectList("adminRoom.getBranchApprovalHistoryList", adminNo);
 	}
 
-	
-	
 
-	
 
-   
-	
+
 
 	
 }

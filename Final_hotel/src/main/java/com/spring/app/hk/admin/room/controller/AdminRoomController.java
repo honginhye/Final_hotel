@@ -81,9 +81,13 @@ public class AdminRoomController {
                 .filter(r -> "REJECTED".equals(r.getApprove_status()))
                 .toList();
 
+        List<RoomTypeDTO> inactiveList =
+                roomService.getInactiveRoomListByManager(adminNo);
+        
         model.addAttribute("approvedList", approvedList);
         model.addAttribute("pendingList", pendingList);
         model.addAttribute("rejectedList", rejectedList);
+        model.addAttribute("inactiveList", inactiveList);
         model.addAttribute("historyList", historyList);
 
         if(!roomList.isEmpty()){
@@ -196,6 +200,17 @@ public class AdminRoomController {
 	        return "redirect:/admin/room/branch/list";
 	    }
     
+	
+	// 객실 비활성화
+    @PostMapping("/deactivate")
+    @PreAuthorize("hasRole('ADMIN_BRANCH')")
+    public String deactivateRoom(@RequestParam("roomTypeId") int roomTypeId){
+
+        roomService.deactivateRoom(roomTypeId);
+
+        return "redirect:/admin/room/branch/list";
+    }   
+	    
 	    
     // ==========================
     // 총괄 관리자 객실 관리 페이지 (승인/반려)
