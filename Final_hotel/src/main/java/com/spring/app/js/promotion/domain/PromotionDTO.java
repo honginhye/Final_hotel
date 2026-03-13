@@ -15,6 +15,12 @@ public class PromotionDTO {
     private double discount_rate;  // 할인율 (필요 시)
     private int discount_amount;   // 할인 금액 (필요 시)
 
+    // --- [변경] 객실 적용 범위 필터 필드 ---
+    // 조인 방식이 아니므로 String 타입을 사용하여 'DELUXE', 'DOUBLE' 등의 값을 직접 담습니다.
+    private String target_room_type; // 적용 객실 등급 (예: DELUXE, ALL)
+    private String target_bed_type;  // 적용 침대 타입 (예: DOUBLE, ALL)
+    private String target_view_type; // 적용 전망 타입 (예: CITY, ALL)
+    
     // --- 2. PROMOTION_BANNER (전시 / UI 레이아웃) ---
     private int banner_id;         // 배너 PK
     private String banner_type;    // [변경] MAIN(상단 슬라이드), CARD(하단 프로모션) 구분

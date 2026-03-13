@@ -10,7 +10,7 @@ import com.spring.app.js.promotion.domain.PromotionDTO;
 public interface PromotionDAO {
 
     // 1. 특정 호텔의 진행 중인 프로모션 목록 조회
-    List<PromotionDTO> getPromotionList(int hotelId);
+    List<PromotionDTO> getPromotionList(Map<String, Object> paraMap);
 
     // 2. 프로모션 상세 조회 (필요 시)
     PromotionDTO getPromotionDetail(int promotionId);
@@ -26,4 +26,20 @@ public interface PromotionDAO {
 
     // 6. 마스터 테이블(부모) 삭제
     int deletePromotionMaster(int promotionId);
+
+    // 객실 예약 기본 정보 저장
+	int insertBaseReservation(Map<String, String> paraMap);
+
+	// 예약-프로모션 매핑 정보 저장
+	int insertPromotionMapping(Map<String, Object> paraMap);
+
+	// 프로모션 수정
+	int updatePromotion(Map<String, String> paraMap);
+
+	// 프로모션 배너 수정
+	int updatePromotionBanner(Map<String, String> paraMap);
+
+	// 프로모션 조건(타겟)에 맞는 객실 리스트만 조회
+	List<Map<String, Object>> getAvailableRoomsForPromotion(PromotionDTO promo);
+
 }
