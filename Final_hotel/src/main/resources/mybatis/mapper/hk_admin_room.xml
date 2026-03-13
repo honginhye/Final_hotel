@@ -39,9 +39,35 @@
 		
 	</select>
 	
+	
+	<!-- 운영중 객실 수정 -->
+	<update id="modifyApprovedRoom">
+		UPDATE room_type
+		SET
+		    room_name = #{room_name},
+		    room_grade = #{room_grade},
+		    bed_type = #{bed_type},
+		    view_type = #{view_type},
+		    base_price = #{base_price},
+		    total_count = #{total_count}
+		
+		WHERE room_type_id = #{roomTypeId}
+	</update>
+	
+	<!-- 이미지 수정시 이거 사용(밑에 있음) -->
+    <!-- 	
+        <update id="updateRoomImage">
+			UPDATE ROOM_IMAGE
+			SET IMAGE_URL = #{image_url}
+			WHERE ROOM_TYPE_ID = #{roomTypeId}
+			AND IS_MAIN = 'Y'
+		</update>
+	 -->
+	
+	
 	<!-- 객실 등록 신청 -->	
 	
-	<!-- 1. 객실 등록 -->
+	<!-- 1. 객실 등록(roomtype) -->
 	<insert id="insertRoom">
 
 		<selectKey keyProperty="room_type_id" resultType="int" order="AFTER">
@@ -54,6 +80,7 @@
 		    fk_hotel_id,
 		    room_name,
 		    room_grade,
+		    room_size,
 		    bed_type,
 		    view_type,
 		    base_price,
@@ -71,6 +98,7 @@
 		     
 		    #{room_name},
 		    #{room_grade},
+		    #{room_size},
 		    #{bed_type},
 		    #{view_type},
 		    #{base_price},
@@ -82,7 +110,7 @@
 	
 	</insert>
 		
-	<!-- 2. 이미지 저장 -->
+	<!-- 2. roomtype 이미지 저장 -->
 	<insert id="insertRoomImage">	
 		INSERT INTO ROOM_IMAGE
 		(
@@ -100,6 +128,32 @@
 		    'Y',
 		    1
 		)		
+	</insert>
+	
+	
+	<!-- 3. 승인시 roomstock 생성 -->
+	<insert id="insertRoomStock365">	
+		INSERT INTO ROOM_STOCK (
+		    stock_id,
+		    room_type_id,
+		    stay_date,
+		    available_count,
+		    is_closed,
+		    min_stay
+		)
+		
+		SELECT
+		    SEQ_ROOM_STOCK.NEXTVAL,
+		    #{roomTypeId},
+		    TRUNC(SYSDATE) + (LEVEL - 1),
+		    (SELECT total_count
+		     FROM ROOM_TYPE
+		     WHERE room_type_id = #{roomTypeId}),
+		    'N',
+		    1
+		
+		FROM dual
+		CONNECT BY LEVEL &lt;= 365	
 	</insert>
 	
 	
@@ -123,7 +177,6 @@
 		UPDATE ROOM_IMAGE
 		SET IMAGE_URL = #{image_url}
 		WHERE ROOM_TYPE_ID = #{roomTypeId}
-		AND IS_MAIN = 'Y'
 	</update>
 	
 	<!-- 반려 후 재상신 -->

@@ -9,6 +9,7 @@ public interface HotelDAO {
 	// List<Map<String,Object>> selectHotelList();
 	List<Map<String, Object>> selectApprovedHotelList();
 	List<Map<String, Object>> selectPendingHotelList();
+	List<Map<String, Object>> selectDisabledHotelList();
 	
     // 호텔 상세페이지 이동
 	Map<String, Object> selectHotelDetail(Long hotelId);
@@ -30,6 +31,8 @@ public interface HotelDAO {
 	
 	// 지점관리자 호텔 조회
 	List<Map<String, Object>> selectHotelListByManager(Integer adminNo);
+	
+	
 
 	
 	

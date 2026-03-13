@@ -11,6 +11,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.spring.app.hk.reservation.mail.ReservationMailService;
 import com.spring.app.hk.reservation.model.ReservationDAO;
 import com.spring.app.hk.room.service.RoomStockService;
 import com.spring.app.jh.security.domain.CustomUserDetails;
@@ -24,6 +25,8 @@ public class ReservationService_imple implements ReservationService {
 
     private final ReservationDAO reservationDAO;
     private final RoomStockService roomStockService;
+    
+    private final ReservationMailService reservationMailService; // 추가 : 메일
 
     // 결제 성공 후 db 저장하기
     @Override
@@ -31,50 +34,71 @@ public class ReservationService_imple implements ReservationService {
 
         Map<String, Object> paraMap = new HashMap<>(map);
 
-        // 로그인 사용자 가져오기
+        // 로그인 사용자 정보 세팅
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-
-        int memberNo = userDetails.getMemberDto().getMemberNo();
-
-        paraMap.put("member_no", memberNo);
-        paraMap.put("total_price", 100);
+        paraMap.put("member_no", userDetails.getMemberDto().getMemberNo());
         
-        // ■ 날짜 파싱
+        // 2. [추가] 인원수(guest_count) 처리
+        // 프론트에서 넘어온 값이 없으면 기본값 1, 혹은 0으로 세팅하여 ORA-17004 방지
+        String guestCount = map.getOrDefault("guest_count", "1"); 
+        paraMap.put("guest_count", guestCount);
+
+        // 3. [추가] imp_uid 처리
+        // 결제 UID가 null이면 빈 문자열이라도 넣어 오라클 에러 방지
+        if (paraMap.get("imp_uid") == null) {
+            paraMap.put("imp_uid", ""); 
+        }
+
+        // ■ [수정 포인트 1] 가격 결정 로직
+        // 프로모션 예약은 'applied_price'를 쓰고, 일반 예약은 기존처럼 처리합니다.
+        if (map.containsKey("applied_price") && !map.get("applied_price").isEmpty()) {
+            paraMap.put("total_price", map.get("applied_price")); // 프로모션 최종가
+        } else {
+            // 기존에 100으로 고정하셨던 부분을 room_price 등 실제 값으로 변경 권장
+            paraMap.put("total_price", map.getOrDefault("room_price", "100")); 
+        }
+        
+        // ■ [수정 포인트 2] 날짜 파싱 및 취소 마감일
         int roomId = Integer.parseInt(map.get("room_type_id"));
         LocalDate checkIn = LocalDate.parse(map.get("check_in"));
         LocalDate checkOut = LocalDate.parse(map.get("check_out"));
 
-        // 1) 취소 마감일 계산 (체크인 하루 전 00:00 기준)
         LocalDateTime cancelDeadline = checkIn.atStartOfDay().minusDays(1);
         paraMap.put("cancel_deadline", cancelDeadline);
-
-        // 2) 환불금액 기본값
         paraMap.put("refund_amount", 0);
         
-        // 3) 재고 차감
+        // 재고 차감 (기존 로직 유지)
         roomStockService.decreaseStockByDateRange(roomId, checkIn, checkOut);
         
-        // 4) PAYMENT insert
+        // 4) PAYMENT insert (프로모션 시 넘어온 imp_uid 등이 paraMap에 포함됨)
         reservationDAO.insertPayment(paraMap);
 
-        System.out.println("생성된 payment_id = " + paraMap.get("payment_id"));
-
-        // 5) RESERVATION insert
+        // 5) RESERVATION insert (paraMap에 promotion_id가 있으면 MyBatis에서 처리)
         reservationDAO.insertReservation(paraMap);
         
-        // reservation_id는 selectKey 때문에 들어있음
         Long reservationId = (Long) paraMap.get("reservation_id");
 
-        System.out.println("예약 + 결제 저장 완료");
-       
-        // DB에서 만드는 것과 동일한 코드 생성
-        String reservationCode =
-                "R"
-                + LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"))
-                + "-"
-                + String.format("%04d", reservationId);
+        // 예약 코드 생성 (기존 포맷 유지)
+        String reservationCode = "R" + LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"))
+                               + "-" + String.format("%04d", reservationId);
 
+        // 메일 전송 (기존 로직 유지)
+        try {
+            reservationMailService.sendReservationMail(
+                    userDetails.getMemberDto().getEmail(),
+                    userDetails.getMemberDto().getName(),
+                    reservationCode,
+                    map.get("hotel_name"),
+                    map.get("room_name"),
+                    map.get("check_in"),
+                    map.get("check_out"),
+                    String.valueOf(paraMap.get("total_price"))
+            );
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
         return reservationCode;
     }
 

@@ -39,6 +39,10 @@ public class MemberDTO {
     private String memberType;
     private String lookupKey;
 
+    // 소셜 로그인
+    private String socialProvider;
+    private String providerUserId;
+
     // 주소
     private String postcode;
     private String address;

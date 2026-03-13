@@ -30,6 +30,9 @@ public class ReservationController {
             @RequestParam("room_type_id") int room_type_id,
             @RequestParam("check_in") String check_in,
             @RequestParam("check_out") String check_out,
+            @RequestParam("room_price") int room_price,
+            @RequestParam(value="currency", required=false) String currency,
+            @RequestParam(value="tax", required=false) Boolean tax,
             Authentication auth, 
             Model model) {
 
@@ -45,8 +48,8 @@ public class ReservationController {
         Integer memberNo = userDetails.getMemberDto().getMemberNo(); // 중요
         
         // 숙박일 계산
-        LocalDate inDate = LocalDate.parse(check_in);
-        LocalDate outDate = LocalDate.parse(check_out);
+        LocalDate inDate = LocalDate.parse(check_in.trim());
+        LocalDate outDate = LocalDate.parse(check_out.trim());
         long nights = ChronoUnit.DAYS.between(inDate, outDate);
         
         // 기본 객실 요금 계산 (1박 요금 * 숙박일)
@@ -69,19 +72,32 @@ public class ReservationController {
         model.addAttribute("room_name", roomInfo.get("ROOM_NAME"));
         model.addAttribute("max_capacity", maxCapacity);
         model.addAttribute("base_price", totalRoomPrice);
-
+        
+        model.addAttribute("room_price", room_price);   // 추가 (가격 합)
+        model.addAttribute("currency", currency);       // 추가 (환율, 세금)
+        model.addAttribute("tax", tax);
         	
         return "hk/reservation/form";
     }
     
     
     // 예약 저장용
+ // ReservationController.java 내 수정
+
     @PostMapping("/save")
-    public String saveReservation(@RequestParam Map<String, String> map) {
+    public String saveReservation(@RequestParam Map<String, String> map, Model model) {
+        
+        // 1. 넘어온 결제 정보 확인 (디버깅용)
+        System.out.println("결제 성공 UID: " + map.get("payment_imp_uid"));
+        System.out.println("최종 결제 금액: " + map.get("applied_price"));
+        System.out.println("프로모션 ID: " + map.get("promotion_id"));
 
-        reservationService.saveReservation(map);
+        // 2. 서비스 단에서 예약 정보 저장
+        // (이때 결제 테이블에도 insert하거나, 예약 테이블에 imp_uid를 같이 저장해야 합니다.)
+        String reservationCode = reservationService.saveReservation(map);
 
-        return "redirect:/reservation/success";
+        // 3. 성공 시 완료 페이지로 이동 (기존 complete 경로로 리다이렉트)
+        return "redirect:/reservation/complete?code=" + reservationCode;
     }
     
     

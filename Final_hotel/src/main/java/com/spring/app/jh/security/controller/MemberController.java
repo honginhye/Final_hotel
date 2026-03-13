@@ -327,16 +327,6 @@ public class MemberController {
     }
     
     
-    // 회원정보보기 URL
-    @PreAuthorize("hasRole('USER')") // 해당 권한이 있는 사람이 있는 사람만 허용
-    @GetMapping(value="memberOnly")
-    public String memberOnly(){
-       
-       return "security/member/memberOwnInfo";
-    // src/main/resources/templates/security/member/memberOwnInfo.html 파일 생성해줘야 함
-    }
-    
-    
     // 회원정보 수정 폼 페이지
     @PreAuthorize("hasRole('USER')")
     @GetMapping("member/profileEdit")

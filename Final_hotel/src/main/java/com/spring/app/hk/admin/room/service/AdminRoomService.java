@@ -13,6 +13,9 @@ public interface AdminRoomService {
 	// 지점 객실 목록 조회
 	List<RoomTypeDTO> getRoomListByManager(Integer adminNo);
 	
+	// 운영중 객실 수정
+	void modifyApprovedRoom(Map<String, String> map, MultipartFile roomImage);
+	
 	// 객실 등록 신청시 객실 + 이미지 저장
 	void saveRoom(Map<String, Object> paraMap);
 	
@@ -43,6 +46,8 @@ public interface AdminRoomService {
 	
 	// 객실 전체 승인 히스토리 조회용
 	List<Map<String,Object>> getApprovalHistoryList();
+
+	
 
 	
 

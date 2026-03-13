@@ -125,6 +125,7 @@
                 </div>
                 <p class="mt-2 small text-danger" style="font-size: 0.85rem;">* 예약금은 방문 시 전체 금액에서 차감됩니다.</p>
             </div>
+        </div>
 
             <button type="button" class="btn-pay" onclick="requestPay()">
                 결제 및 예약 확정하기
@@ -133,7 +134,16 @@
             <div class="text-center mt-4">
                 <a href="javascript:history.back()" class="text-secondary small" style="text-decoration: underline;">정보 수정하기</a>
             </div>
+            <p class="mt-2 small text-danger">* 예약금은 방문 시 전체 금액에서 차감됩니다.</p>
         </div>
-    </th:block>
+
+        <button type="button" class="btn-pay shadow" onclick="requestPay()">
+            결제 및 예약 확정하기
+        </button>
+        
+        <div class="text-center mt-4">
+            <a href="javascript:history.back()" class="text-secondary small" style="text-decoration: underline;">정보 수정하기</a>
+        </div>
+    </div>
 </body>
 </html>

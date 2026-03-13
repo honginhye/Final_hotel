@@ -2,12 +2,6 @@
 <html th:replace="~{js/layout/layout_main :: layout(~{::title}, ~{::link}, ~{::style}, ~{::script}, ~{::div.container})}" 
       lang="ko" 
       xmlns:th="http://www.thymeleaf.org"> 
-<!-- ::title 은   현재 페이지의 title   태그를 읽어다가 templates/layout/layout_main.html 파일의 th:fragment="layout(title, link, css, script, content)" 에 있는 첫번째 파라미터로 전달한다. -->
-<!-- ::link  는   현재 페이지의 link    태그를 읽어다가 templates/layout/layout_main.html 파일의 th:fragment="layout(title, link, css, script, content)" 에 있는 두번째 파라미터로 전달한다. -->
-<!-- ::style 은   현재 페이지의 style   태그를 읽어다가 templates/layout/layout_main.html 파일의 th:fragment="layout(title, link, css, script, content)" 에 있는 세번째 파라미터로 전달한다. -->
-<!-- ::script 는  현재 페이지의 script  태그를 읽어다가 templates/layout/layout_main.html 파일의 th:fragment="layout(title, link, css, script, content)" 에 있는 네번째 파라미터로 전달한다. -->
-<!-- ::div.container 은 현재 페이지의 div.container 태그를 읽어다가 templates/layout/layout_main.html 파일의 th:fragment="layout(title, link, css, script, content)" 에 있는 다섯번째 파라미터로 전달한다. --> 
-<!-- 타임리프는 백엔드 서버에서 HTML을 동적으로 렌더링하는 용도로 사용된다. -->
 
 <head>
 <meta charset="UTF-8">
@@ -15,34 +9,118 @@
 
 <link rel="stylesheet" href="">
 
-<style type="text/css"></style>
+<style>
+:root{
+  --bg:#ffffff;
+  --panel:#ffffff;
+  --line:#e7e7e7;
+  --text:#111111;
+  --muted:#6f6f6f;
+  --header-offset:165px;
+  --page-bottom:90px;
+  --radius:10px;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:'Noto Sans KR', sans-serif;
+  background:#fff;
+  color:var(--text);
+}
+.container{
+  min-height:calc(100vh - 40px);
+  display:flex;
+  align-items:flex-start;
+  justify-content:center;
+  padding:var(--header-offset) 16px var(--page-bottom);
+}
+.wrap{
+  width:520px;
+  max-width:100%;
+}
+.brandbar{
+  display:flex;
+  justify-content:center;
+  margin-bottom:18px;
+  font-size:.92rem;
+  letter-spacing:.24em;
+  color:#111;
+  font-weight:700;
+}
+.card{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:10px;
+  overflow:hidden;
+}
+.header{
+  padding:24px 22px 18px;
+  text-align:center;
+  border-bottom:1px solid var(--line);
+  background:#fafafa;
+}
+.header h1{
+  margin:0;
+  font-size:1.4rem;
+  font-weight:700;
+}
+.body{
+  padding:24px 22px;
+  text-align:center;
+}
+.result-message{
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:#fafafa;
+  padding:18px;
+  line-height:1.8;
+  color:#333;
+}
+.btnrow{
+  margin-top:18px;
+}
+.btn-main{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:13px 22px;
+  border-radius:999px;
+  background:#111;
+  color:#fff;
+  border:1px solid #111;
+  font-weight:700;
+  text-decoration:none;
+}
+.btn-main:hover{
+  color:#fff;
+  text-decoration:none;
+}
+</style>
 
-<!--/* 
-      자바스크립트 인라인 
-      th:inline="javascript" 은 스크립트 태그 내에서 Thymeleaf 문법([[...]])을 해석할 수 있게 해주는 설정이다.
-      JavaScript 안에서 Thymeleaf 값을 넣을 때는 th:inline="javascript" 와 /*[[뭐뭐뭐]]*/ 구문을 사용해야 한다. 
-*/-->
 <script th:inline="javascript">
  /*<![CDATA[*/
  /*]]>*/	
 </script>
 
 <body>
-	<div class="container text-center">
- <!--/* <div th:text="${message}"></div> */-->
-		<div th:utext="${message}"></div>
-		<!--/*
-		  th:text: 변수 안의 내용을 순수 텍스트로 처리한다. 예를 들어 내용이 <b>성공</b>이라면 브라우저 화면에 그대로 <b>성공</b>이라고 표시된다.
-          th:utext: 변수 안의 HTML 태그를 브라우저가 인식할 수 있는 코드로 변환하여 출력한다. <b>성공</b>이 실제 성공처럼 굵은 글씨로 표현된다.
-          
-          !! 주의사항 !!
-          th:utext는 외부 사용자가 입력한 내용을 그대로 출력할 경우 XSS(크로스 사이트 스크립팅) 공격에 취약할 수 있다.!! 
-          현재처럼 관리자가 직접 작성한 알림 메시지 등을 출력하는 용도로만 안전하게 사용해야 한다. 
-		*/-->
-		
-		<div class="mt-3">    
-		    <a th:href="@{/index}" class="btn btn-secondary">메인페이지로 이동</a>          
-		</div>  
-	</div>
+  <div class="container">
+    <div class="wrap">
+      <div class="brandbar">CIEL</div>
+
+      <section class="card">
+        <div class="header">
+          <h1>회원가입 결과</h1>
+        </div>
+
+        <div class="body">
+          <div class="result-message" th:utext="${message}"></div>
+
+          <div class="btnrow">
+            <a th:href="@{/index}" class="btn-main">메인페이지로 이동</a>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
 </body>
-</html> 
+</html>

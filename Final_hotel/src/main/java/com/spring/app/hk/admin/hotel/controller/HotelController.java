@@ -45,12 +45,15 @@ public class HotelController {
 
         List<Map<String,Object>> activeHotelList = hotelService.getApprovedHotelList();
         List<Map<String,Object>> pendingHotelList = hotelService.getPendingHotelList();
-
+        List<Map<String,Object>> disabledHotelList = hotelService.getDisabledHotelList(); // 추가 (비활성화 호텔)
+        
         model.addAttribute("activeHotelList", activeHotelList);
         model.addAttribute("pendingHotelList", pendingHotelList);
-
+        model.addAttribute("disabledHotelList", disabledHotelList); // 추가	
+        
         return "hk/admin/hotel/list";
     }
+    
     
     
     // 호텔 상세페이지 이동
@@ -169,18 +172,6 @@ public class HotelController {
 
         return Map.of("result", 1);
     }
-
-
-    
-  
-    
-    
-    
-    
-    
-    
-    
-    
     
     
     

@@ -3,11 +3,11 @@
       th:replace="~{js/layout/layout_main :: layout(~{::title}, ~{::link}, ~{::style}, ~{::script}, ~{::content})}">
 <head>
     <meta charset="UTF-8">
+    <meta name="_csrf" th:content="${_csrf.token}">
+    <meta name="_csrf_header" th:content="${_csrf.headerName}">
     <title>예약 완료 - 호텔 다이닝</title>
-    
-    <link th:fragment="link" rel="stylesheet" href="">
 
-    <style th:fragment="style">
+    <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;500&display=swap');
         
         #mycontent { background-color: #f8f9fa; padding-bottom: 100px; padding-top: 160px !important;}
@@ -51,12 +51,10 @@
         }
         .btn-list:hover { background: #fdfaf5; }
     </style>
-    
-    <script th:fragment="script"></script>
 </head>
 
 <body>
-    <div class="container success-container" th:fragment="content">
+    <div class="container success-container">
         
         <div class="text-center mb-4">
             <span class="gold-text">RESERVATION SUCCESS</span>

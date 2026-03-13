@@ -1,12 +1,15 @@
 <!DOCTYPE html>
 <html lang="ko" 
       xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       th:replace="~{js/layout/layout_main :: layout(~{::title}, ~{::link}, ~{::style}, ~{::script}, ~{::content})}">
 <head>
     <title th:if="${promo != null}">[[${promo.title}]] | CIEL HOTEL</title>
     <title th:unless="${promo != null}">Promotion | CIEL HOTEL</title>
     
-    <th:block th:fragment="link"></th:block>
+    <th:block th:fragment="link">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    </th:block>
 
     <th:block th:fragment="style">
         <style>
@@ -80,11 +83,18 @@
                 <h2 th:text="${promo.title}">패키지 제목</h2>
             </div>
             <div class="price-info">
-                <span class="original-price" th:text="${#numbers.formatInteger(promo.price, 3, 'COMMA')} + ' KRW'">정상가</span>
-                <span class="final-price">
-                    특별가 <b th:text="${#numbers.formatInteger(finalPrice, 3, 'COMMA')}">0</b> KRW ~
-                </span>
-            </div>
+			    <span class="original-price"
+			          th:if="${promo.discount_rate > 0 and promo.price > 0}"
+			          th:text="${#numbers.formatInteger(promo.price, 3, 'COMMA')} + ' KRW'">
+			    </span>
+			    <span class="final-price" th:if="${promo.price > 0}">
+			        특별가 
+			        <b th:text="${#numbers.formatInteger(finalPrice, 3, 'COMMA')}">0</b> KRW
+			    </span>
+			    <span class="final-price" th:if="${promo.price == 0}">
+			        최대 <b th:text="${promo.discount_rate}">0</b>% 할인
+			    </span>
+			</div>
         </div>
     
         <div class="main-summary">
@@ -107,75 +117,130 @@
         </div>
 
         <div class="benefit-section">
-            <div class="card-inner">
-                <div class="card-inner-title" th:text="${promo.title}">패키지 상세 설명</div>
-                <div class="benefit-grid">
-                    <div class="benefit-label">특별 혜택</div>
-                    <div class="benefit-content" th:utext="${promo.benefits}">
-                        상세 혜택 내용이 이곳에 출력됩니다.
-                    </div>
-                </div>
-                <div class="benefit-grid" style="margin-top:30px; border-top:1px dashed #ddd; padding-top:30px;">
-                    <div class="benefit-label">공통 안내</div>
-                    <div class="benefit-content" style="font-size:0.9rem; color:#999;">
-                        - 본 패키지는 선착순 한정 판매 상품입니다.<br>
-                        - 체크인 3일 전까지 취소 시 위약금이 발생하지 않습니다.<br>
-                        - 타 프로모션 및 할인 혜택과 중복 적용되지 않습니다.
-                    </div>
-                </div>
-            </div>
+		    <div class="card-inner">
+		        <div class="card-inner-title" th:text="${promo.title}">패키지 상세 설명</div>
+		        
+		        <div class="benefit-grid">
+		            <div class="benefit-label">특별 혜택</div>
+		            <div class="benefit-content" th:utext="${promo.benefits}">
+		                상세 혜택 내용이 이곳에 출력됩니다.
+		            </div>
+		        </div>
+		
+		        <div class="benefit-grid" style="margin-top:40px; padding-top:20px; border-top:1px solid #f0f0f0;">
+		            <div class="benefit-label">적용 대상</div>
+		            <div class="benefit-content">
+		                <div style="display: flex; gap: 25px; flex-wrap: wrap;">
+		                    <div style="display: flex; align-items: center; gap: 8px;">
+							    <i class="bi bi-door-open" style="color: #d4af37;"></i>
+							    <span style="font-weight: 600; color: #333;">객실 :</span>
+							    <span th:text="${(promo.target_room_type != null and promo.target_room_type != '') ? promo.target_room_type : '모든 객실'}"></span>
+							</div>
+							
+							<div style="display: flex; align-items: center; gap: 8px;">
+							    <i class="bi bi-briefcase" style="color: #d4af37;"></i>
+							    <span style="font-weight: 600; color: #333;">침대 :</span>
+							    <span th:text="${(promo.target_bed_type != null and promo.target_bed_type != '') ? promo.target_bed_type : '타입 무관'}"></span>
+							</div>
+							
+							<div style="display: flex; align-items: center; gap: 8px;">
+							    <i class="bi bi-image" style="color: #d4af37;"></i>
+							    <span style="font-weight: 600; color: #333;">전망 :</span>
+							    <span th:text="${(promo.target_view_type != null and promo.target_view_type != '') ? promo.target_view_type : '뷰 무관'}"></span>
+							</div>
+		                </div>
+		                <p style="font-size: 0.85rem; color: #999; margin-top: 10px;">* 해당 조건 충족 시 프로모션 혜택이 적용됩니다.</p>
+		            </div>
+		        </div>
+		
+		        <div class="benefit-grid" style="margin-top:30px; border-top:1px dashed #ddd; padding-top:30px;">
+		            <div class="benefit-label">공통 안내</div>
+		            <div class="benefit-content" style="font-size:0.9rem; color:#999;">
+		                - 본 패키지는 선착순 한정 판매 상품입니다.<br>
+		                - 체크인 3일 전까지 취소 시 위약금이 발생하지 않습니다.<br>
+		                - 타 프로모션 및 할인 혜택과 중복 적용되지 않습니다.
+		            </div>
+		        </div>
+		    </div>
 
             <div class="btn-area">
-			    <div style="display: flex; justify-content: center; gap: 15px; max-width: 600px; margin: 0 auto;">
-			        <a th:href="@{/reservation/step1(promoId=${promo.promotion_id})}" 
-			           class="btn-reserve" style="flex: 2; margin-top: 0;">
-			            프로모션 예약
-			        </a>
-			        
-			        <button type="button" 
-			                th:onclick="goDelete([[${promo.promotion_id}]], [[${promo.fk_hotel_id}]])"
-			                style="flex: 1; padding: 18px 0; background: #fff; border: 1px solid #e74c3c; color: #e74c3c; font-weight: 700; cursor: pointer; transition: 0.3s;">
-			            삭제하기
-			        </button>
-			    </div>
-			    
-			    <a th:href="@{/promotion/list(hotelId=${promo.fk_hotel_id})}" 
-			       style="display:block; margin-top:25px; color:#888; text-decoration:none; font-size: 0.95rem;">
-			        ← 목록으로 돌아가기
-			    </a>
-			</div>
+		    <div style="display: flex; justify-content: center; gap: 15px; max-width: 850px; margin: 0 auto;">
+		        
+		        <a th:href="@{/promotion/reserve(promoId=${promo.promotion_id})}" 
+		           class="btn-reserve" 
+		           style="flex: 1.5; display: flex; align-items: center; justify-content: center; height: 60px;">
+		            이 패키지로 예약하기
+		        </a>
+		        
+		        <div th:if="${promo != null}" sec:authorize="hasAnyRole('ADMIN_BRANCH', 'ROLE_ADMIN_BRANCH', 'ROLE_ADMIN', 'ADMIN')" 
+		             style="flex: 1; display: flex; gap: 10px;">
+		            
+		            <button type="button" 
+		                    th:onclick="|location.href='@{/promotion/edit(promoId=${promo.promotion_id})}'|"
+		                    style="flex: 1; height: 60px; background: #2e7d32; border: 1px solid #2e7d32; color: #fff; font-weight: 700; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 8px;"
+		                    onmouseover="this.style.background='#1b5e20'; this.style.borderColor='#1b5e20';"
+		                    onmouseout="this.style.background='#2e7d32'; this.style.borderColor='#2e7d32';">
+		                <i class="bi bi-pencil-square"></i> 수정
+		            </button>
+		
+		            <button type="button" 
+		                    th:onclick="goDelete([[${promo.promotion_id}]], [[${promo.fk_hotel_id}]])"
+		                    style="flex: 1; height: 60px; background: #fff; border: 1px solid #e74c3c; color: #e74c3c; font-weight: 700; cursor: pointer; transition: all 0.3s ease;"
+		                    onmouseover="this.style.background='#e74c3c'; this.style.color='#fff';"
+		                    onmouseout="this.style.background='#fff'; this.style.color='#e74c3c';">
+		                삭제
+		            </button>
+		        </div>
+		    </div>
+		    
+		    <a th:href="@{/promotion/list(hotelId=${promo.fk_hotel_id})}" 
+		       style="display:block; margin-top:35px; color:#888; text-decoration:none; font-size: 0.95rem; transition: 0.3s;"
+		       onmouseover="this.style.color='#1a1a1a';"
+		       onmouseout="this.style.color='#888';">
+		        ← 다른 프로모션 보기
+		    </a>
+		</div>
 
     <div class="footer-pusher"></div>
 </th:block>
 
 <th:block th:fragment="script">
     <script th:inline="javascript">
+        /**
+         * 프로모션 삭제 함수
+         * Spring Security CSRF 토큰을 동적으로 추가하여 인증 문제를 해결합니다.
+         */
         function goDelete(promoId, hotelId) {
-            // 1. 사용자 재확인
             if(confirm("정말로 이 프로모션을 삭제하시겠습니까?\n삭제된 데이터는 복구할 수 없습니다.")) {
                 
-                // 2. 가상의 폼(Form) 생성
+                // 1. 가상의 폼(Form) 생성
                 const form = document.createElement('form');
                 form.method = 'POST';
-                // 컨트롤러에서 설정한 @PostMapping("/delete") 경로와 일치해야 합니다.
                 form.action = /*[[@{/promotion/delete}]]*/ '/promotion/delete';
                 
-                // 3. 파라미터 추가 (프로모션 ID)
+                // 2. 파라미터 추가 (프로모션 ID)
                 const idInput = document.createElement('input');
                 idInput.type = 'hidden';
                 idInput.name = 'promotion_id';
                 idInput.value = promoId;
+                form.appendChild(idInput);
                 
-                // 4. 파라미터 추가 (삭제 후 돌아갈 호텔 ID)
+                // 3. 파라미터 추가 (삭제 후 돌아갈 호텔 ID)
                 const hotelInput = document.createElement('input');
                 hotelInput.type = 'hidden';
                 hotelInput.name = 'hotelId';
                 hotelInput.value = hotelId;
-                form.appendChild(idInput);
                 form.appendChild(hotelInput);
+
+                // ★ 4. CSRF 토큰 추가 (인증 문제 해결의 핵심) ★
+                const csrfInput = document.createElement('input');
+                csrfInput.type = 'hidden';
+                csrfInput.name = /*[[${_csrf.parameterName}]]*/ '_csrf';
+                csrfInput.value = /*[[${_csrf.token}]]*/ '';
+                form.appendChild(csrfInput);
+
+                // 5. 문서에 폼 추가 후 전송
                 document.body.appendChild(form);
-                
-                // 5. 전송
                 form.submit();
             }
         }

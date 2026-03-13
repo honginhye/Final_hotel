@@ -1,6 +1,5 @@
 package com.spring.app.hk.admin.hotel.model;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -26,6 +25,13 @@ public class HotelDAO_imple implements HotelDAO {
     public List<Map<String,Object>> selectPendingHotelList(){
         return sqlsession.selectList("hotel.selectPendingHotelList");
     }
+   
+    // 비활성화 호텔 리스트
+    @Override
+	public List<Map<String, Object>> selectDisabledHotelList() {
+    	return sqlsession.selectList("hotel.selectDisabledHotelList");
+	}
+
 	
     // 호텔 상세페이지 이동
     @Override
@@ -65,6 +71,7 @@ public class HotelDAO_imple implements HotelDAO {
 		return sqlsession.selectList("hotel.selectHotelListByManager", adminNo);
 	}
 
+	
 	
 	
 	

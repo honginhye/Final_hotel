@@ -101,14 +101,17 @@ onclick="filterHotel('ALL')">전체</button>
 <button class="btn btn-outline-success btn-sm"
 onclick="filterHotel('APPROVED')">운영중</button>
 
-<button class="btn btn-outline-warning btn-sm"
+<button class="btn btn-outline-dark btn-sm"
+onclick="filterHotel('INACTIVE')">비활성</button>
+
+<!-- <button class="btn btn-outline-warning btn-sm"
 onclick="filterHotel('PENDING')">승인대기</button>
 
 <button class="btn btn-outline-secondary btn-sm"
 onclick="filterHotel('NEED_REVISION')">수정요청</button>
 
 <button class="btn btn-outline-danger btn-sm"
-onclick="filterHotel('REJECTED')">반려</button>
+onclick="filterHotel('REJECTED')">반려</button> -->
 
 </div>
 
@@ -125,7 +128,7 @@ onclick="filterHotel('REJECTED')">반려</button>
 <!-- 운영중 호텔 반복 -->
 <div class="col-md-4 hotel-card-item"
      th:each="hotel : ${activeHotelList}"
-     th:attr="data-status=${hotel.APPROVE_STATUS}">
+     data-status="APPROVED">
 
 <div class="hotel-card">
 
@@ -164,6 +167,50 @@ onclick="filterHotel('REJECTED')">반려</button>
 </div>
 
 
+
+<!-- ================= 비활성 호텔 ================= -->
+
+<h4 class="mt-5 mb-3">
+비활성 호텔
+</h4>
+
+<div class="row">
+
+<div class="col-md-4 hotel-card-item"
+     th:each="hotel : ${disabledHotelList}"
+     data-status="INACTIVE">
+
+<div class="hotel-card">
+
+<img class="hotel-img"
+     th:src="@{${hotel.IMAGE_URL}}">
+
+<div class="hotel-body">
+
+<div class="hotel-name"
+     th:text="${hotel.HOTEL_NAME}">
+</div>
+
+<span class="badge bg-dark">
+비활성
+</span>
+
+<div class="mt-3">
+
+<!-- <a class="btn btn-sm btn-primary"
+   th:href="@{/admin/hotel/detail(hotel_id=${hotel.HOTEL_ID})}">
+상세보기
+</a> -->
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
 
 <!-- ================= 승인 대기 ================= -->
 <!-- 지점 1개 = 호텔 1개로 변경됐기 때문에 호텔 추가 및 승인반려 개념이 안맞아서 삭제함 -->

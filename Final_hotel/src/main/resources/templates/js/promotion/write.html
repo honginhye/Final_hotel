@@ -79,21 +79,19 @@
                 </div>
 
                 <div class="row">
-			        <div class="col-md-4">
-			            <div class="form-group mb-4">
-			                <label>판매가</label>
-			                <input type="text" name="price" id="price" class="form-control" 
+                <!-- 나중에 패키지 프로모션 만들때 사용할 예정 -->
+                
+                <input type="hidden" name="price" id="price" class="form-control" 
 			                       placeholder="숫자만 입력" oninput="inputNumberFormat(this)">
-			            </div>
-			        </div>
-			        <div class="col-md-4">
+                
+			        <div class="col-md-6">
 			            <div class="form-group mb-4">
 			                <label>할인율</label>
 			                <input type="number" name="discount_rate" id="discount_rate" class="form-control" 
 			                       min="0" max="100" placeholder="0 ~ 100" oninput="toggleDiscountFields('rate')">
 			            </div>
 			        </div>
-			        <div class="col-md-4">
+			        <div class="col-md-6">
 			            <div class="form-group mb-4">
 			                <label>할인금액</label>
 			                <input type="text" name="discount_amount" id="discount_amount" class="form-control" 
@@ -127,6 +125,45 @@
                     <label>주요 혜택</label>
                     <textarea name="benefits" class="form-control" rows="3" placeholder="예: 조식 2인 포함, 레이트 체크아웃 등"></textarea>
                 </div>
+                
+                <span class="section-label mt-4">3. 프로모션 적용 대상 설정</span>
+				<div class="row">
+				    <div class="col-md-4">
+				        <div class="form-group mb-4">
+				            <label>적용 객실 등급</label>
+				            <select name="target_room_type" class="form-control">
+				                <option value="">객실등급 전체</option>
+				                <option value="DELUXE">DELUXE</option>
+				                <option value="PREMIER">PREMIER</option>
+				                <option value="SUITE">SUITE</option>
+				                <option value="STANDARD">STANDARD</option>
+				            </select>
+				        </div>
+				    </div>
+				    
+				    <div class="col-md-4">
+				        <div class="form-group mb-4">
+				            <label>적용 침대 타입</label>
+				            <select name="target_bed_type" class="form-control">
+				                <option value="">침대타입 전체</option>
+				                <option value="DOUBLE">DOUBLE</option>
+				                <option value="TWIN">TWIN</option>
+				                <option value="KING">KING</option>
+				            </select>
+				        </div>
+				    </div>
+				
+				    <div class="col-md-4">
+				        <div class="form-group mb-4">
+				            <label>적용 전망</label>
+				            <select name="target_view_type" class="form-control">
+				                <option value="">전망 전체</option>
+				                <option value="CITY">CITY</option>
+				                <option value="RIVER">RIVER</option>
+				            </select>
+				        </div>
+				    </div>
+				</div>
 
                 <div class="row">
                     <div class="col-md-6">

@@ -8,37 +8,156 @@
   <link rel="stylesheet" href="">
 
   <style>
-    :root{--bg:#F7F2EC;--card:#fff;--line:#E3D6C9;--text:#2C2420;--muted:#7A6A5C;--brand:#7B5A46;--danger:#B42318;}
-    body{background:var(--bg);color:var(--text);}
-    .container{max-width:1100px;margin:0 auto;padding:90px 18px 26px;}
+    :root{
+      --bg:#ffffff;
+      --card:#ffffff;
+      --line:#e7e7e7;
+      --text:#111111;
+      --muted:#6f6f6f;
+      --brand:#111111;
+      --danger:#c94b4b;
+      --warn-bg:#fff8ef;
+      --warn-text:#b15500;
+      --header-offset:165px;
+      --page-bottom:90px;
+      --radius:10px;
+      --max:1100px;
+      --shadow:0 10px 24px rgba(0,0,0,.04);
+    }
 
-    .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:14px;}
-    .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
-    @media (max-width:980px){.grid{grid-template-columns:1fr;}}
+    *{box-sizing:border-box;}
 
-    table{width:100%;border-collapse:separate;border-spacing:0;border:1px solid var(--line);border-radius:14px;overflow:hidden;}
-    th,td{padding:10px 10px;border-bottom:1px solid var(--line);font-size:13px;vertical-align:middle;}
-    th{background:#FBF7F3;text-align:left;}
-    tr:last-child td{border-bottom:none;}
+    body{
+      margin:0;
+      background:var(--bg);
+      color:var(--text);
+      font-family:'Noto Sans KR', sans-serif;
+    }
 
-    .pill{display:inline-flex;gap:8px;align-items:center;padding:7px 11px;border-radius:999px;border:1px solid var(--line);background:#FBF7F3;font-size:13px;}
-    .muted{color:var(--muted);font-size:13px;}
+    .container{
+      max-width:var(--max);
+      margin:0 auto;
+      padding:var(--header-offset) 18px var(--page-bottom);
+    }
 
-    .btn{border:1px solid var(--line);background:#fff;border-radius:12px;padding:10px 14px;font-weight:900;cursor:pointer;}
-    .btn-primary{background:var(--brand);color:#fff;border-color:transparent;}
-    .btn:disabled{opacity:.55;cursor:not-allowed;}
+    .card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      padding:18px;
+      margin-bottom:16px;
+    }
 
-    .qty{width:90px;border:1px solid var(--line);border-radius:12px;padding:8px 10px;}
+    .grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:16px;
+    }
+
+    @media (max-width:980px){
+      .grid{
+        grid-template-columns:1fr;
+      }
+    }
+
+    table{
+      width:100%;
+      border-collapse:separate;
+      border-spacing:0;
+      border:1px solid var(--line);
+      border-radius:8px;
+      overflow:hidden;
+      background:#fff;
+    }
+
+    th,td{
+      padding:12px 10px;
+      border-bottom:1px solid var(--line);
+      font-size:13px;
+      vertical-align:middle;
+    }
+
+    th{
+      background:#fafafa;
+      text-align:left;
+      color:#333;
+      font-weight:700;
+    }
+
+    tr:last-child td{
+      border-bottom:none;
+    }
+
+    .pill{
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+      padding:7px 11px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:#fff;
+      font-size:13px;
+      font-weight:500;
+    }
+
+    .muted{
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.7;
+    }
+
+    .btn{
+      border:1px solid var(--line);
+      background:#fff;
+      border-radius:999px;
+      padding:11px 16px;
+      font-weight:700;
+      cursor:pointer;
+      color:#111;
+      transition:.18s ease;
+    }
+
+    .btn:hover{
+      transform:translateY(-1px);
+    }
+
+    .btn-primary{
+      background:#111;
+      color:#fff;
+      border-color:#111;
+    }
+
+    .btn:disabled{
+      opacity:.55;
+      cursor:not-allowed;
+    }
+
+    .qty{
+      width:90px;
+      border:1px solid var(--line);
+      border-radius:8px;
+      padding:9px 10px;
+      background:#fff;
+      color:#111;
+      font-family:inherit;
+    }
+
+    .qty:focus{
+      outline:none;
+      border-color:#111;
+      box-shadow:0 0 0 4px rgba(17,17,17,.05);
+    }
 
     .warn{
       display:none;
       margin-top:10px;
-      padding:10px 12px;
-      border-radius:14px;
-      border:1px solid var(--line);
-      background:#FFF4E6;
-      color:#B15500;
+      padding:11px 12px;
+      border-radius:8px;
+      border:1px solid #f1d7b8;
+      background:var(--warn-bg);
+      color:var(--warn-text);
       font-size:13px;
+      line-height:1.6;
     }
 
     .footerRow{
@@ -46,6 +165,13 @@
       justify-content:flex-end;
       gap:10px;
       margin-top:14px;
+    }
+
+    .sectionTitle{
+      font-size:18px;
+      font-weight:700;
+      margin-bottom:2px;
+      color:#111;
     }
   </style>
 
@@ -134,11 +260,10 @@
 <body>
 <div class="container">
 
-  <!-- 상단 요약 -->
   <div class="card">
     <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center;">
       <div>
-        <div style="font-size:18px;font-weight:900;">셔틀 예약</div>
+        <div class="sectionTitle">셔틀 예약</div>
         <div class="muted">
           예약번호: <b th:text="${page.reservation.reservationId}"></b> /
           호텔: <b th:text="${page.reservation.hotelName}"></b>
@@ -149,12 +274,11 @@
         <b th:text="${page.reservation.guestCount}"></b>
       </div>
     </div>
-    <div class="muted" style="margin-top:8px;">
-      안내: 같은 방향(호텔행/행선지행) 합계는 최대 티켓을 넘을 수 없습니다. / 시간 변경은 “입력 수정 후 예약 확정”으로 반영됩니다.
+    <div class="muted" style="margin-top:10px;">
+      안내: 같은 방향(호텔행/행선지행) 합계는 최대 티켓 수를 넘을 수 없습니다. / 시간 변경은 “입력 수정 후 예약 확정”으로 반영됩니다.
     </div>
   </div>
 
-  <!-- 확정 버튼 1개: TO/FROM을 한 번에 전송 -->
   <form th:action="@{/shuttle/confirm}" method="post">
     <input type="hidden" name="reservationId" th:value="${page.reservation.reservationId}">
     <input type="hidden" id="maxTicket" th:value="${page.reservation.guestCount}">
@@ -162,9 +286,8 @@
 
     <div class="grid">
 
-      <!-- TO_HOTEL -->
       <div class="card">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;gap:10px;flex-wrap:wrap;">
           <b>호텔행 (체크인)</b>
           <span class="pill">
             탑승일: <b th:text="${#dates.format(page.toRideDate,'yyyy-MM-dd')}"></b>
@@ -211,9 +334,8 @@
         </table>
       </div>
 
-      <!-- FROM_HOTEL -->
       <div class="card">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;gap:10px;flex-wrap:wrap;">
           <b>행선지행 (체크아웃)</b>
           <span class="pill">
             탑승일: <b th:text="${#dates.format(page.fromRideDate,'yyyy-MM-dd')}"></b>

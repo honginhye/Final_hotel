@@ -22,6 +22,13 @@ public class AdminRoomDAO_imple implements AdminRoomDAO {
         return sqlsession.selectList("adminRoom.getRoomListByManager", adminNo);
     }
     
+    // 운영중 객실 수정
+    @Override
+	public void modifyApprovedRoom(Map<String, String> map) {
+    	sqlsession.update("adminRoom.modifyApprovedRoom", map);	
+	}
+
+    
     // 객실 등록 신청시
     // 1. 객실 등록
     @Override
@@ -37,6 +44,14 @@ public class AdminRoomDAO_imple implements AdminRoomDAO {
 
     }
     
+    // 3. 승인시 room stock 등록
+   	@Override
+   	public void insertRoomStock365(int roomTypeId) {
+   		sqlsession.insert("adminRoom.insertRoomStock365", roomTypeId);
+   		
+   	}
+    
+    // 반려후 재상신시
    	// 1. 객실 정보 수정
    	@Override
    	public void updateRoom(Map<String, String> map) {
@@ -49,6 +64,7 @@ public class AdminRoomDAO_imple implements AdminRoomDAO {
    	public void updateRoomImage(Map<String, Object> imageMap) {
    	    sqlsession.update("adminRoom.updateRoomImage", imageMap);
    	}
+   	
    	
    	// 반려 후 재상신
 	@Override
@@ -125,6 +141,9 @@ public class AdminRoomDAO_imple implements AdminRoomDAO {
 	public List<Map<String, Object>> getBranchApprovalHistoryList(Integer adminNo) {
 		return sqlsession.selectList("adminRoom.getBranchApprovalHistoryList", adminNo);
 	}
+
+	
+	
 
 	
 

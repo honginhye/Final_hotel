@@ -2,6 +2,7 @@ package com.spring.app.jh.ops.user.controller;
 
 import java.util.Enumeration;
 
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -9,6 +10,8 @@ import org.springframework.web.bind.annotation.*;
 import com.spring.app.jh.ops.user.domain.ShuttleConfirmPageDTO;
 import com.spring.app.jh.ops.user.domain.ShuttleReservePageDTO;
 import com.spring.app.jh.ops.user.service.ShuttleOpsService;
+import com.spring.app.jh.security.auth.domain.JwtPrincipalDTO;
+import com.spring.app.jh.security.domain.CustomUserDetails;
 import com.spring.app.jh.security.domain.Session_GuestDTO;
 import com.spring.app.jh.security.domain.Session_MemberDTO;
 
@@ -75,11 +78,31 @@ public class ShuttleOpsController {
     }
 
     private Integer getSessionMemberNo(HttpSession session) {
-        Session_MemberDTO m = (Session_MemberDTO) session.getAttribute("sessionMemberDTO");
-        if (m != null) return m.getMemberNo();
 
-        Session_GuestDTO g = (Session_GuestDTO) session.getAttribute("guestSession");
-        if (g != null) return g.getMemberNo();
+        if (session == null) return null;
+
+        Object obj = session.getAttribute("sessionMemberDTO");
+        if (obj instanceof Session_MemberDTO dto) {
+            return dto.getMemberNo();
+        }
+
+        SecurityContext context =
+                (SecurityContext)
+                        session.getAttribute("SPRING_SECURITY_CONTEXT");
+
+        if (context != null && context.getAuthentication() != null) {
+            Object principal = context.getAuthentication().getPrincipal();
+
+            if (principal instanceof JwtPrincipalDTO jwtPrincipal) {
+                if ("MEMBER".equals(jwtPrincipal.getPrincipalType())) {
+                    return jwtPrincipal.getPrincipalNo().intValue();
+                }
+            }
+
+            if (principal instanceof CustomUserDetails cud) {
+                return Integer.valueOf(cud.getMemberDto().getMemberNo());
+            }
+        }
 
         return null;
     }
