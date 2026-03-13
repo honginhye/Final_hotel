@@ -2,6 +2,7 @@ package com.spring.app.hk.reservation.controller;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.security.core.Authentication;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.spring.app.hk.reservation.service.ReservationService;
 import com.spring.app.jh.security.domain.CustomUserDetails;
@@ -82,7 +84,7 @@ public class ReservationController {
     
     
     // 예약 저장용
- // ReservationController.java 내 수정
+    // ReservationController.java 내 수정
 
     @PostMapping("/save")
     public String saveReservation(@RequestParam Map<String, String> map, Model model) {
@@ -117,5 +119,57 @@ public class ReservationController {
 
         return "hk/reservation/complete";
     }
+    
+	 // =======================================================
+	 // 마이페이지 : 로그인 회원의 예약 목록 조회
+	 // =======================================================
+	 @GetMapping("/mypage")
+	 public String myReservationList(Authentication auth, Model model) {
+	
+	     // 로그인 사용자 정보 가져오기
+	     CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();
+	     int memberNo = userDetails.getMemberDto().getMemberNo();
+	
+	     // 예약 목록 조회
+	     List<Map<String,Object>> reservationList =
+	             reservationService.selectMyReservationList(memberNo);
+	
+	     // 화면에 전달
+	     model.addAttribute("reservationList", reservationList);
+	
+	     return "hk/reservation/reservationList";
+	 }
+	 
+	// ======================================
+	// 예약 취소
+	// ======================================
+	@PostMapping("/cancel")
+	@ResponseBody
+	public String cancelReservation(@RequestParam("reservation_id") long reservationId){
+
+	    int result = reservationService.cancelReservation(reservationId);
+
+	    if(result == 1){
+	        return "success";
+	    }
+
+	    return "fail";
+	}
+	
+	
+	// 예약 취소 내역 조회하기
+	@GetMapping("/mypage/cancel")
+	@ResponseBody
+	public List<Map<String,Object>> myCancelReservationList(Authentication auth){
+
+	    // 로그인 사용자 정보
+	    CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();
+	    int memberNo = userDetails.getMemberDto().getMemberNo();
+
+	    // 취소 내역 조회
+	    return reservationService.selectMyCancelReservationList(memberNo);
+
+	}
+	    
     
 }

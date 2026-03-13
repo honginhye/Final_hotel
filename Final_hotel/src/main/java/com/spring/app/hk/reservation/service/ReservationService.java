@@ -1,5 +1,6 @@
 package com.spring.app.hk.reservation.service;
 
+import java.util.List;
 import java.util.Map;
 
 public interface ReservationService {
@@ -12,5 +13,14 @@ public interface ReservationService {
 
 	// 예약 페이지 내 객실 기본 정보 조회
 	Map<String, Object> getRoomInfo(int room_type_id);
+	
+	// 마이페이지 예약 목록 조회
+	List<Map<String, Object>> selectMyReservationList(int memberNo);
+	
+	// 예약 취소
+	int cancelReservation(long reservationId);
+
+	// 예약 취소 내역 조회
+	List<Map<String, Object>> selectMyCancelReservationList(int memberNo);
 
 }

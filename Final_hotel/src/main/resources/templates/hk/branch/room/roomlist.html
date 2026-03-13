@@ -97,14 +97,29 @@ th {
 					<button class="btn btn-sm btn-primary" data-bs-toggle="modal"
 						data-bs-target="#editModal"
 						th:attr="data-id=${room.room_type_id},
-	         data-name=${room.room_name},
-	         data-grade=${room.room_grade},
-	         data-bed=${room.bed_type},
-	         data-view=${room.view_type},
-	         data-price=${room.base_price},
-	         data-count=${room.total_count},
-	         data-image=${room.image_url}">
+						         data-name=${room.room_name},
+						         data-grade=${room.room_grade},
+						         data-bed=${room.bed_type},
+						         data-view=${room.view_type},
+						         data-price=${room.base_price},
+						         data-count=${room.total_count},
+						         data-image=${room.image_url}">
 						수정</button>
+						
+					<form th:action="@{/admin/room/deactivate}"
+			          method="post"
+			          style="display:inline"
+			          onsubmit="return confirm('객실을 비활성화 하시겠습니까?');">
+			
+			        <input type="hidden"
+			               name="roomTypeId"
+			               th:value="${room.room_type_id}">
+			
+			        <button type="submit"
+			                class="btn btn-sm btn-danger">
+			            비활성화
+			        </button>
+				    </form>
 				</td>
 
 			</tr>
@@ -160,7 +175,6 @@ th {
 	</table>
 
 
-
 	<h3 style="margin-top: 40px;">반려된 객실</h3>
 
 	<table>
@@ -207,15 +221,15 @@ th {
 					<button class="btn btn-sm btn-primary" data-bs-toggle="modal"
 						data-bs-target="#editModal"
 						th:attr="data-id=${room.room_type_id},
-         data-name=${room.room_name},
-         data-grade=${room.room_grade},
-         data-bed=${room.bed_type},
-         data-view=${room.view_type},
-         data-price=${room.base_price},
-         data-count=${room.total_count},
-         data-image=${room.image_url}">
+						         data-name=${room.room_name},
+						         data-grade=${room.room_grade},
+						         data-bed=${room.bed_type},
+						         data-view=${room.view_type},
+						         data-price=${room.base_price},
+						         data-count=${room.total_count},
+						         data-image=${room.image_url}">
 						수정</button>
-
+			
 					<form th:action="@{/admin/room/resubmit}" method="post"
 						style="display: inline"
 						onsubmit="return confirm('정말 재상신 하시겠습니까?');">
@@ -223,15 +237,13 @@ th {
 						<input type="hidden" name="roomTypeId"
 							th:value="${room.room_type_id}">
 
-						<button type="submit">재상신</button>
+						<button type="submit" class="btn btn-sm btn-warning">재상신</button>
 
 					</form>
 
 				</td>
 
 			</tr>
-
-
 
 		</tbody>
 	</table>
@@ -274,7 +286,6 @@ th {
 			</tr>
 
 		</tbody>
-
 	</table>
 
 
@@ -361,6 +372,76 @@ th {
 		</div>
 
 	</div>
+	
+	<h3 style="margin-top: 40px;">비활성 객실</h3>
+
+	<table>
+	
+	<thead>
+	<tr>
+	<th>호텔</th>
+	<th>사진</th>
+	<th>객실명</th>
+	<th>등급</th>
+	<th>침대</th>
+	<th>뷰</th>
+	<th>최대인원</th>
+	<th>재고</th>
+	<th>가격</th>
+	<th>상태</th>
+	<th>관리</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	<tr th:each="room : ${inactiveList}">
+	
+	<td th:text="${room.hotel_name}"></td>
+	
+	<td>
+	<img th:src="@{${room.image_url}}"
+	style="width:150px;height:100px;object-fit:cover;border-radius:4px;">
+	</td>
+	
+	<td th:text="${room.room_name}"></td>
+	<td th:text="${room.room_grade}"></td>
+	<td th:text="${room.bed_type}"></td>
+	<td th:text="${room.view_type}"></td>
+	<td th:text="${room.max_capacity}"></td>
+	<td th:text="${room.total_count}"></td>
+	<td th:text="${room.base_price}"></td>
+	
+	<td style="color:gray;">비활성</td>
+	
+	<td>
+
+	<form th:action="@{/admin/room/restore}"
+	      method="post"
+	      style="display:inline"
+	      onsubmit="return confirm('객실을 복구하시겠습니까?');">
+	
+	<input type="hidden"
+	       name="roomTypeId"
+	       th:value="${room.room_type_id}">
+	
+	<button type="submit"
+	        class="btn btn-success btn-sm">
+	복구
+	</button>
+	
+	</form>
+	
+	</td>
+	
+	</tr>
+	
+	</tbody>
+	
+	</table>
+	
+	
+	
 
 	<script>
 		//================================

@@ -164,8 +164,27 @@ public class AdminRoomService_imple implements AdminRoomService {
 	}
 
     
+	// 객실 비활성화
+	@Override
+	public void deactivateRoom(int roomTypeId) {
+		adminRoomDAO.deactivateRoom(roomTypeId);		
+	}
+	
+	
+	// 비활성 객실 조회
+	@Override
+	public List<RoomTypeDTO> getInactiveRoomListByManager(Integer adminNo) {
+		return adminRoomDAO.getInactiveRoomListByManager(adminNo);
+	}
     
-    
+	
+	// 객실 복구 (활성화)
+	@Override
+	public void restoreRoom(int roomTypeId) {
+		adminRoomDAO.restoreRoom(roomTypeId);
+	}
+	
+	
     // ======== 총괄관리자 ========
     // 승인 대기 객실 목록 조회
     @Override
@@ -212,11 +231,5 @@ public class AdminRoomService_imple implements AdminRoomService {
 
 	}
 
-
 	
-
-
-
-	
-		
-	}
+}

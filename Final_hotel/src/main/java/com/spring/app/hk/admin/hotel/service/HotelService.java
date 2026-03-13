@@ -25,11 +25,4 @@ public interface HotelService {
 
 
 	
-	// 지점관리자 호텔 조회
-	List<Map<String, Object>> getHotelListByManager(Integer adminNo);
-	
-
-
-
-	
 }

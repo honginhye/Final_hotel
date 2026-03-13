@@ -97,12 +97,6 @@ public class HotelService_imple implements HotelService {
 	
 
 
-	// 지점관리자 호텔 조회
-	@Override
-	public List<Map<String, Object>> getHotelListByManager(Integer adminNo) {
-		  return hotelDAO.selectHotelListByManager(adminNo);
-	}
-
 
 	
 

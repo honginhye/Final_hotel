@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.security.core.Authentication;
@@ -121,5 +122,26 @@ public class ReservationService_imple implements ReservationService {
 	    }
 
 	    return roomInfo;
+	}
+
+
+	// 마이페이지 예약 목록 조회
+	@Override
+	public List<Map<String, Object>> selectMyReservationList(int memberNo) {
+		return reservationDAO.selectMyReservationList(memberNo);
+	}
+
+
+	// 예약 취소
+	@Override
+	public int cancelReservation(long reservationId) {
+	    return reservationDAO.cancelReservation(reservationId);
+	}
+
+
+	// 예약 취소 내역 조회
+	@Override
+	public List<Map<String, Object>> selectMyCancelReservationList(int memberNo) {
+		return reservationDAO.selectMyCancelReservationList(memberNo);
 	}
 }
