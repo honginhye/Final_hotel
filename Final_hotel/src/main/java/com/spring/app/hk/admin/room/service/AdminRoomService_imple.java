@@ -178,6 +178,13 @@ public class AdminRoomService_imple implements AdminRoomService {
 	}
     
 	
+	// 객실 복구 (활성화)
+	@Override
+	public void restoreRoom(int roomTypeId) {
+		adminRoomDAO.restoreRoom(roomTypeId);
+	}
+	
+	
     // ======== 총괄관리자 ========
     // 승인 대기 객실 목록 조회
     @Override

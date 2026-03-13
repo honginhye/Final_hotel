@@ -48,8 +48,8 @@ public class AdminRoomController {
     @GetMapping("/branch/list")
     public String roomList(Model model, HttpSession session) {
     	
-    	System.out.println("컨트롤러 세션 ID = " + session.getId());
-        System.out.println("sessionAdminDTO = " + session.getAttribute("sessionAdminDTO"));
+    	//System.out.println("컨트롤러 세션 ID = " + session.getId());
+        //System.out.println("sessionAdminDTO = " + session.getAttribute("sessionAdminDTO"));
     	
     	// 로그인 사용자 가져오기
     	Session_AdminDTO loginAdmin = (Session_AdminDTO) session.getAttribute("sessionAdminDTO");
@@ -211,7 +211,18 @@ public class AdminRoomController {
         return "redirect:/admin/room/branch/list";
     }   
 	    
+    
+    // 객실 복구 (활성화)
+    @PostMapping("/restore")
+    @PreAuthorize("hasRole('ADMIN_BRANCH')")
+    public String restoreRoom(@RequestParam("roomTypeId") int roomTypeId){
+
+        roomService.restoreRoom(roomTypeId);
+
+        return "redirect:/admin/room/branch/list";
+    }
 	    
+    
     // ==========================
     // 총괄 관리자 객실 관리 페이지 (승인/반려)
     // ==========================   

@@ -393,6 +393,7 @@ th {
 	<th>재고</th>
 	<th>가격</th>
 	<th>상태</th>
+	<th>관리</th>
 	</tr>
 	</thead>
 	
@@ -417,11 +418,33 @@ th {
 	
 	<td style="color:gray;">비활성</td>
 	
+	<td>
+
+	<form th:action="@{/admin/room/restore}"
+	      method="post"
+	      style="display:inline"
+	      onsubmit="return confirm('객실을 복구하시겠습니까?');">
+	
+	<input type="hidden"
+	       name="roomTypeId"
+	       th:value="${room.room_type_id}">
+	
+	<button type="submit"
+	        class="btn btn-success btn-sm">
+	복구
+	</button>
+	
+	</form>
+	
+	</td>
+	
 	</tr>
 	
 	</tbody>
 	
 	</table>
+	
+	
 	
 
 	<script>

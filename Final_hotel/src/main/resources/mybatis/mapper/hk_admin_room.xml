@@ -109,6 +109,14 @@
 	
 	</select>
 	
+	<!-- 객실 복구 -->
+	<update id="restoreRoom">
+	    UPDATE ROOM_TYPE
+	    SET IS_ACTIVE = 'Y'
+	    WHERE ROOM_TYPE_ID = #{roomTypeId}
+	</update>
+	
+	
 	<!-- 객실 등록 신청 -->	
 	
 	<!-- 1. 객실 등록(roomtype) -->
