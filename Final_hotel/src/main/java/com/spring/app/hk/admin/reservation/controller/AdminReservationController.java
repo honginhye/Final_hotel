@@ -38,13 +38,33 @@ public class AdminReservationController {
 		List<Map<String, Object>> stayList = reservationService.getStayList();
 		List<Map<String, Object>> checkoutCompleteList = reservationService.getCheckoutCompleteList();
 
-		System.out.println("checkinList = " + checkinList);
-		System.out.println("checkoutList = " + checkoutList);
+		// ===== KPI 계산 =====
+	    int todayCheckinCount = checkinList.size();
+	    int todayCheckoutCount = checkoutList.size();
+	    int stayCount = stayList.size();
+		
+	    // 점유율 계산 (예: 총 객실수 기준)
+	    int totalRoomCount = 100; // 필요하면 서비스에서 가져와도 됨
+	    int occupancyRate = 0;
+	    
+	    if(totalRoomCount > 0) {
+	        occupancyRate = (int)(((double) stayCount / totalRoomCount) * 100);
+	    }
+	    
+		//System.out.println("checkinList = " + checkinList);
+		//System.out.println("checkoutList = " + checkoutList);
 
-		model.addAttribute("checkinList", checkinList);
-		model.addAttribute("checkoutList", checkoutList);
-		model.addAttribute("stayList", stayList);
-		model.addAttribute("checkoutCompleteList", checkoutCompleteList);
+	 // ===== 리스트 =====
+	    model.addAttribute("checkinList", checkinList);
+	    model.addAttribute("checkoutList", checkoutList);
+	    model.addAttribute("stayList", stayList);
+	    model.addAttribute("checkoutCompleteList", checkoutCompleteList);
+
+	    // ===== KPI =====
+	    model.addAttribute("todayCheckinCount", todayCheckinCount);
+	    model.addAttribute("todayCheckoutCount", todayCheckoutCount);
+	    model.addAttribute("stayCount", stayCount);
+	    model.addAttribute("occupancyRate", occupancyRate);
 
 		return "hk/admin/reservation/reservationManage";
 	}

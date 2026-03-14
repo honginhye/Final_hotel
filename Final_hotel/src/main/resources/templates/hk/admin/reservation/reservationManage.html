@@ -14,7 +14,40 @@ font-family: Arial;
 margin:40px;
 }
 
+/* ================================ */
+/* KPI 카드 스타일 */
+/* ================================ */
+
+.kpi-container{
+display:flex;
+gap:20px;
+margin-bottom:40px;
+}
+
+.kpi-card{
+flex:1;
+background:#f7f7f7;
+border-radius:10px;
+padding:20px;
+text-align:center;
+box-shadow:0 2px 6px rgba(0,0,0,0.1);
+}
+
+.kpi-title{
+font-size:14px;
+color:#666;
+margin-bottom:10px;
+}
+
+.kpi-value{
+font-size:28px;
+font-weight:bold;
+}
+
+/* ================================ */
 /* 테이블 스타일 */
+/* ================================ */
+
 table{
 border-collapse:collapse;
 width:100%;
@@ -46,6 +79,39 @@ cursor:pointer;
 <body>
 
 <h2>관리자 예약 관리</h2>
+
+
+<!-- ================================ -->
+<!-- KPI 요약 -->
+<!-- ================================ -->
+
+<div class="kpi-container">
+
+<div class="kpi-card">
+<div class="kpi-title">오늘 체크인</div>
+<div class="kpi-value"
+     th:text="${todayCheckinCount} + '건'">0건</div>
+</div>
+
+<div class="kpi-card">
+<div class="kpi-title">오늘 체크아웃</div>
+<div class="kpi-value"
+     th:text="${todayCheckoutCount} + '건'">0건</div>
+</div>
+
+<div class="kpi-card">
+<div class="kpi-title">현재 투숙중</div>
+<div class="kpi-value"
+     th:text="${stayCount} + '건'">0건</div>
+</div>
+
+<div class="kpi-card">
+<div class="kpi-title">객실 점유율</div>
+<div class="kpi-value"
+     th:text="${occupancyRate} + '%'">0%</div>
+</div>
+
+</div>
 
 
 <!-- ================================ -->
