@@ -182,9 +182,7 @@ public class HotelController {
             }
 
             // 서비스 호출 (Reservation 구조 동일)
-            hotelService.saveHotel(paraMap);
-            
-            
+            hotelService.saveHotel(paraMap);         
 
         } catch(Exception e) {
             e.printStackTrace();
@@ -194,5 +192,16 @@ public class HotelController {
         return Map.of("result", 1);
     }
     
-       
+      
+	// 호텔 위치
+	@GetMapping("/map")
+	public String hotelMap(Model model){
+
+	    List<Map<String,Object>> hotelList = hotelService.getAllHotelLocation();
+
+	    model.addAttribute("hotelList", hotelList);
+
+	    return "hk/admin/hotel/map";
+	}
+	
 }

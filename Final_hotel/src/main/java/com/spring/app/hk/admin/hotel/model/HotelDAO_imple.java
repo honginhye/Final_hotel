@@ -69,6 +69,12 @@ public class HotelDAO_imple implements HotelDAO {
 	    return sqlsession.update("hotel.restoreHotel", hotel_id);
 	}
 
+	// 호텔 위치
+	@Override
+	public List<Map<String, Object>> selectAllHotelLocation() {
+		return sqlsession.selectList("hotel.selectAllHotelLocation");
+	}
+
 
 
 }

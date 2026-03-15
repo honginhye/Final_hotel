@@ -189,4 +189,18 @@
 		ORDER BY h.hotel_id DESC
 		
 		</select>
+		
+	<!-- 호텔 위치 -->
+	<select id="selectAllHotelLocation" resultType="map">
+
+		SELECT
+		    HOTEL_ID,
+		    HOTEL_NAME,
+		    LATITUDE,
+		    LONGITUDE
+		FROM TBL_HOTEL
+		WHERE ACTIVE_YN = 'Y'
+	
+	</select>
+	
 </mapper>

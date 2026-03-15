@@ -25,6 +25,9 @@ public interface HotelService {
 
 	// 호텔 활성화시키기
 	int restoreHotel(int hotel_id);
+	
+	// 호텔 위치
+	List<Map<String, Object>> getAllHotelLocation();
 
 	
 }

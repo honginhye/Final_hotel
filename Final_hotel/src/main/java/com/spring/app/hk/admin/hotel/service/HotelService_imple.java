@@ -102,6 +102,13 @@ public class HotelService_imple implements HotelService {
 	}
 
 
+	// 호텔 위치
+	@Override
+	public List<Map<String, Object>> getAllHotelLocation() {
+		 return hotelDAO.selectAllHotelLocation();
+	}
+
+
 	
 
 	
