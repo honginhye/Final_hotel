@@ -16,7 +16,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.spring.app.hk.reservation.service.ReservationService;
 import com.spring.app.jh.security.domain.CustomUserDetails;
+import com.spring.app.jh.security.domain.Session_GuestDTO;
 
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 
 @Controller
@@ -29,21 +31,58 @@ public class ReservationController {
 	// 예약 정보 입력 페이지 (객실 정보 조회, 숙박일 계산, 총 객실 기본요금 계산)
 	@GetMapping("/form")
 	public String reservationForm(@RequestParam("room_type_id") int room_type_id,
-			@RequestParam("check_in") String check_in, @RequestParam("check_out") String check_out,
+			@RequestParam("check_in") String check_in,
+			@RequestParam("check_out") String check_out,
 			@RequestParam("room_price") int room_price,
 			@RequestParam(value = "currency", required = false) String currency,
-			@RequestParam(value = "tax", required = false) Boolean tax, Authentication auth, Model model) {
+			@RequestParam(value = "tax", required = false) Boolean tax,
+			Authentication auth,
+			HttpSession session,
+			Model model) {
 
 		// 객실 기본 정보 조회 (DAO → ROOM + HOTEL JOIN)
 		Map<String, Object> roomInfo = reservationService.getRoomInfo(room_type_id);
 
-		// 로그인 사용자 이름 가져오기
-		CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();
+		// ===============================
+		// 로그인 사용자 정보 가져오기
+		// 회원 로그인 / 비회원 로그인 모두 처리
+		// ===============================
+		String name = null;
+		String mobile = null;
+		String email = null;
+		Integer memberNo = null;
 
-		String name = userDetails.getMemberDto().getName();
-		String mobile = userDetails.getMemberDto().getMobile();
-		String email = userDetails.getMemberDto().getEmail();
-		Integer memberNo = userDetails.getMemberDto().getMemberNo(); // 중요
+		// 1️⃣ 회원 로그인 (Spring Security)
+		if (auth != null && auth.getPrincipal() instanceof CustomUserDetails) {
+
+			CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();
+
+			name = userDetails.getMemberDto().getName();
+			mobile = userDetails.getMemberDto().getMobile();
+			email = userDetails.getMemberDto().getEmail();
+			memberNo = userDetails.getMemberDto().getMemberNo();
+		}
+
+		// 2️⃣ 비회원 로그인 (세션 guestSession)
+		if (name == null) {
+
+			Session_GuestDTO guest = (Session_GuestDTO) session.getAttribute("guestSession");
+
+			if (guest != null) {
+				name = guest.getGuestName();
+				mobile = guest.getGuestPhone();
+				memberNo = guest.getMemberNo();
+			}
+		}
+		
+		// 추가
+		if(memberNo == null){
+
+		    model.addAttribute("message","로그인 또는 비회원 로그인이 필요합니다.");
+		    model.addAttribute("loc","/final_hotel/security/login");
+
+		    return "msg";
+		}
 
 		// 숙박일 계산
 		LocalDate inDate = LocalDate.parse(check_in.trim());
@@ -55,7 +94,9 @@ public class ReservationController {
 		int maxCapacity = ((Number) roomInfo.get("MAX_CAPACITY")).intValue();
 		int totalRoomPrice = basePrice * (int) nights;
 
-		// 추가
+		// ===============================
+		// 모델 데이터 전달
+		// ===============================
 		model.addAttribute("memberName", name);
 		model.addAttribute("memberMobile", mobile);
 		model.addAttribute("memberEmail", email);
@@ -79,10 +120,10 @@ public class ReservationController {
 	}
 
 	// 예약 저장용
-	// ReservationController.java 내 수정
-
 	@PostMapping("/save")
-	public String saveReservation(@RequestParam Map<String, String> map, Model model) {
+	public String saveReservation(@RequestParam Map<String, String> map,
+								  HttpSession session,
+								  Model model) {
 
 		// 1. 넘어온 결제 정보 확인 (디버깅용)
 		System.out.println("결제 성공 UID: " + map.get("payment_imp_uid"));
@@ -90,10 +131,9 @@ public class ReservationController {
 		System.out.println("프로모션 ID: " + map.get("promotion_id"));
 
 		// 2. 서비스 단에서 예약 정보 저장
-		// (이때 결제 테이블에도 insert하거나, 예약 테이블에 imp_uid를 같이 저장해야 합니다.)
-		String reservationCode = reservationService.saveReservation(map);
+		String reservationCode = reservationService.saveReservation(map, session);
 
-		// 3. 성공 시 완료 페이지로 이동 (기존 complete 경로로 리다이렉트)
+		// 3. 성공 시 완료 페이지로 이동
 		return "redirect:/reservation/complete?code=" + reservationCode;
 	}
 
@@ -146,6 +186,32 @@ public class ReservationController {
 
 	    return "deadline";
 	}
+	
+	
+	// ======================================
+	// 비회원 예약 조회 페이지
+	// ======================================
+	@GetMapping("/guest")
+	public String guestReservationSearchPage(){
+	    return "hk/reservation/guestSearch";
+	}
 
 
+	// ======================================
+	// 비회원 예약 조회 처리
+	// ======================================
+	@PostMapping("/guest")
+	public String guestReservationSearch(
+	        @RequestParam("name") String name,
+	        @RequestParam("phone") String phone,
+	        Model model){
+
+	    List<Map<String,Object>> reservationList =
+	            reservationService.findGuestReservation(name, phone);
+
+	    model.addAttribute("reservationList", reservationList);
+
+	    return "hk/reservation/guestReservationList";
+	}
+	
 }

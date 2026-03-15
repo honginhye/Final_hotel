@@ -3,10 +3,12 @@ package com.spring.app.hk.reservation.service;
 import java.util.List;
 import java.util.Map;
 
+import jakarta.servlet.http.HttpSession;
+
 public interface ReservationService {
 
-	// 예약 db 저장 후 reservation_code 반환
-    String saveReservation(Map<String, String> map);
+	// 예약 db 저장 후 reservation_code 반환 + 비회원 붙이기
+	String saveReservation(Map<String, String> map, HttpSession session);
 
     // 예약 완료 페이지 조회
 	Map<String, Object> getReservationByCode(String code);
@@ -19,6 +21,12 @@ public interface ReservationService {
 	
 	// 예약 취소
 	int cancelReservation(long reservationId);
+
+	// 비회원 에약 조회
+	List<Map<String, Object>> findGuestReservation(String name, String phone);
+
+	
+	
 
 
 }

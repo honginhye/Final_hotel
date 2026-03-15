@@ -20,13 +20,15 @@ public class AdminReservationController {
 	private final AdminReservationService reservationService;
 
 	// ======= 지점 관리자 ========= //
-	// 예약 캘린더 (객실 배정)
-	@PreAuthorize("hasRole('ADMIN_BRANCH')")
-	@GetMapping("/calendar")
-	public String reservationCalendar() {
-
-		return "hk/admin/reservation/calendar";
-	}
+	/*
+	 * // 예약 캘린더 (객실 배정)
+	 * 
+	 * @PreAuthorize("hasRole('ADMIN_BRANCH')")
+	 * 
+	 * @GetMapping("/calendar") public String reservationCalendar() {
+	 * 
+	 * return "hk/admin/reservation/calendar"; }
+	 */
 
 	// 예약 관리 페이지
 	@PreAuthorize("hasRole('ADMIN_BRANCH')")

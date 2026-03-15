@@ -23,5 +23,8 @@ public interface ReservationDAO {
 	// 예약 취소
 	int cancelReservation(long reservationId);
 
+	// 비회원 예약 조회
+	List<Map<String, Object>> findGuestReservation(Map<String, Object> paraMap);
+
 
 }

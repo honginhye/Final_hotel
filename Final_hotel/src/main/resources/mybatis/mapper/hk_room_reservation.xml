@@ -162,6 +162,39 @@
 	</update>
 	
 	
+	<!-- ========================================= -->
+	<!-- 비회원 예약 조회 -->
+	<!-- ========================================= -->
+	<select id="findGuestReservation" parameterType="map" resultType="map">
+
+SELECT
+    r.RESERVATION_CODE,
+    r.CHECKIN_DATE,
+    r.CHECKOUT_DATE,
+    r.TOTAL_PRICE,
+    r.RESERVATION_STATUS,
+    rt.ROOM_NAME,
+    h.HOTEL_NAME
+
+FROM RESERVATION r
+
+JOIN TBL_MEMBER_SECURITY m
+ON r.MEMBER_NO = m.MEMBER_NO
+
+JOIN ROOM_TYPE rt
+ON r.ROOM_TYPE_ID = rt.ROOM_TYPE_ID
+
+JOIN TBL_HOTEL h
+ON rt.FK_HOTEL_ID = h.HOTEL_ID
+
+WHERE m.NAME = #{name}
+AND m.MEMBER_TYPE = 'GUEST'
+
+ORDER BY r.CREATED_AT DESC
+
+</select>
+	
+	
 
 	  
 
