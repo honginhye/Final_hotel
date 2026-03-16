@@ -105,15 +105,15 @@ height:100%;
 <div class="kpi-container">
 
 <div class="kpi-card">
-<div class="kpi-title">오늘 체크인</div>
+<div class="kpi-title">오늘 체크인 예정</div>
 <div class="kpi-value"
-     th:text="${todayCheckinCount} + '건'">0건</div>
+     th:text="${todayCheckinReserved} + '건'"></div>
 </div>
 
 <div class="kpi-card">
-<div class="kpi-title">오늘 체크아웃</div>
+<div class="kpi-title">오늘 체크인 완료</div>
 <div class="kpi-value"
-     th:text="${todayCheckoutCount} + '건'">0건</div>
+     th:text="${todayCheckinDone} + '건'"></div>
 </div>
 
 <div class="kpi-card">

@@ -36,34 +36,49 @@ public class AdminReservationController {
 	@GetMapping("/manage")
 	public String reservationManage(Model model) {
 
-		List<Map<String, Object>> checkinList = reservationService.getTodayCheckinList();
-		List<Map<String, Object>> checkoutList = reservationService.getTodayCheckoutList();
-		List<Map<String, Object>> stayList = reservationService.getStayList();
-		List<Map<String, Object>> checkoutCompleteList = reservationService.getCheckoutCompleteList();
+	    List<Map<String, Object>> checkinList = reservationService.getTodayCheckinList();
+	    List<Map<String, Object>> checkoutList = reservationService.getTodayCheckoutList();
+	    List<Map<String, Object>> stayList = reservationService.getStayList();
+	    List<Map<String, Object>> checkoutCompleteList = reservationService.getCheckoutCompleteList();
 
-		// ===== KPI 계산 =====
-	    int todayCheckinCount = checkinList.size();
+	    // ===== KPI 계산 =====
+
+	    // 오늘 체크인 예정
+	    int todayCheckinReserved = checkinList.size();
+
+	    // 오늘 체크인 완료 (투숙중 중에서 오늘 체크인한 것)
+	    int todayCheckinDone = 0;
+
+	    for(Map<String,Object> stay : stayList) {
+
+	        java.sql.Timestamp checkinDate = (java.sql.Timestamp) stay.get("CHECKIN_DATE");
+
+	        java.time.LocalDate today = java.time.LocalDate.now();
+
+	        if(checkinDate.toLocalDateTime().toLocalDate().equals(today)) {
+	            todayCheckinDone++;
+	        }
+	    }
+
 	    int todayCheckoutCount = checkoutList.size();
 	    int stayCount = stayList.size();
-		
-	    // 점유율 계산 (예: 총 객실수 기준)
-	    int totalRoomCount = 100; // 필요하면 서비스에서 가져와도 됨
+
+	    // 점유율 계산
+	    int totalRoomCount = 100;
 	    int occupancyRate = 0;
-	    
+
 	    if(totalRoomCount > 0) {
 	        occupancyRate = (int)(((double) stayCount / totalRoomCount) * 100);
 	    }
-	    
-	    // 바
+
+	    // ===== 체크인 진행률 =====
 	    int checkinProgress = 0;
 
-	    if(todayCheckinCount > 0){
-	        checkinProgress = (int)(((double) stayCount / todayCheckinCount) * 100);
-	    }
+	    int totalCheckin = todayCheckinReserved + todayCheckinDone;
 
-	    
-		//System.out.println("checkinList = " + checkinList);
-		//System.out.println("checkoutList = " + checkoutList);
+	    if(totalCheckin > 0) {
+	        checkinProgress = (int)(((double) todayCheckinDone / totalCheckin) * 100);
+	    }
 
 	    // ===== 리스트 =====
 	    model.addAttribute("checkinList", checkinList);
@@ -72,15 +87,15 @@ public class AdminReservationController {
 	    model.addAttribute("checkoutCompleteList", checkoutCompleteList);
 
 	    // ===== KPI =====
-	    model.addAttribute("todayCheckinCount", todayCheckinCount);
+	    model.addAttribute("todayCheckinReserved", todayCheckinReserved);
+	    model.addAttribute("todayCheckinDone", todayCheckinDone);
 	    model.addAttribute("todayCheckoutCount", todayCheckoutCount);
 	    model.addAttribute("stayCount", stayCount);
 	    model.addAttribute("occupancyRate", occupancyRate);
-	    
-	    // === 바 ===
+
 	    model.addAttribute("checkinProgress", checkinProgress);
 
-		return "hk/admin/reservation/reservationManage";
+	    return "hk/admin/reservation/reservationManage";
 	}
 
 	// 체크인 처리
