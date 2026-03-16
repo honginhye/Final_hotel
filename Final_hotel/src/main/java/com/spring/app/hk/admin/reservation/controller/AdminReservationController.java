@@ -138,7 +138,7 @@ public class AdminReservationController {
 	    model.addAttribute("name", name);
 	    model.addAttribute("status", status);
 
-	    return "hk/admin/reservation/reservationList";
+	    return "hk/admin/reservation/adminreservationList";
 	}
 
 }
