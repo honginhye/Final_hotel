@@ -14,7 +14,40 @@ font-family: Arial;
 margin:40px;
 }
 
+/* ================================ */
+/* KPI 카드 스타일 */
+/* ================================ */
+
+.kpi-container{
+display:flex;
+gap:20px;
+margin-bottom:40px;
+}
+
+.kpi-card{
+flex:1;
+background:#f7f7f7;
+border-radius:10px;
+padding:20px;
+text-align:center;
+box-shadow:0 2px 6px rgba(0,0,0,0.1);
+}
+
+.kpi-title{
+font-size:14px;
+color:#666;
+margin-bottom:10px;
+}
+
+.kpi-value{
+font-size:28px;
+font-weight:bold;
+}
+
+/* ================================ */
 /* 테이블 스타일 */
+/* ================================ */
+
 table{
 border-collapse:collapse;
 width:100%;
@@ -39,6 +72,23 @@ padding:6px 12px;
 cursor:pointer;
 }
 
+/* 체크인 진행률 */
+.progress-container{
+margin-bottom:40px;
+}
+
+.progress-bar-bg{
+width:100%;
+background:#eee;
+border-radius:10px;
+overflow:hidden;
+height:20px;
+}
+
+.progress-bar-fill{
+background:#4CAF50;
+height:100%;
+}
 </style>
 
 </head>
@@ -47,6 +97,60 @@ cursor:pointer;
 
 <h2>관리자 예약 관리</h2>
 
+
+<!-- ================================ -->
+<!-- KPI 요약 -->
+<!-- ================================ -->
+
+<div class="kpi-container">
+
+<div class="kpi-card">
+<div class="kpi-title">오늘 체크인 예정</div>
+<div class="kpi-value"
+     th:text="${todayCheckinReserved} + '건'"></div>
+</div>
+
+<div class="kpi-card">
+<div class="kpi-title">오늘 체크인 완료</div>
+<div class="kpi-value"
+     th:text="${todayCheckinDone} + '건'"></div>
+</div>
+
+<div class="kpi-card">
+<div class="kpi-title">현재 투숙중</div>
+<div class="kpi-value"
+     th:text="${stayCount} + '건'">0건</div>
+</div>
+
+<div class="kpi-card">
+<div class="kpi-title">객실 점유율</div>
+<div class="kpi-value"
+     th:text="${occupancyRate} + '%'">0%</div>
+</div>
+
+</div>
+
+<!-- ================================ -->
+<!-- 체크인 진행률 -->
+<!-- ================================ -->
+
+<div class="progress-container">
+
+<h3>오늘 체크인 진행률</h3>
+
+<div class="progress-bar-bg">
+
+<div class="progress-bar-fill"
+     th:style="'width:' + ${checkinProgress} + '%'">
+</div>
+
+</div>
+
+<div style="margin-top:8px;font-weight:bold;"
+     th:text="${checkinProgress} + '%'">
+</div>
+
+</div>
 
 <!-- ================================ -->
 <!-- 1. 오늘 체크인 -->

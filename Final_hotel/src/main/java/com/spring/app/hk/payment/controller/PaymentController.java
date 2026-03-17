@@ -8,6 +8,8 @@ import org.springframework.web.client.RestTemplate;
 
 import com.spring.app.hk.reservation.service.ReservationService;
 
+import jakarta.servlet.http.HttpSession;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,79 +29,73 @@ public class PaymentController {
 
 	// 예약
 	@PostMapping("/verify")
-	public ResponseEntity<String> verify(@RequestBody Map<String, String> map) {
+	public ResponseEntity<String> verify(@RequestBody Map<String, String> map,
+	                                     HttpSession session) {
 
-		System.out.println("==== /payment/verify 호출됨 ====");
+	    System.out.println("==== /payment/verify 호출됨 ====");
+	    System.out.println("==== 전달받은 map = " + map);
 
-		// ============================
-		// 1️. 프론트에서 전달받은 imp_uid
-		// ============================
-		String impUid = map.get("imp_uid");
-		System.out.println("==== 결제 완료 imp_uid = " + impUid);
+	    String impUid = map.get("imp_uid");
+	    System.out.println("==== 결제 완료 imp_uid = " + impUid);
 
-		try {
-			// ==========================================
-			// 2️. Access Token 발급 (포트원 REST 인증)
-			// ==========================================
-			RestTemplate restTemplate = new RestTemplate();
+	    try {
 
-			String tokenUrl = "https://api.iamport.kr/users/getToken";
+	        // ==========================================
+	        // 1. 포트원 결제 검증
+	        // ==========================================
+	        try {
+	            RestTemplate restTemplate = new RestTemplate();
 
-			Map<String, String> tokenRequest = new HashMap<>();
-			tokenRequest.put("imp_key", apiKey);
-			tokenRequest.put("imp_secret", apiSecret);
+	            String tokenUrl = "https://api.iamport.kr/users/getToken";
 
-			HttpHeaders headers = new HttpHeaders();
-			headers.setContentType(MediaType.APPLICATION_JSON);
+	            Map<String, String> tokenRequest = new HashMap<>();
+	            tokenRequest.put("imp_key", apiKey);
+	            tokenRequest.put("imp_secret", apiSecret);
 
-			HttpEntity<Map<String, String>> tokenEntity = new HttpEntity<>(tokenRequest, headers);
+	            HttpHeaders headers = new HttpHeaders();
+	            headers.setContentType(MediaType.APPLICATION_JSON);
 
-			ResponseEntity<Map> tokenResponse = restTemplate.postForEntity(tokenUrl, tokenEntity, Map.class);
+	            HttpEntity<Map<String, String>> tokenEntity =
+	                    new HttpEntity<>(tokenRequest, headers);
 
-			String accessToken = (String) ((Map) tokenResponse.getBody().get("response")).get("access_token");
+	            ResponseEntity<Map> tokenResponse =
+	                    restTemplate.postForEntity(tokenUrl, tokenEntity, Map.class);
 
-			// ==========================================
-			// 3️. imp_uid로 실제 결제 정보 조회
-			// ==========================================
-			String paymentUrl = "https://api.iamport.kr/payments/" + impUid;
+	            String accessToken =
+	                    (String) ((Map) tokenResponse.getBody().get("response"))
+	                            .get("access_token");
 
-			HttpHeaders paymentHeaders = new HttpHeaders();
-			paymentHeaders.set("Authorization", accessToken);
+	            String paymentUrl = "https://api.iamport.kr/payments/" + impUid;
 
-			HttpEntity<String> paymentEntity = new HttpEntity<>(paymentHeaders);
+	            HttpHeaders paymentHeaders = new HttpHeaders();
+	            paymentHeaders.set("Authorization", accessToken);
 
-			restTemplate.exchange(paymentUrl, HttpMethod.GET, paymentEntity, Map.class);
+	            HttpEntity<String> paymentEntity =
+	                    new HttpEntity<>(paymentHeaders);
 
-			// 여기서 금액 비교 로직 추가 가능
-			// int paidAmount = ...
-			// if (paidAmount != 예상금액) { throw new RuntimeException("금액 불일치"); }
+	            restTemplate.exchange(paymentUrl, HttpMethod.GET, paymentEntity, Map.class);
 
-		} catch (Exception e) {
+	        } catch (Exception e) {
+	            System.out.println("==== 포트원 결제 검증 실패(임시 무시) ====");
+	            e.printStackTrace();
+	        }
 
-			// =========================================================
-			// ⚠️ 현재 포트원 404 오류 발생 문제 있음
-			// ⚠️ imp_uid는 관리자에 존재하나 REST 조회 시 404 발생
-			// ⚠️ 환경/스토어 스코프 문제로 추정
-			//
-			// 👉 프로젝트 진행을 위해 검증 실패 시에도 예약은 진행
-			// 👉 실서비스 전환 시 반드시 정상 검증 로직 복구 필요
-			// =========================================================
+	        // ==========================================
+	        // 2. 예약 저장
+	        // ==========================================
+	        String reservationCode = reservationService.saveReservation(map, session);
 
-			// System.out.println("결제 검증 실패했지만 예약은 진행 (임시 처리)");
-		}
+	        System.out.println("==== 예약 저장 성공 reservationCode = " + reservationCode);
 
-		// ==========================================
-		// 4️. 예약 DB 저장 (MyBatis)
-		// ==========================================
-		// JS에서 room_type_id, check_in, check_out 등 함께 전달해야 함
-		// 예약 저장 + 코드 받기
-		String reservationCode = reservationService.saveReservation(map);
+	        return ResponseEntity.ok(reservationCode);
 
-		// ==========================================
-		// 5️. 클라이언트에 성공 응답
-		// ==========================================
-		return ResponseEntity.ok(reservationCode);
+	    } catch (Exception e) {
+	        e.printStackTrace();
 
+	        String errorMsg = "예약 저장 실패: " + e.getMessage();
+	        System.out.println("==== " + errorMsg);
+
+	        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMsg);
+	    }
 	}
-
 }

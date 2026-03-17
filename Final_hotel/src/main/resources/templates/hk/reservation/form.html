@@ -100,22 +100,31 @@ button:hover {
         <br><br>
 
         <!-- 조식 -->
-       <label>조식 인원 선택 (1인 67,500원)</label><br>
+        <label>조식 인원 선택 (1인 67,500원)</label><br>
 
-		<select id="breakfastCount" onchange="calculateTotal()">
-		    <option value="0">선택 안함</option>
-		    <option th:each="i : ${#numbers.sequence(1, max_capacity)}"
-		            th:value="${i}"
-		            th:text="${i} + ' 명'">
-		    </option>
-		</select>
-		
-		 <hr>
-		
-		<h3>예약자 정보</h3>
-	    <p>예약자 : <span th:text="${memberName}"></span></p>
-		<p>연락처 : <span th:text="${memberMobile}"></span></p>
-		<p>이메일 : <span th:text="${memberEmail}"></span></p>
+        <select id="breakfastCount" onchange="calculateTotal()">
+            <option value="0">선택 안함</option>
+            <option th:each="i : ${#numbers.sequence(1, max_capacity)}"
+                    th:value="${i}"
+                    th:text="${i} + ' 명'">
+            </option>
+        </select>
+
+        <hr>
+
+        <h3>예약자 정보</h3>
+
+        <p>예약자 : 
+            <span th:text="${memberName != null ? memberName : '비회원'}"></span>
+        </p>
+
+        <p>연락처 : 
+            <span th:text="${memberMobile != null ? memberMobile : '-'}"></span>
+        </p>
+
+        <p>이메일 : 
+            <span th:text="${memberEmail != null ? memberEmail : '-'}"></span>
+        </p>
 
         <br><br>
 
@@ -131,20 +140,20 @@ button:hover {
     <h3>결제 요약</h3>
 
     <p>객실 요금:
-    <span id="currencySymbol">₩</span>
-    <span id="roomPrice" th:text="${room_price}"></span>
-	</p>
-	
-	<p>조식 요금:
-	    <span id="currencySymbol2">₩</span>
-	    <span id="breakfastPrice">0</span>
-	</p>
-	
-	<p class="summary-price">
-	    총 결제 금액:
-	    <span id="currencySymbol3">₩</span>
-	    <span id="totalPrice" th:text="${room_price}"></span>
-	</p>
+        <span id="currencySymbol">₩</span>
+        <span id="roomPrice" th:text="${room_price}"></span>
+    </p>
+
+    <p>조식 요금:
+        <span id="currencySymbol2">₩</span>
+        <span id="breakfastPrice">0</span>
+    </p>
+
+    <p class="summary-price">
+        총 결제 금액:
+        <span id="currencySymbol3">₩</span>
+        <span id="totalPrice" th:text="${room_price}"></span>
+    </p>
 
 </div>
 
@@ -229,16 +238,19 @@ function requestPay() {
         pay_method: "card",
         merchant_uid: "hotel_" + new Date().getTime(),
         name: "호텔 예약 결제",
-        amount: 100,
+        amount: 100,   
         buyer_name: "[[${memberName}]]",
         buyer_tel: "[[${memberMobile}]]"
     }, function (rsp) {
 
         if (rsp.success) {
 
-        	const token = document.querySelector("meta[name='_csrf']").content;
-        	const header = document.querySelector("meta[name='_csrf_header']").content;
-        	
+            const token = document.querySelector("meta[name='_csrf']").content;
+            const header = document.querySelector("meta[name='_csrf_header']").content;
+            
+            console.log("totalAmount : "+totalAmount);
+            console.log("typeof totalAmount =", typeof totalAmount);
+            
             fetch("/final_hotel/payment/verify", {
                 method: "POST",
                 headers: {
@@ -248,22 +260,35 @@ function requestPay() {
                 body: JSON.stringify({
                     imp_uid: rsp.imp_uid,
                     merchant_uid: rsp.merchant_uid,
-                    member_no: "[[${memberNo}]]",
                     room_type_id: document.querySelector("input[name='room_type_id']").value,
                     check_in: document.querySelector("input[name='check_in']").value,
                     check_out: document.querySelector("input[name='check_out']").value,
                     guest_count: document.getElementById("guestCount").value,
                     breakfast_count: document.getElementById("breakfastCount").value,
-                    total_price: totalAmount,
-                    
+                    total_price: String(totalAmount), // 안전한 방식
+
                     hotel_name: "[[${hotel_name}]]",
                     room_name: "[[${room_name}]]"
                 })
             })
-            .then(res => res.text())
-            .then(code => {
+            .then(async res => {
+
+                const text = await res.text();
+
+                console.log("==== /payment/verify status ====", res.status);
+                console.log("==== /payment/verify response ====", text);
+
+                if (!res.ok) {
+                    alert("예약 저장 중 오류가 발생했습니다.\n\n" + text);
+                    return;
+                }
+
                 alert("예약이 완료되었습니다.");
-                location.href = "/final_hotel/reservation/complete?code=" + code;
+                location.href = "/final_hotel/reservation/complete?code=" + encodeURIComponent(text);
+            })
+            .catch(err => {
+                console.error("==== /payment/verify fetch 오류 ====", err);
+                alert("서버 통신 중 오류가 발생했습니다.");
             });
 
         } else {

@@ -20,7 +20,7 @@
 		AND i.is_main='Y'
 		
 		WHERE h.active_yn='Y'
-		AND h.approve_status='APPROVED'
+		
 		
 		ORDER BY h.hotel_id
 	</select>
@@ -59,10 +59,18 @@
 		WHERE H.ACTIVE_YN = 'N'
 		ORDER BY H.HOTEL_ID DESC
 	</select>
+	
+	<!-- 호텔 다시 활성화시키기 -->
+	<update id="restoreHotel">
+	    UPDATE tbl_hotel
+	    SET active_yn = 'Y'
+	    WHERE hotel_id = #{hotel_id}
+	</update>
 
 	
-	<!-- 호텔 상세페이지 이동 -->
+	<!-- 호텔 상세페이지 -->
 	<select id="selectHotelDetail" resultType="map">
+	
 		SELECT
 		    H.HOTEL_ID,
 		    H.HOTEL_NAME,
@@ -70,6 +78,8 @@
 		    H.CONTACT,
 		    H.HOTEL_DESC,
 		    H.APPROVE_STATUS,
+		    H.LATITUDE,
+		    H.LONGITUDE,
 		    I.IMAGE_URL
 		
 		FROM TBL_HOTEL H
@@ -80,6 +90,7 @@
 		
 		WHERE H.HOTEL_ID = #{hotelId}
 		AND H.ACTIVE_YN = 'Y'
+	
 	</select>
 		
 		
@@ -158,7 +169,7 @@
     
     <!-- 2. 호텔 승인관리 -->
 	<!-- 지점관리자 호텔 조회 -->
-	<!-- <select id="selectHotelListByManager" parameterType="int" resultType="map">
+	<select id="selectHotelListByManager" parameterType="int" resultType="map">
 
 		SELECT
 		    h.hotel_id,
@@ -177,5 +188,19 @@
 		
 		ORDER BY h.hotel_id DESC
 		
-		</select> -->
+		</select>
+		
+	<!-- 호텔 위치 -->
+	<select id="selectAllHotelLocation" resultType="map">
+
+		SELECT
+		    HOTEL_ID,
+		    HOTEL_NAME,
+		    LATITUDE,
+		    LONGITUDE
+		FROM TBL_HOTEL
+		WHERE ACTIVE_YN = 'Y'
+	
+	</select>
+	
 </mapper>

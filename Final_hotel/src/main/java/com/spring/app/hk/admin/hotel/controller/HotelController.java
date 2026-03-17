@@ -43,13 +43,12 @@ public class HotelController {
     @GetMapping("list")
     public String hotelList(Model model){
 
-        List<Map<String,Object>> activeHotelList = hotelService.getApprovedHotelList();
-        List<Map<String,Object>> pendingHotelList = hotelService.getPendingHotelList();
-        List<Map<String,Object>> disabledHotelList = hotelService.getDisabledHotelList(); // 추가 (비활성화 호텔)
-        
-        model.addAttribute("activeHotelList", activeHotelList);
-        model.addAttribute("pendingHotelList", pendingHotelList);
-        model.addAttribute("disabledHotelList", disabledHotelList); // 추가	
+    	List<Map<String,Object>> activeHotelList = hotelService.getApprovedHotelList();
+    	List<Map<String,Object>> pendingHotelList = hotelService.getPendingHotelList();
+    	List<Map<String,Object>> disabledHotelList = hotelService.getDisabledHotelList();
+
+    	model.addAttribute("activeHotelList", activeHotelList);
+    	model.addAttribute("disabledHotelList", disabledHotelList);
         
         return "hk/admin/hotel/list";
     }
@@ -104,6 +103,23 @@ public class HotelController {
     }
       
     
+    // 호텔 활성화시키기
+    @PreAuthorize("hasRole('ADMIN_HQ')")
+    @PostMapping("restore")
+    @ResponseBody
+    public Map<String,Object> restoreHotel(@RequestBody Map<String,Object> param){
+
+        int hotel_id = Integer.parseInt(param.get("hotel_id").toString());
+
+        int result = hotelService.restoreHotel(hotel_id);
+
+        Map<String,Object> map = new HashMap<>();
+        map.put("result", result);
+
+        return map;
+    }
+    
+    
     // 등록 페이지 이동
 	@PreAuthorize("hasRole('ADMIN_HQ')")
     @GetMapping("register")
@@ -134,6 +150,9 @@ public class HotelController {
 
 			Map<String,Object> paraMap = new HashMap<>(map);
 
+			paraMap.put("latitude", latitude);
+			paraMap.put("longitude", longitude);
+			
 			// 관리자 번호
 			paraMap.put("admin_no", adminNo);
 
@@ -163,7 +182,7 @@ public class HotelController {
             }
 
             // 서비스 호출 (Reservation 구조 동일)
-            hotelService.saveHotel(paraMap);
+            hotelService.saveHotel(paraMap);         
 
         } catch(Exception e) {
             e.printStackTrace();
@@ -173,6 +192,16 @@ public class HotelController {
         return Map.of("result", 1);
     }
     
-    
-    
+      
+	// 호텔 위치
+	@GetMapping("/map")
+	public String hotelMap(Model model){
+
+	    List<Map<String,Object>> hotelList = hotelService.getAllHotelLocation();
+
+	    model.addAttribute("hotelList", hotelList);
+
+	    return "hk/admin/hotel/map";
+	}
+	
 }

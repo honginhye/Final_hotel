@@ -34,6 +34,14 @@ public interface AdminRoomDAO {
 	// 승인 히스토리 조회
 	List<Map<String, Object>> getBranchApprovalHistoryList(Integer adminNo);
 	
+	// 객실 비활성화
+	void deactivateRoom(int roomTypeId);
+	
+	// 비활성 객실 조회
+	List<RoomTypeDTO> getInactiveRoomListByManager(Integer adminNo);
+	
+	// 객실 복구 (활성화)
+	void restoreRoom(int roomTypeId);
 	
 	// ======== 총괄관리자 ========
 	// 승인 대기 객실 목록 조회

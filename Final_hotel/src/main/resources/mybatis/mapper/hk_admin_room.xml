@@ -65,6 +65,58 @@
 	 -->
 	
 	
+	<!-- 객실 비활성화 -->
+	<update id="deactivateRoom">
+	    UPDATE ROOM_TYPE
+	    SET IS_ACTIVE = 'N'
+	    WHERE ROOM_TYPE_ID = #{roomTypeId}
+	</update>
+	
+	
+	<!-- 비활성 객실 조회 -->
+	<select id="getInactiveRoomListByManager"
+	        parameterType="int"
+	        resultType="RoomTypeDTO">
+	
+		SELECT
+		    r.ROOM_TYPE_ID AS room_type_id,
+		    r.FK_HOTEL_ID AS brand_id,
+		    h.HOTEL_NAME AS hotel_name,
+		    r.ROOM_GRADE AS room_grade,
+		    r.BED_TYPE AS bed_type,
+		    r.VIEW_TYPE AS view_type,
+		    r.ROOM_NAME AS room_name,
+		    r.ROOM_SIZE AS room_size,
+		    r.MAX_CAPACITY AS max_capacity,
+		    r.TOTAL_COUNT AS total_count,
+		    r.BASE_PRICE AS base_price,
+		    r.APPROVE_STATUS AS approve_status,
+		    i.IMAGE_URL AS image_url
+		
+		FROM ROOM_TYPE r
+		
+		JOIN TBL_HOTEL h
+		ON r.FK_HOTEL_ID = h.HOTEL_ID
+		
+		LEFT JOIN ROOM_IMAGE i
+		ON r.ROOM_TYPE_ID = i.ROOM_TYPE_ID
+		AND i.IS_MAIN = 'Y'
+		
+		WHERE r.IS_ACTIVE = 'N'
+		AND h.ADMIN_NO = #{adminNo}
+		
+		ORDER BY r.ROOM_NAME
+	
+	</select>
+	
+	<!-- 객실 복구 -->
+	<update id="restoreRoom">
+	    UPDATE ROOM_TYPE
+	    SET IS_ACTIVE = 'Y'
+	    WHERE ROOM_TYPE_ID = #{roomTypeId}
+	</update>
+	
+	
 	<!-- 객실 등록 신청 -->	
 	
 	<!-- 1. 객실 등록(roomtype) -->
@@ -177,6 +229,7 @@
 		UPDATE ROOM_IMAGE
 		SET IMAGE_URL = #{image_url}
 		WHERE ROOM_TYPE_ID = #{roomTypeId}
+
 	</update>
 	
 	<!-- 반려 후 재상신 -->
