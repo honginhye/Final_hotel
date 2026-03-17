@@ -6,16 +6,17 @@ import java.util.Map;
 public interface RevenueService {
     
     // 1. 월간 수익 요약 정보 조회 (총 매출, 예약 건수, 취소 건수 등)
-    Map<String, Object> getRevenueSummary(String month);
+    Map<String, Object> getRevenueSummary(Map<String, String> paraMap);
     
     // 2. 차트용 일별 매출 추이 데이터 조회 (Line Chart)
-    // 기존 getDailyRevenueTrends와 컨트롤러의 호출명을 통일함
-    List<Map<String, Object>> getDailyRevenue(String month);
+    List<Map<String, Object>> getDailyRevenue(Map<String, String> paraMap);
     
     // 3. 객실 등급별 매출 비중 조회 (Doughnut Chart)
-    List<Map<String, Object>> getRoomTypePortion(String month);
+    List<Map<String, Object>> getRoomTypePortion(Map<String, String> paraMap);
     
     // 4. 월간 결제 상세 내역 리스트 조회 (Table)
-    // AJAX에서 JSON으로 다루기 쉽도록 Map 리스트로 반환
-    List<Map<String, Object>> getMonthlyPaymentList(String month);
+    List<Map<String, Object>> getMonthlyPaymentList(Map<String, String> paraMap);
+    
+    // 5. 호텔 리스트 가져오기
+    List<Map<String, String>> getHotelList();
 }
