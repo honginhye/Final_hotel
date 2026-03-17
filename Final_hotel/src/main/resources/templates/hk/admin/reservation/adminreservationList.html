@@ -96,11 +96,33 @@ button:hover{
 	<input type="text" name="name" th:value="${name}" placeholder="회원 이름">
 	
 	예약 상태
-	<select name="status" th:value="${status}">
-	<option value="">전체</option>
-	<option value="CONFIRMED">예약완료</option>
-	<option value="CHECKED_IN">체크인</option>
-	<option value="CHECKED_OUT">체크아웃</option>
+	<select name="status">
+
+		<option value=""
+		th:selected="${status == null or status == ''}">
+		전체
+		</option>
+		
+		<option value="CONFIRMED"
+		th:selected="${status == 'CONFIRMED'}">
+		예약완료
+		</option>
+		
+		<option value="CHECKED_IN"
+		th:selected="${status == 'CHECKED_IN'}">
+		체크인
+		</option>
+		
+		<option value="CHECKED_OUT"
+		th:selected="${status == 'CHECKED_OUT'}">
+		체크아웃
+		</option>
+		
+		<option value="CANCELLED"
+		th:selected="${status == 'CANCELLED'}">
+		예약취소
+		</option>
+		
 	</select>
 	
 	<button type="submit">검색</button>
@@ -180,7 +202,10 @@ button:hover{
 
 function downloadExcel(){
 
-alert("엑셀 다운로드 기능은 아직 구현되지 않았습니다.");
+	const name = document.querySelector("input[name='name']").value;
+    const status = document.querySelector("select[name='status']").value;
+
+    location.href = "/admin/reservation/excel?name="+name+"&status="+status;
 
 }
 

@@ -49,9 +49,16 @@ public class ReservationDAO_imple implements ReservationDAO {
 		 return sqlsession.update("reservation.cancelReservation", reservationId);
 	}
 
-	// 예약 취소 내역 조회
+	// 비회원 예약 조회
 	@Override
-	public List<Map<String, Object>> selectMyCancelReservationList(int memberNo) {
-		return sqlsession.selectList("reservation.selectMyCancelReservationList", memberNo);
+	public List<Map<String, Object>> findGuestReservation(Map<String, Object> paraMap) {
+		return sqlsession.selectList("reservation.findGuestReservation", paraMap);
 	}
+
+	// 비회원 예약 취소
+	@Override
+	public int cancelGuestReservation(String reservationCode) {
+		return sqlsession.update("reservation.cancelGuestReservation", reservationCode);
+	}
+
 }
