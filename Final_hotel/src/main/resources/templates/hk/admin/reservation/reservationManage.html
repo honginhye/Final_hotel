@@ -112,6 +112,21 @@ height:100%;
 background:#ffe5e5;
 }
 
+.table-container{
+max-height:300px;   /* 원하는 높이 */
+overflow-y:auto;
+border:1px solid #ddd;
+border-radius:8px;
+}
+
+/* 헤더 고정까지 하고 싶으면 추가 */
+.table-container thead th{
+position:sticky;
+top:0;
+background:#f3f3f3;
+z-index:1;
+}
+
 </style>
 
 </head>

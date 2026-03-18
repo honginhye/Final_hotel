@@ -148,11 +148,12 @@
 	
 	<!-- 오늘 체크인 전체 -->
 	<select id="getTodayCheckinTotalCount" resultType="int">
-	    SELECT COUNT(*)
-	    FROM reservation
-	    WHERE TRUNC(checkin_date) = TRUNC(SYSDATE)
-	    AND reservation_status IN ('RESERVED', 'CHECKED_IN')
-	</select>
+    SELECT COUNT(*)
+    FROM reservation
+    WHERE checkin_date >= TRUNC(SYSDATE)
+    AND checkin_date <![CDATA[ < ]]> TRUNC(SYSDATE) + 1
+    AND reservation_status IN ('CONFIRMED', 'CHECKED_IN')
+</select>
 	
 	<!-- 오늘 체크인 완료 -->
 	<select id="getTodayCheckinDoneCount" resultType="int">
