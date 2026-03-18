@@ -153,5 +153,11 @@ public class AdminRoomDAO_imple implements AdminRoomDAO {
 	public List<Map<String, Object>> getBranchApprovalHistoryList(Integer adminNo) {
 		return sqlsession.selectList("adminRoom.getBranchApprovalHistoryList", adminNo);
 	}
+	
+	// 호텔 필터용
+	@Override
+	public List<Map<String, Object>> selectHotelList() {
+	    return sqlsession.selectList("adminRoom.selectHotelList");
+	}
 
 }

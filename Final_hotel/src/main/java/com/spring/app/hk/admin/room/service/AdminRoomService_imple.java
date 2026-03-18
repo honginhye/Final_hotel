@@ -226,5 +226,11 @@ public class AdminRoomService_imple implements AdminRoomService {
 
 	}
 
+	// 호텔 필터용
+	@Override
+	public List<Map<String, Object>> selectHotelList() {
+	    return adminRoomDAO.selectHotelList();
+	}
+
 	
 }

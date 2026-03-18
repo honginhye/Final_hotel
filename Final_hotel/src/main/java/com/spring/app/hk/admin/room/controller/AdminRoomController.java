@@ -208,10 +208,18 @@ public class AdminRoomController {
 	// 승인요청 (지점관리자) 목록 조회
 	@PreAuthorize("hasRole('ADMIN_HQ')")
 	@GetMapping("/pending")
-	public String roomApprovalPage(Model model) {
+	public String roomApprovalPage(@RequestParam(value="hotelId", required=false) String hotelId,
+	        					   Model model) {
 
 		List<RoomTypeDTO> roomList = roomService.getRoomApprovalList();
 
+		// 호텔 필터
+		 if(hotelId != null && !hotelId.equals("")) {
+		        roomList = roomList.stream()
+		                .filter(r -> hotelId.equals(String.valueOf(r.getHotel_name())))
+		                .toList();
+		    }
+		
 		List<RoomTypeDTO> pendingList = roomList.stream().filter(r -> "PENDING".equals(r.getApprove_status())).toList();
 
 		List<RoomTypeDTO> approvedList = roomList.stream().filter(r -> "APPROVED".equals(r.getApprove_status()))
@@ -234,6 +242,9 @@ public class AdminRoomController {
 
 		model.addAttribute("historyList", historyList);
 
+		// 호텔 목록 
+		model.addAttribute("hotelList", roomService.selectHotelList());
+		
 		return "hk/admin/room/pendingRoomList";
 	}
 

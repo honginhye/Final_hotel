@@ -56,6 +56,9 @@ public interface AdminRoomService {
 	// 객실 전체 승인 히스토리 조회용
 	List<Map<String,Object>> getApprovalHistoryList();
 
+	// 호텔 필터 추가
+	Object selectHotelList();
+
 	
 
 	
