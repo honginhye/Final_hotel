@@ -60,5 +60,13 @@ public class ReservationDAO_imple implements ReservationDAO {
 	public int cancelGuestReservation(String reservationCode) {
 		return sqlsession.update("reservation.cancelGuestReservation", reservationCode);
 	}
+	
+	// 스프링 스케줄러로 예약 메일 보내기
+	@Override
+	public List<Map<String, Object>> selectTomorrowCheckinForMail() {
+	    return sqlsession.selectList("reservation.selectTomorrowCheckinForMail");
+	}
+
+	
 
 }

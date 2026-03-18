@@ -28,6 +28,9 @@ public interface ReservationDAO {
 
 	// 비회원 예약 취소
 	int cancelGuestReservation(String reservationCode);
+	
+	// 스프링 스케줄러로 예약 메일 보내기
+	List<Map<String, Object>> selectTomorrowCheckinForMail();
 
 
 }

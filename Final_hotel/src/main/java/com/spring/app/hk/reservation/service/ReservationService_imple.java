@@ -12,6 +12,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.spring.app.common.AES256;
 import com.spring.app.hk.reservation.mail.ReservationMailService;
 import com.spring.app.hk.reservation.model.ReservationDAO;
 import com.spring.app.hk.room.service.RoomStockService;
@@ -28,6 +29,7 @@ public class ReservationService_imple implements ReservationService {
 
     private final ReservationDAO reservationDAO;
     private final RoomStockService roomStockService;
+    private final AES256 aes256;
     
     private final ReservationMailService reservationMailService; // 추가 : 메일
 
@@ -251,6 +253,59 @@ public class ReservationService_imple implements ReservationService {
 	public int cancelGuestReservation(String reservationCode) {
 		return reservationDAO.cancelGuestReservation(reservationCode);
 	}
+	
+	
+	// 스프링 스케줄러로 예약 메일 보내기
+	public void sendCheckinReminderMail() {
 
+	    List<Map<String, Object>> list = reservationDAO.selectTomorrowCheckinForMail();
+
+	    for(Map<String, Object> row : list) {
+
+	    	String encryptedEmail = (String) row.get("EMAIL");
+	    	String email = null;
+
+	    	try {
+	    	    email = aes256.decrypt(encryptedEmail);  // 복호화
+	    	} catch (Exception e) {
+	    	    System.out.println("❌ 이메일 복호화 실패: " + encryptedEmail);
+	    	    continue;
+	    	}
+
+	    	// 안전 필터
+	    	if(email == null || !email.contains("@")) {
+	    	    System.out.println("❌ 잘못된 이메일: " + email);
+	    	    continue;
+	    	}
+	        
+	        String name = (String) row.get("NAME");
+
+	        String reservationCode = (String) row.get("RESERVATION_CODE");
+	        String hotelName = (String) row.get("HOTEL_NAME");
+	        String roomName = (String) row.get("ROOM_NAME");
+
+	        String checkIn = String.valueOf(row.get("CHECKIN_DATE"));
+	        String checkOut = String.valueOf(row.get("CHECKOUT_DATE"));
+	        String totalPrice = String.valueOf(row.get("TOTAL_PRICE"));
+
+	        try {
+	        	reservationMailService.sendReminderMail(
+	        		    email,
+	        		    name,
+	        		    reservationCode,
+	        		    hotelName,
+	        		    roomName,
+	        		    checkIn,
+	        		    checkOut
+	        		);
+
+	            System.out.println("✅ 체크인 하루 전 메일 발송 완료 : " + reservationCode);
+
+	        } catch (Exception e) {
+	            System.out.println("❌ 메일 발송 실패 : " + reservationCode);
+	            e.printStackTrace();
+	        }
+	    }
+	}
 
 }

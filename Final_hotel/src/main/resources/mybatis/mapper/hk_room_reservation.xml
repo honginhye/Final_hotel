@@ -201,6 +201,30 @@
 	    WHERE RESERVATION_CODE = #{reservation_code}
 	    AND TRUNC(SYSDATE) &lt;= TRUNC(CANCEL_DEADLINE)
 	</update>
+	
+	
+	<!-- 스프링 스케줄러로 예약 메일 보내기 -->
+	<select id="selectTomorrowCheckinForMail" resultType="map">
+	    SELECT
+	        r.RESERVATION_ID,
+	        r.CHECKIN_DATE,
+	        r.CHECKOUT_DATE,
+	        r.RESERVATION_CODE,
+	        r.TOTAL_PRICE,
+	        m.EMAIL,
+	        m.NAME,
+	        rt.ROOM_NAME,
+	        h.HOTEL_NAME
+	    FROM RESERVATION r
+	    JOIN TBL_MEMBER_SECURITY m
+	      ON r.MEMBER_NO = m.MEMBER_NO
+	    JOIN ROOM_TYPE rt
+	      ON r.ROOM_TYPE_ID = rt.ROOM_TYPE_ID
+	    JOIN TBL_HOTEL h
+	      ON rt.FK_HOTEL_ID = h.HOTEL_ID
+	    WHERE r.RESERVATION_STATUS = 'CONFIRMED'
+	      AND TRUNC(r.CHECKIN_DATE) = TRUNC(SYSDATE + 1)
+	</select>
 	  
 
 </mapper>
