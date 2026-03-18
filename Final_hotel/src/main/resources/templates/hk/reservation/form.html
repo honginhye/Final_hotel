@@ -272,10 +272,26 @@ function requestPay() {
                     room_name: "[[${room_name}]]"
                 })
             })
-            .then(res => res.text())
+            .then(res => {
+                if (!res.ok) {
+                    return res.text().then(msg => {
+                        throw new Error(msg); //  여기 중요
+                    });
+                }
+                return res.text();
+            })
             .then(code => {
                 alert("예약이 완료되었습니다.");
                 location.href = "/final_hotel/reservation/complete?code=" + code;
+            })
+            .catch(err => {
+                console.error(err);
+
+                if (err.message.includes("재고")) {
+                    alert("이미 예약된 객실입니다. 다른 날짜를 선택해주세요.");
+                } else {
+                    alert("예약 처리 중 오류가 발생했습니다.");
+                }
             });
 
         } else {
