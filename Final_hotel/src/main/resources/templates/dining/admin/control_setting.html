@@ -29,65 +29,93 @@
         </style>
     </th:block>
 
-    <th:block th:fragment="script">
-        <script th:inline="javascript">
-            // 업장 선택 시 시간대 동적 생성
-            function changeDining(obj) {
-                const selectedOption = obj.options[obj.selectedIndex];
-                const timesStr = selectedOption.getAttribute('data-times'); 
-                const timeSelect = $('#blockTime');
-
-                timeSelect.empty();
-                timeSelect.append('<option value="ALL">종일 (Full Day)</option>');
-
-                if (timesStr) {
-                    const times = timesStr.split(',');
-                    times.forEach(time => {
-                        const t = time.trim();
-                        if(t) timeSelect.append(`<option value="${t}">${t}</option>`);
-                    });
-                }
-            }
-        
-            function submitBlock() {
-                const dining = $('select[name="fkDiningId"]').val();
-                const date = $('input[name="blockDate"]').val();
-                
-                if(!dining) { alert("업장을 선택해주세요."); return; }
-                if(!date) { alert("날짜를 선택해주세요."); return; }
-                
-                if(!confirm("해당 시간의 예약을 차단하시겠습니까?")) return;
-
-                const formData = $('#blockForm').serialize();
-                $.ajax({
-                    url: "/admin/dining/block/register",
-                    type: "POST",
-                    data: formData,
-                    success: function(res) {
-                        alert("차단 설정이 완료되었습니다.");
-                        location.reload();
-                    },
-                    error: function() { alert("저장에 실패했습니다. 다시 시도해주세요."); }
-                });
-            }
-
-            function deleteBlock(blockId) {
-                if(!confirm("해당 차단 설정을 해제하시겠습니까?")) return;
-                $.ajax({
-                    url: "/admin/dining/block/delete",
-                    type: "POST",
-                    data: { "blockId": blockId },
-                    success: function() { location.reload(); }
-                });
-            }
-            
-            $(document).ready(function() {
-                const today = new Date().toISOString().split('T')[0];
-                $('input[name="blockDate"]').attr('min', today);
-            });
-            
-        </script>
-    </th:block>
+	<th:block th:fragment="script">
+	    <script th:inline="javascript">
+	        /*<![CDATA[*/
+	        
+	        function changeDining(obj) {
+	            const selectedOption = obj.options[obj.selectedIndex];
+	            const timesStr = selectedOption.getAttribute('data-times'); 
+	            const timeSelect = $('#blockTime');
+	
+	            timeSelect.empty();
+	            timeSelect.append('<option value="ALL">종일 (Full Day)</option>');
+	
+	            if (timesStr) {
+	                const times = timesStr.split(',');
+	                times.forEach(time => {
+	                    const t = time.trim();
+	                    if(t) {
+	                        timeSelect.append(`<option value="${t}">${t}</option>`);
+	                    }
+	                });
+	            }
+	        }
+	    
+	        // 차단 등록
+	        function submitBlock() {
+	            const url = /*[[@{/admin/dining/block/register}]]*/ "/admin/dining/block/register";
+	            
+	            const dining = $('select[name="fkDiningId"]').val();
+	            const date = $('input[name="blockDate"]').val();
+	            
+	            if(!dining) { alert("업장을 선택해주세요."); return; }
+	            if(!date) { alert("날짜를 선택해주세요."); return; }
+	            
+	            if(!confirm("해당 시간의 예약을 차단하시겠습니까?")) return;
+	
+	            const formData = $('#blockForm').serialize();
+	            
+	            $.ajax({
+	                url: url,
+	                type: "POST",
+	                data: formData,
+	                success: function(res) {
+	                    if(res === "success") {
+	                        alert("차단 설정이 완료되었습니다.");
+	                        location.reload();
+	                    } else {
+	                        alert("등록 실패: " + res);
+	                    }
+	                },
+	                error: function() { 
+	                    alert("저장에 실패했습니다. 주소(404) 또는 서버 에러(500)를 확인해주세요."); 
+	                }
+	            });
+	        }
+	
+	        // 차단 해제
+	        function deleteBlock(blockId) {
+	            const url = /*[[@{/admin/dining/block/delete}]]*/ "/admin/dining/block/delete";
+	            
+	            if(!confirm("해당 차단 설정을 해제하시겠습니까?")) return;
+	            $.ajax({
+	                url: url,
+	                type: "POST",
+	                data: { "blockId": blockId },
+	                success: function(res) {
+	                    if(res === "success") {
+	                        alert("해제되었습니다.");
+	                        location.reload();
+	                    }
+	                },
+	                error: function() { alert("통신 오류가 발생했습니다."); }
+	            });
+	        }
+	        
+	        $(document).ready(function() {
+	            const today = new Date().toISOString().split('T')[0];
+	            $('input[name="blockDate"]').attr('min', today);
+	
+	            const token = $("meta[name='_csrf']").attr("content");
+	            const header = $("meta[name='_csrf_header']").attr("content");
+	            $(document).ajaxSend(function(e, xhr, options) {
+	                if (token && header) { xhr.setRequestHeader(header, token); }
+	            });
+	        });
+	        /*]]>*/
+	    </script>
+	</th:block>
 </head>
 <body>
     <div th:fragment="content">
