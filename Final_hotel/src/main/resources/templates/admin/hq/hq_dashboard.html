@@ -589,27 +589,31 @@
         </div>
 
         <div class="quickActions">
-          <button class="qaBtn" type="button" onclick="location.href='/final_hotel/admin/hq/account/myInfo'">
-            <div class="dot">👤</div>
-            <div class="txt"><b>내 정보</b></div>
-          </button>
-          <button class="qaBtn" type="button" onclick="location.href='/final_hotel/admin/hq/admins'">
-            <div class="dot">🧑‍💼</div>
-            <div class="txt"><b>지점관리자 관리</b></div>
-          </button>
-          <button class="qaBtn" type="button" onclick="location.href='/final_hotel/admin/hq/shuttle'">
-            <div class="dot">🚌</div>
-            <div class="txt"><b>셔틀 운영 관리</b></div>
-          </button>
-          <button class="qaBtn" type="button" onclick="location.href='/final_hotel/admin/hq/notice/write'">
-            <div class="dot">📢</div>
-            <div class="txt"><b>공지 등록</b></div>
-          </button>
-          <button class="qaBtn" type="button" onclick="location.href='/final_hotel/admin/hq/promotion/write'">
-            <div class="dot">🎁</div>
-            <div class="txt"><b>프로모션 등록</b></div>
-          </button>
-        </div>
+		  <button class="qaBtn" type="button" th:onclick="|location.href='@{/admin/hotel/list}'|">
+		    <div class="dot">🧑‍💼</div>
+		    <div class="txt"><b>호텔 관리</b></div>
+		  </button>
+		
+		  <button class="qaBtn" type="button" th:onclick="|location.href='@{/admin/room/pending}'|">
+		    <div class="dot">🚌</div>
+		    <div class="txt"><b>객실 승인 관리</b></div>
+		  </button>
+		
+		  <button class="qaBtn" type="button" th:onclick="|location.href='@{/admin/reservation/list}'|">
+		    <div class="dot">🛏️</div>
+		    <div class="txt"><b>예약 관리</b></div>
+		  </button>
+		
+		  <button class="qaBtn" type="button" th:onclick="|location.href='@{/notice/list}'|">
+		    <div class="dot">📢</div>
+		    <div class="txt"><b>공지 등록</b></div>
+		  </button>
+		
+		  <button class="qaBtn" type="button" th:onclick="|location.href='@{/promotion/write(hotelId=1)}'|">
+		    <div class="dot">🎁</div>
+		    <div class="txt"><b>프로모션 등록</b></div>
+		  </button>
+		</div>
       </div>
     </section>
 
@@ -704,7 +708,7 @@
               <span>지점 관리자 계정 발급 및 목록 관리</span>
             </div>
           </div>
-          <button class="btnSmall primary" type="button" onclick="location.href='/final_hotel/admin/hq/admins'">이동</button>
+          <button class="btnSmall primary" type="button" th:onclick="|location.href='@{/admin/hq/admins}'|">이동</button>
         </div>
 
         <div class="item">
@@ -715,7 +719,7 @@
               <span>호텔별 셔틀 노선 관리, 운행 차단, 기간 연장, 과거 데이터 정리</span>
             </div>
           </div>
-          <button class="btnSmall primary" type="button" onclick="location.href='/final_hotel/admin/hq/shuttle'">이동</button>
+          <button class="btnSmall primary" type="button" th:onclick="|location.href='@{/admin/hq/shuttle}'|">이동</button>
         </div>
       </div>
     </section>

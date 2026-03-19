@@ -229,7 +229,7 @@
 		UPDATE ROOM_IMAGE
 		SET IMAGE_URL = #{image_url}
 		WHERE ROOM_TYPE_ID = #{roomTypeId}
-
+		AND IS_MAIN = 'Y'
 	</update>
 	
 	<!-- 반려 후 재상신 -->
@@ -381,7 +381,13 @@
 		ORDER BY h.DECIDED_AT DESC
 	</select>
 	
-	
+	<!-- 호텔필터용 -->
+	<select id="selectHotelList" resultType="map">
+	    SELECT hotel_id, hotel_name
+	    FROM tbl_hotel
+	    WHERE active_yn = 'Y'
+	    ORDER BY hotel_name
+	</select>
 	
 
 	

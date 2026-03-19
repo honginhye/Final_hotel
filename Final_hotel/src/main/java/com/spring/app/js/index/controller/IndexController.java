@@ -12,6 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.HashMap;
 import java.util.List;
@@ -45,6 +48,9 @@ public class IndexController {
         // 4. 다이닝 목록 (상위 3개) 가져오기
         List<DiningDTO> diningList = service.getMainDiningList();
 
+        // 퀵탭(Quick Tab) 검색용 호텔 목록 가져오기
+        List<Map<String, String>> hotelList = service.getHotelList();
+        
         // 뷰(HTML)로 전달
         // HTML에서 사용하는 th:each 명칭과 일치시켜야 합니다.
         model.addAttribute("mainBannerList", mainBannerList); // 슬라이더용
@@ -52,6 +58,8 @@ public class IndexController {
         model.addAttribute("roomList", roomList);
         model.addAttribute("diningList", diningList);
 
+        model.addAttribute("hotelList", hotelList);
+        
         return "js/index/index";
     }
     
@@ -71,7 +79,7 @@ public class IndexController {
 
         // 3. 객실 예약일 경우 처리 (기존 로직)
         String daterange = request.getParameter("daterange"); 
-        String bedType = request.getParameter("bedType");
+        String capacity = request.getParameter("capacity");
 
         // 날짜 파싱 (안전하게 처리)
         String checkIn = "";
@@ -86,7 +94,7 @@ public class IndexController {
         paraMap.put("hotelId", hotelId);
         paraMap.put("checkIn", checkIn);
         paraMap.put("checkOut", checkOut);
-        paraMap.put("bedType", bedType);
+        paraMap.put("capacity", capacity);
 
         // 필터용 호텔 목록
         List<Map<String, String>> hotelList = service.getHotelList(); 
@@ -100,5 +108,48 @@ public class IndexController {
         model.addAttribute("searchParams", paraMap);
 
         return "hk/room/list"; 
+    }
+    
+    // 1. 배너 작성/수정 페이지 진입 (모든 호텔이 나오도록 수정)
+    @GetMapping("/admin/banner/write")
+    public String bannerWrite(Model model) {
+        // [수정] 필터링된 리스트 대신, 모든 호텔이 나오는 getHotelList()를 사용합니다.
+        List<Map<String, String>> hotelList = service.getHotelList();
+        model.addAttribute("hotelList", hotelList);
+        return "js/index/banner_write"; 
+    }
+
+    // 2. [신설] 특정 호텔의 기존 배너 정보를 가져오는 API (AJAX용)
+    @GetMapping("/api/banner/detail")
+    @ResponseBody
+    public Map<String, Object> getBannerDetail(@RequestParam("hotelId") String hotelId) {
+        // Service와 DAO에 getBannerByHotelId(hotelId) 메서드를 만들어야 합니다.
+        return service.getBannerByHotelId(hotelId);
+    }
+
+    // 3. 배너 저장 (등록 및 수정 통합)
+    @PostMapping("/admin/banner/write")
+    public String bannerWriteEnd(@RequestParam Map<String, String> paraMap) {
+        
+        if(!paraMap.containsKey("banner_type") || paraMap.get("banner_type").isEmpty()) {
+            paraMap.put("banner_type", "MAIN");
+        }
+
+        // [수정] insertBanner 대신 saveBanner(Merge 쿼리 호출)를 사용하면 등록/수정이 한 번에 됩니다.
+        int n = service.saveBanner(paraMap); 
+        
+        if(n >= 1) { // Merge 쿼리는 영향받은 행이 1 이상일 수 있음
+            return "redirect:/index"; 
+        } else {
+            return "js/index/banner_write"; 
+        }
+    }
+
+    // 특정 호텔의 이미지를 가져오는 API (AJAX용)
+    @GetMapping("/api/hotel/images")
+    @ResponseBody
+    public List<Map<String, Object>> getHotelImages(@RequestParam(value = "hotelId") String hotelId) {
+        // SELECT image_url FROM HOTEL_IMAGE WHERE fk_hotel_id = #{hotelId}
+        return service.getHotelImages(hotelId);
     }
 }

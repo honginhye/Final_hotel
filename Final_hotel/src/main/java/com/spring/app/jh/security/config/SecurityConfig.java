@@ -204,11 +204,14 @@ public class SecurityConfig {
             "/product/list",
             "/room/**",
             "/js_images/**",
-            "/notice/**",
+            "/notice/list",
+            "/notice/detail/**",
             "/cs/**",
             "/hotel/location",
             
-            "/dining/**"
+            "/dining/**",
+            "/search"
+           
         };
 
         httpSecurity
@@ -223,9 +226,12 @@ public class SecurityConfig {
                 .requestMatchers(excludeUri).permitAll()
                 .requestMatchers("/notice/write", "/notice/edit/**", "/notice/delete")
                     .hasAnyRole("ADMIN_HQ", "ADMIN_BRANCH")
+                .requestMatchers("/promotion/reserve").authenticated()
+                .requestMatchers("/promotion/**").permitAll()
                 .requestMatchers("/cs/qnaWrite", "/cs/qnaDelete").authenticated()
                 .requestMatchers("/reservation/**").permitAll()
                 .requestMatchers("/payment/**").permitAll()
+                .requestMatchers("/shuttle/**").permitAll()
                 .requestMatchers("/security/special/**").hasAnyRole("ADMIN_HQ", "ADMIN_BRANCH", "USER_SPECIAL")
                 .requestMatchers("/security/admin/**").hasAnyRole("ADMIN_HQ", "ADMIN_BRANCH")
                 .requestMatchers("/emp/**").hasAnyRole("ADMIN_HQ", "ADMIN_BRANCH")
