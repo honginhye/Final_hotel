@@ -783,9 +783,10 @@ function switchReserveTab(type) {
              th:href="@{/promotion/detail/{id}(id=${promo.promotion_id})}">
             <div class="thumb">
               <img class="promoImg"
-                   th:if="${promo.image_url != null and promo.image_url != ''}"
-                   th:src="@{'/images/js/' + ${promo.image_url}}"
-                   alt="프로모션 이미지">
+				     th:if="${promo.image_url != null and promo.image_url != ''}"
+				     th:src="${#strings.startsWith(promo.image_url, 'http')} ? ${promo.image_url} : @{/file_images/js/{img}(img=${promo.image_url})}"
+				     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+				     alt="프로모션 이미지">
               <span th:if="${promo.image_url == null or promo.image_url == ''}">프로모션</span>
             </div>
             <h3 th:text="${promo.title}">프로모션 제목</h3>
