@@ -445,5 +445,31 @@
 	    WHERE d.dining_id = #{diningId}
 	    ORDER BY s.res_time ASC
 	</select>
+	
+	<select id="getTodayShopResList" resultType="map">
+	    SELECT guest_name as "guestName", 
+	           res_time as "resTime", 
+	           status as "status"
+	    FROM dining_reservations
+	    WHERE dining_id = #{diningId}
+	      AND res_date = TO_CHAR(SYSDATE, 'YYYY-MM-DD')
+	    ORDER BY res_time ASC
+	</select>
+	
+	<select id="getAvailableSeatCount" resultType="int">
+	    SELECT 
+	        (SELECT max_slot_capacity
+	         FROM tbl_dining_time_slot 
+	         WHERE dining_id = #{diningId} AND res_time = #{resTime}) 
+	        - 
+	        (SELECT NVL(SUM(adult_count + child_count + infant_count), 0) 
+	         FROM dining_reservations
+	         WHERE dining_id = #{diningId} 
+	           AND res_date = #{resDate} 
+	           AND res_time = #{resTime}
+	           AND status IN ('CONFIRMED', 'VISITED')) as available_seat
+	    FROM DUAL
+	</select>
+
 
 </mapper>
