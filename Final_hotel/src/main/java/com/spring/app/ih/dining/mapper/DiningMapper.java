@@ -64,6 +64,10 @@ public interface DiningMapper {
     int updateSlotCapacity(Map<String, Object> paraMap);
     
     List<ShopReservationStatDTO> getDiningConfig(@Param("diningId") String diningId);
+
+	List<Map<String, Object>> getTodayShopResList(String diningId);
+
+	int getAvailableSeatCount(Map<String, Object> params);
 	
 	
 	

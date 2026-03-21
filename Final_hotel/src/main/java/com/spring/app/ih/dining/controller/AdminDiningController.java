@@ -92,25 +92,15 @@ public class AdminDiningController {
     }
     
     // 인원 합산
-    @PostMapping("/check")
     @ResponseBody
-    public int check(@RequestParam Map<String, Object> paraMap) {
-       
-        System.out.println(">>> [Check] 넘어온 파라미터: " + paraMap);
-
+    public int check_backup(@RequestParam Map<String, Object> paraMap) {
         try {
             int total = Integer.parseInt(String.valueOf(paraMap.get("adult_count"))) 
                       + Integer.parseInt(String.valueOf(paraMap.get("child_count")))
                       + Integer.parseInt(String.valueOf(paraMap.get("infant_count")));
-            
             paraMap.put("totalGuests", total);
-            
-            int result = diningservice.checkAvailability(paraMap);
-            System.out.println(">>> [Check] 서비스 결과값: " + result); // 0인지 1인지 확인
-            
-            return result;
+            return diningservice.checkAvailability(paraMap);
         } catch (Exception e) {
-            e.printStackTrace();
             return 0; 
         }
     }
@@ -199,6 +189,35 @@ public class AdminDiningController {
     public List<ShopReservationStatDTO> getDiningConfig(@RequestParam("diningId") String diningId) {
         return diningservice.getDiningConfig(diningId); 
     }
+    
+    @GetMapping("/getTodayShopResList")
+    @ResponseBody
+    public List<Map<String, Object>> getTodayShopResList(@RequestParam("diningId") String diningId) {
+        return diningservice.getTodayShopResList(diningId); 
+    }
+    
+    @PostMapping("/check")
+    @ResponseBody
+    public int checkAvailability(@RequestParam Map<String, Object> params) {
+        System.out.println(">>> [신규 검증] 파라미터: " + params);
+        
+        try {
+            int availableSeat = diningservice.getAvailableSeatCount(params);
+            
+            int requestedPeople = Integer.parseInt(params.get("adult_count").toString())
+                                + Integer.parseInt(params.get("child_count").toString())
+                                + Integer.parseInt(params.get("infant_count").toString());
+
+            System.out.println(">>> 잔여석: " + availableSeat + " / 요청인원: " + requestedPeople);
+
+            return availableSeat; 
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            return -1; 
+        }
+    }
+    
     
 
 }
