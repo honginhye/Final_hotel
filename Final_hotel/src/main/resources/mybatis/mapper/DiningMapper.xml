@@ -4,26 +4,22 @@
 <mapper namespace="com.spring.app.ih.dining.mapper.DiningMapper">
 
 	<select id="getDiningList" resultType="map" parameterType="HashMap">
-	    SELECT 
-	        dining_id as "DINING_ID", 
-	        name as "NAME", 
-	        d_type as "D_TYPE", 
-	        description as "DESCRIPTION",
-	        tel as "TEL", 
-	        floor as "FLOOR", 
-	        main_img as "MAIN_IMG", 
-	        fk_hotel_id as "FK_HOTEL_ID", 
-	        business_hours as "BUSINESS_HOURS",
-	        available_times as "AVAILABLE_TIMES"  FROM tbl_dining
-	    <where>
-	        <if test="hotel_id != null and hotel_id != ''">
-	            AND fk_hotel_id = #{hotel_id}
-	        </if>
-	        <if test="d_type != null and d_type != ''">
-	            AND UPPER(d_type) = UPPER(#{d_type})
-	        </if>
-	    </where>
-	    ORDER BY dining_id ASC
+
+		SELECT
+			dining_id as "DINING_ID", name as "NAME", d_type as "D_TYPE",
+			description as "DESCRIPTION", tel as "TEL", floor as "FLOOR",
+			main_img as "MAIN_IMG", fk_hotel_id as "FK_HOTEL_ID", 
+			business_hours as "BUSINESS_HOURS",
+			available_times as "AVAILABLE_TIMES" FROM tbl_dining
+		<where>
+			<if test="hotel_id != null and hotel_id != ''">
+				AND fk_hotel_id = #{hotel_id}
+			</if>
+			<if test="d_type != null and d_type != ''">
+				AND UPPER(d_type) = UPPER(#{d_type})
+			</if>
+		</where>
+			ORDER BY dining_id ASC
 	</select>
 	
     <select id="getDiningDetail" resultType="DiningDTO">
@@ -37,7 +33,7 @@
             FROM tbl_dining
         WHERE dining_id = #{dining_id}
     </select>
-    
+
     <insert id="registerReservation" parameterType="DiningReservationDTO">
 	    INSERT INTO dining_reservations (
 	        dining_reservation_id,
@@ -202,30 +198,50 @@
 	    WHERE DINING_RESERVATION_ID = #{id}
     </update>
     
-    <select id="findAllReservationsAdmin" parameterType="map" resultType="DiningReservationDTO">
-	    SELECT 
-	        R.dining_reservation_id as diningReservationId,
-	        (SELECT D.NAME FROM TBL_DINING D WHERE D.DINING_ID = R.dining_id) as diningName,
-	        R.guest_name as guestName,
-	        R.guest_phone as guestPhone,
-	        R.res_date as resDate,
-	        R.res_time as resTime,
-	        R.adult_count as adultCount,
-	        R.child_count as childCount,
-	        R.infant_count as infantCount,
-	        R.status as status,
-	        R.fk_member_no as fkMemberNo,
-	        R.created_at as createdAt
-	    FROM dining_reservations R
+    <select id="getTotalReservationCount" parameterType="map" resultType="int">
+	    SELECT COUNT(*)
+	    FROM dining_reservations
 	    <where>
 	        <if test="keyword != null and keyword != ''">
-	            AND (R.guest_name LIKE '%' || #{keyword} || '%' OR R.guest_phone LIKE '%' || #{keyword} || '%')
+	            AND (guest_name LIKE '%' || #{keyword} || '%' OR guest_phone LIKE '%' || #{keyword} || '%')
 	        </if>
 	        <if test="status != null and status != ''">
-	            AND R.status = #{status}
+	            AND status = #{status}
 	        </if>
 	    </where>
-	    ORDER BY R.res_date DESC, R.res_time DESC
+	</select>
+	
+	<select id="findAllReservationsAdmin" parameterType="map" resultType="DiningReservationDTO">
+	    SELECT *
+	    FROM (
+	        SELECT rownum AS rno, T.*
+	        FROM (
+	            SELECT 
+	                R.dining_reservation_id as diningReservationId,
+	                (SELECT D.NAME FROM TBL_DINING D WHERE D.DINING_ID = R.dining_id) as diningName,
+	                R.guest_name as guestName,
+	                R.guest_phone as guestPhone,
+	                R.res_date as resDate,
+	                R.res_time as resTime,
+	                R.adult_count as adultCount,
+	                R.child_count as childCount,
+	                R.infant_count as infantCount,
+	                R.status as status,
+	                R.fk_member_no as fkMemberNo,
+	                R.created_at as createdAt
+	            FROM dining_reservations R
+	            <where>
+	                <if test="keyword != null and keyword != ''">
+	                    AND (R.guest_name LIKE '%' || #{keyword} || '%' OR R.guest_phone LIKE '%' || #{keyword} || '%')
+	                </if>
+	                <if test="status != null and status != ''">
+	                    AND R.status = #{status}
+	                </if>
+	            </where>
+	            ORDER BY R.res_date DESC, R.res_time DESC
+	        ) T
+	    )
+	    WHERE rno BETWEEN #{startRow} AND #{endRow}
 	</select>
 	
 	<select id="getAdminDashboardCounts" resultType="map">
@@ -283,12 +299,11 @@
 	        res.status, 
 	        res.special_requests AS specialRequests,
 	        res.created_at AS createdAt,
-	        d.name AS diningName  
+	        res.fk_member_no AS fkMemberNo,  d.name AS diningName  
 	    FROM dining_reservations res
 	    JOIN tbl_dining d ON res.dining_id = d.dining_id
 	    WHERE res.dining_reservation_id = #{resId}
 	</select>
-	
 
 	<select id="checkAvailability" resultType="int">
 	    <![CDATA[
@@ -388,6 +403,149 @@
 	    GROUP BY r.res_time, d.max_total_capacity
 	    HAVING SUM(r.adult_count + r.child_count + r.infant_count) >= d.max_total_capacity
 	</select>
+	
+	<select id="getTodayShopStats" resultType="com.spring.app.ih.dining.model.ShopReservationStatDTO">
+	    SELECT 
+	        d.dining_id AS "diningId",       d.name AS "shopName",
+	        COUNT(res.dining_reservation_id) AS "totalCount",
+	        COUNT(CASE WHEN res.status = 'VISITED' THEN 1 END) AS "visitedCount",
+	        NVL(SUM(res.adult_count + res.child_count + res.infant_count), 0) AS "currentPeople",
+	        d.max_total_capacity AS "maxCapacity"
+	    FROM tbl_dining d
+	    LEFT JOIN dining_reservations res 
+	      ON d.dining_id = res.dining_id 
+	     AND res.res_date = TRUNC(SYSDATE)
+	     AND res.status != 'CANCELED'
+	    GROUP BY d.dining_id, d.name, d.max_total_capacity
+	    ORDER BY d.dining_id ASC
+	</select>
+	
+	<update id="updateMaxCapacity">
+	    UPDATE tbl_dining SET max_total_capacity = #{maxCapacity} WHERE dining_id = #{diningId}
+	</update>
+	
+	<update id="updateSlotCapacity">
+	    UPDATE tbl_dining_time_slot SET max_slot_capacity = #{maxSlotCapacity} WHERE slot_id = #{slotId}
+	</update>
+	
+	<select id="getDiningConfig" resultType="com.spring.app.ih.dining.model.ShopReservationStatDTO">
+	    SELECT 
+	        d.dining_id as diningId,
+	        d.name as shopName,
+	        d.max_total_capacity as maxTotal,
+	        s.slot_id as slotId,
+	        s.res_time as resTime,
+	        s.max_slot_capacity as slotCapacity
+	    FROM tbl_dining d
+	    LEFT JOIN tbl_dining_time_slot s ON d.dining_id = s.dining_id
+	    WHERE d.dining_id = #{diningId}
+	    ORDER BY s.res_time ASC
+	</select>
+	
+	<select id="getTodayShopResList" resultType="map">
+	    SELECT guest_name as "guestName", 
+	           res_time as "resTime", 
+	           status as "status"
+	    FROM dining_reservations
+	    WHERE dining_id = #{diningId}
+	      AND res_date = TO_CHAR(SYSDATE, 'YYYY-MM-DD')
+	    ORDER BY res_time ASC
+	</select>
+	
+	<select id="getAvailableSeatCount" resultType="int">
+	    SELECT 
+	        (SELECT max_slot_capacity
+	         FROM tbl_dining_time_slot 
+	         WHERE dining_id = #{diningId} AND res_time = #{resTime}) 
+	        - 
+	        (SELECT NVL(SUM(adult_count + child_count + infant_count), 0) 
+	         FROM dining_reservations
+	         WHERE dining_id = #{diningId} 
+	           AND res_date = #{resDate} 
+	           AND res_time = #{resTime}
+	           AND status IN ('CONFIRMED', 'VISITED')) as available_seat
+	    FROM DUAL
+	</select>
+	
+	<update id="updateDiningDetails" parameterType="DiningDTO">
+	    UPDATE tbl_dining
+	    <set>
+	        business_hours = #{business_hours},
+	        tel = #{tel},
+	        introduction = #{introduction},
+	        description = #{description},
+	        extra_info = #{extra_info},
+	        
+	        <if test="main_img != null">main_img = #{main_img},</if>
+	        <if test="store_imgs != null">store_imgs = #{store_imgs},</if>
+	        <if test="food_imgs != null">food_imgs = #{food_imgs},</if>
+	        <if test="menu_pdf != null">menu_pdf = #{menu_pdf}</if>
+	    </set>
+	    WHERE 
+	        dining_id = #{dining_id}
+	</update>
+
+	<select id="getAdminDiningList" resultType="DiningDTO" parameterType="HashMap">
+	    SELECT 
+	        dining_id, 
+	        name, 
+	        d_type, 
+	        description,
+	        tel, 
+	        floor, 
+	        main_img, 
+	        fk_hotel_id, 
+	        business_hours,
+	        available_times
+	    FROM tbl_dining
+	    <where>
+	        <if test="hotel_id != null and hotel_id != ''">
+	            AND fk_hotel_id = #{hotel_id}
+	        </if>
+	        <if test="d_type != null and d_type != ''">
+	            AND UPPER(d_type) = UPPER(#{d_type})
+	        </if>
+	    </where>
+	    ORDER BY dining_id ASC
+	</select>
+	
+	<select id="getDailyStatistics" resultType="map">
+	    <![CDATA[
+	    SELECT 
+	        TO_CHAR(R.RES_DATE, 'YYYY-MM-DD') AS RES_DATE,
+	        COUNT(R.DINING_RESERVATION_ID) AS DAILY_COUNT,
+	        SUM(
+	            CASE 
+	                WHEN R.DINING_ID = '1' THEN (R.ADULT_COUNT * 100000) + (R.CHILD_COUNT * 50000)
+	                WHEN R.DINING_ID = '2' THEN (R.ADULT_COUNT * 70000) + (R.CHILD_COUNT * 40000) /* 2번으로 수정! */
+	                WHEN R.DINING_ID = '3' THEN (R.ADULT_COUNT * 80000) + (R.CHILD_COUNT * 30000)
+	                WHEN R.DINING_ID = '4' THEN (R.ADULT_COUNT * 80000) + (R.CHILD_COUNT * 20000)
+	                ELSE NVL(P.AMOUNT, 0)
+	            END
+	        ) AS DAILY_REVENUE
+	    FROM DINING_RESERVATIONS R
+	    LEFT JOIN DINING_PAYMENTS P ON R.DINING_RESERVATION_ID = P.DINING_RES_NO
+	    WHERE R.DINING_ID = #{diningId, jdbcType=VARCHAR}
+	      AND R.STATUS = 'VISITED'
+	      AND R.RES_DATE >= TRUNC(SYSDATE) - 7
+	    GROUP BY TO_CHAR(R.RES_DATE, 'YYYY-MM-DD')
+	    ORDER BY TO_CHAR(R.RES_DATE, 'YYYY-MM-DD') ASC
+	    ]]>
+	</select>
+	
+	<select id="getTimeSlotStatistics" resultType="map">
+	    SELECT 
+	        RES_TIME, 
+	        COUNT(*) AS TIME_COUNT
+	    FROM DINING_RESERVATIONS
+	    WHERE DINING_ID = #{diningId}
+	      AND STATUS = 'VISITED'
+	      AND RES_DATE >= TRUNC(SYSDATE) - 7
+	    GROUP BY RES_TIME
+	    ORDER BY RES_TIME ASC
+	</select>
+
+
 
 
 </mapper>
