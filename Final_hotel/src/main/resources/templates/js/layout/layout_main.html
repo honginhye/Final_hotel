@@ -42,14 +42,21 @@
 
        /* --- 드롭다운 스타일 --- */
        .custom-dropdown { position: relative; display: inline-flex; align-items: center; }
-       .custom-dropdown .dropdown-toggle { color: #eee !important; font-size: 0.75rem; text-decoration: none; cursor: pointer; margin-left: 20px; }
+       .custom-dropdown .dropdown-toggle { 
+       		color: #eee !important; font-size: 0.75rem; text-decoration: none; 
+       		cursor: pointer; margin-left: 20px; 
+       	}
        .custom-dropdown .dropdown-menu {
-           position: absolute !important; top: 100% !important; right: 0 !important;
+           position: absolute !important; top: 100% !important; right: 0 !important; left: auto !important;
            background-color: #1a1a1a !important; border: 1px solid rgba(212, 175, 55, 0.5) !important;
-           min-width: 160px; padding: 0 !important; display: none;
+           min-width: 160px; padding: 0 !important; margin: 0 !important; display: none; overflow: hidden; 	
        }
-       .custom-dropdown.show .dropdown-menu { display: block; }
-       .custom-dropdown .dropdown-item { color: #fff !important; font-size: 0.75rem; padding: 12px 20px !important; display: flex; align-items: center; transition: 0.2s; }
+       .custom-dropdown.show .dropdown-menu { display: block;  }
+       .custom-dropdown .dropdown-item { 
+       		color: #fff !important; font-size: 0.75rem; padding: 12px 20px !important; 
+       		display: flex; align-items: center; width: 100% !important; box-sizing: border-box !important; transition: 0.2s; 
+       		border: none !important; background: transparent; margin: 0 !important;
+       	}
        .custom-dropdown .dropdown-item:hover { background-color: #d4af37 !important; color: #000 !important; }
 
        /* --- 네비게이션 스타일 --- */
