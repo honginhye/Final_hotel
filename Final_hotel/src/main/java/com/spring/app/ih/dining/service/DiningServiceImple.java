@@ -37,19 +37,12 @@ public class DiningServiceImple implements DiningService {
     public int registerReservation(DiningReservationDTO reservationDTO, String impUid, Session_MemberDTO member) {
         
         if (member != null) {
-        	System.out.println(">>> 로그인 유저 번호 확인: " + member.getMemberNo()); // 이게 콘솔에 찍히는지 확인!
-            
         	reservationDTO.setFkMemberNo(member.getMemberNo().longValue());
             reservationDTO.setResPassword(null); 
-            
-            
-            System.out.println("디버깅 - DTO에 담긴 회원번호: " + reservationDTO.getFkMemberNo());
+            // System.out.println("확인용:DTO에 담긴 회원번호: " + reservationDTO.getFkMemberNo());
         } else {
-            // 비회원인 경우: 회원 번호는 비우고, 입력받은 4자리 비밀번호를 유지
             reservationDTO.setFkMemberNo(null);
-            
         }
-
         int resResult = diningMapper.insertReservation(reservationDTO);
         
         if (resResult > 0) {
@@ -64,7 +57,6 @@ public class DiningServiceImple implements DiningService {
             
             return diningMapper.insertPayment(paraMap);
         }
-        
         return 0;
     }
 
