@@ -199,6 +199,9 @@ tasks.withType(JavaCompile) {
     options.compilerArgs << "-parameters"
 }
 
+springBoot {
+    mainClass = 'com.spring.app.Application' 
+}
 
 
 
