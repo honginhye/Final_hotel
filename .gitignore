@@ -99,3 +99,6 @@ replay_pid*
 
 #깃이그노어
 /Final_hotel/src/main/resources/static/SQL/FinalProject.sql
+
+# Gradle Wrapper Jar 파일은 무시하지 않도록 예외 처리
+!gradle-wrapper.jar
